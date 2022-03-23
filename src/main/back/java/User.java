@@ -3,7 +3,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.*;
-import java.net.http.WebSocket;
 import java.util.ArrayList;
 import java.util.List;
 
