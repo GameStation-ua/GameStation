@@ -1,4 +1,3 @@
-
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,7 @@ public class User {
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
-    private Long id;
+    private int id;
 
     @Column (name = "NICK_NAME")
     private String nickName;
@@ -22,7 +21,7 @@ public class User {
     @Column (name = "PASSWORD")
     private String password;
 
-    @Column (name = "FOLLOWERS")
+    @OneToMany (mappedBy = "FOLLOWERS_LIST")
     private List<User> followers;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -34,11 +33,11 @@ public class User {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Games> createdGames = new ArrayList<>();
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
