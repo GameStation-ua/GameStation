@@ -8,7 +8,7 @@ public class Main {
         HttpServer server = HttpServer.create(new InetSocketAddress(8443), 0);
 
         server.createContext("/main", new MyHandler()); // creates path
-        server.createContext("/auth/login", new MyHandler());
+        server.createContext("/auth/login", new LogInHandler());
 
         server.setExecutor(null); // creates a default executor
         server.start();

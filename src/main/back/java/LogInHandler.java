@@ -1,12 +1,16 @@
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-public class LogInHandler implements HttpHandler {
+public class LogInHandler extends AbstractHandler{
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange t) throws IOException {
+        User user = new User();
+        user.setUserName("pedro");
+        user.setPassword("wasd");
 
     }
 }
+
+

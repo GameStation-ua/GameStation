@@ -1,5 +1,4 @@
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,17 +20,17 @@ public class User {
     @Column (name = "PASSWORD")
     private String password;
 
-    @OneToMany (mappedBy = "FOLLOWERS_LIST")
-    private List<User> followers;
+    @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<User> followers = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Games> listGames = new ArrayList<>();
+    @Embedded @Column (name = "GAME_LIST")
+    private GameList gameList;
 
-    @Column (name = "NOTIFICATIONS")
+    @ElementCollection
     private List<Notification> notifications;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Games> createdGames = new ArrayList<>();
+    private List<Game> createdGames = new ArrayList<>();
 
     public int getId() {
         return id;
