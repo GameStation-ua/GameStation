@@ -1,3 +1,5 @@
+package time;
+
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.GeneratedValue;
 import javax.persistence.*;

@@ -1,3 +1,5 @@
+package time;
+
 public enum Status {
     PLAYING,
     COMPLETED,
