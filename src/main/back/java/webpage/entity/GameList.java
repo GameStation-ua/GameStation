@@ -1,4 +1,4 @@
-package time;
+package webpage.entity;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;

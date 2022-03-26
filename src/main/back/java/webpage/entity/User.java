@@ -1,4 +1,4 @@
-package time;
+package webpage.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 

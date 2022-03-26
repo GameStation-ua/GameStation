@@ -1,4 +1,4 @@
-package util;
+package webpage.util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

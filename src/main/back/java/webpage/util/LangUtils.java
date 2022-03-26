@@ -1,4 +1,4 @@
-package util;
+package webpage.util;
 
 import java.util.List;
 

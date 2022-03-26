@@ -8,10 +8,10 @@
             GameStation database.
         </description>
 
-        <class>time.User</class>
-        <class>time.Game</class>
-        <class>time.Notification</class>
-        <class>time.GameList</class>
+        <class>webpage.entity.User</class>
+        <class>webpage.entity.Game</class>
+        <class>webpage.entity.Notification</class>
+        <class>webpage.entity.GameList</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />

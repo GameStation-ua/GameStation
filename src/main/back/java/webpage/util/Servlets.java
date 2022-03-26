@@ -1,4 +1,4 @@
-package util;
+package webpage.util;
 
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;

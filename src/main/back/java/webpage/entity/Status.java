@@ -1,4 +1,4 @@
-package time;
+package webpage.entity;
 
 public enum Status {
     PLAYING,

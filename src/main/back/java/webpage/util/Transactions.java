@@ -1,16 +1,14 @@
-package util;
+package webpage.util;
 
 import javax.persistence.EntityTransaction;
 import java.util.function.Supplier;
-
-import static util.EntityManagers.currentEntityManager;
 
 public class Transactions {
 
   private Transactions() {}
 
   public static <R> R tx(Supplier<R> s) {
-    final EntityTransaction tx = currentEntityManager().getTransaction();
+    final EntityTransaction tx = EntityManagers.currentEntityManager().getTransaction();
 
     try {
       tx.begin();
@@ -26,7 +24,7 @@ public class Transactions {
   }
 
   public static void tx(Runnable r){
-    final EntityTransaction tx = currentEntityManager().getTransaction();
+    final EntityTransaction tx = EntityManagers.currentEntityManager().getTransaction();
 
     try {
       tx.begin();
