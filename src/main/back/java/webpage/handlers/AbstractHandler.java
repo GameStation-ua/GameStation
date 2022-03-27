@@ -1,4 +1,4 @@
-package webpage.service;
+package webpage.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -27,6 +27,7 @@ public abstract class AbstractHandler implements HttpHandler{
             os.write(str.getBytes(StandardCharsets.UTF_8));
             os.close();
     }
+
     String receiveJson(HttpExchange t){
             try {
                     Headers requestHeaders = t.getRequestHeaders();

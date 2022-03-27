@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static webpage.util.EntityManagers.currentEntityManager;
+
 @Entity
 public class User {
     @Id
@@ -14,13 +16,13 @@ public class User {
     private int id;
 
     @Column (name = "NICK_NAME")
-    private String nickName;
+    private String nickName = null;
 
     @Column (name = "USER_NAME")
-    private String userName;
+    private String userName = null;
 
     @Column (name = "PASSWORD")
-    private String password;
+    private String password = null;
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<User> followers = new ArrayList<>();
@@ -80,5 +82,21 @@ public class User {
 
     public void setNotifications(List<Notification> notifications) {
         this.notifications = notifications;
+    }
+
+    public User persist() {
+        final EntityTransaction tx = currentEntityManager().getTransaction();
+
+        try {
+            tx.begin();
+
+            currentEntityManager().persist(User.this);
+
+            tx.commit();
+            return User.this;
+        } catch (Exception e) {
+            tx.rollback();
+            throw e;
+        }
     }
 }

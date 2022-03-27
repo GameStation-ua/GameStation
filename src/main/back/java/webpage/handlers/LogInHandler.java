@@ -1,4 +1,4 @@
-package webpage.service;
+package webpage.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import webpage.entity.User;
