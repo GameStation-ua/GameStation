@@ -20,6 +20,7 @@
       })
   }
 
+
 </script>
 <template>
   <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
@@ -47,6 +48,7 @@
     margin-top: 30px;
     width: 100%;
   }
+
 
 </style>
 
