@@ -22,13 +22,31 @@
 
 </script>
 <template>
-  <div>
-    <input v-model="input.userName" type="text" />
-    <input v-model="input.password" type="password" />
-    <button @click="login">
-      get login
-    </button>
-    {{ user.nickName }}
-  </div>
+  <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
+  <h1>Iniciar sesión</h1>
+  <vs-row>
+    <vs-col >
+      <div>
+        <div class="centerx">
+          <vs-input label-placeholder="Username" v-model="input.userName" size="large"/>
+          <vs-input label-placeholder="Password" v-model="input.password" size="large"/>
+          <vs-button @click="login" color="success" type="gradient">Login</vs-button>
+        </div>
+        {{ user.nickName }}
+      </div>
+    </vs-col>
+  </vs-row>
 </template>
+
+<style scoped>
+  .centerx  .vs-button{
+    margin-top: 30px;
+    width: 100%;
+  }
+  .centerx  .vs-input{
+    margin-top: 30px;
+    width: 100%;
+  }
+
+</style>
 
