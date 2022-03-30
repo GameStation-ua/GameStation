@@ -16,13 +16,13 @@ public class User {
     private int id;
 
     @Column (name = "NICK_NAME")
-    private String nickName = null;
+    private String nickName;
 
     @Column (name = "USER_NAME")
-    private String userName = null;
+    private String userName;
 
     @Column (name = "PASSWORD")
-    private String password = null;
+    private String password;
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<User> followers = new ArrayList<>();
@@ -82,21 +82,5 @@ public class User {
 
     public void setNotifications(List<Notification> notifications) {
         this.notifications = notifications;
-    }
-
-    public User persist() {
-        final EntityTransaction tx = currentEntityManager().getTransaction();
-
-        try {
-            tx.begin();
-
-            currentEntityManager().persist(User.this);
-
-            tx.commit();
-            return User.this;
-        } catch (Exception e) {
-            tx.rollback();
-            throw e;
-        }
     }
 }

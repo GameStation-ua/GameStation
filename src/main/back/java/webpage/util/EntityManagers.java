@@ -29,5 +29,4 @@ public class EntityManagers {
     }
     emRef.remove();
   }
-
 }
