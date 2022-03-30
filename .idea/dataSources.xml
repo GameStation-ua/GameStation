@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="GameStation" uuid="739be544-edaf-4b07-ad17-cb708be5bd81">
+    <data-source source="LOCAL" name="HSQLDB (Local)" uuid="799ee768-dd73-46c3-800f-0645b581e13d">
       <driver-ref>hsqldb.local</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>

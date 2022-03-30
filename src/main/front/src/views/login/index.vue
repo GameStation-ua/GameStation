@@ -26,7 +26,7 @@
     <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
     <h1>Iniciar sesión</h1>
     <vs-row>
-      <vs-col >
+      <vs-col>
         <div>
           <div class="centerx">
             <vs-input label-placeholder="Username" v-model="input.userName" size="large"/>
