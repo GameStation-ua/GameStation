@@ -28,7 +28,7 @@ public class User {
     private List<User> followers = new ArrayList<>();
 
     @OneToOne (
-            mappedBy = "GAME_LIST",
+            mappedBy = "USER",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY
