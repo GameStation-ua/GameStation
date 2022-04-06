@@ -6,11 +6,12 @@ import javax.persistence.*;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    User user;
+    @Column(name = "USER_ID") long userId;
     @Column(name = "TITLE") String title;
     @Column(name = "DESCRIPTION") String description;
     @Column(name = "PATH") String path;
