@@ -7,11 +7,12 @@
         <description>
             GameStation database.
         </description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <class>webpage.entity.User</class>
         <class>webpage.entity.Game</class>
         <class>webpage.entity.Notification</class>
-        <class>webpage.entity.GameList</class>
+        <class>webpage.entity.UserGame</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
@@ -19,7 +20,7 @@
             <property name="javax.persistence.jdbc.user" value="sa" />
             <property name="javax.persistence.jdbc.password" value="" />
             <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
         </properties>
 
     </persistence-unit>

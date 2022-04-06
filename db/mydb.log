@@ -1,11 +1,105 @@
+/*C1*/SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+COMMIT
+/*C2*/SET SCHEMA PUBLIC
+drop table if exists Game CASCADE 
+drop table if exists Notification CASCADE 
+drop table if exists User CASCADE 
+drop table if exists UserGame CASCADE 
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table Game (id integer not null, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
+create table Notification (ID bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), primary key (ID))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
+create table UserGame (id bigint not null, gameId bigint, scores integer, statuses integer, userId bigint, game_id integer, primary key (id))
+alter table UserGame add constraint FKgulhxba8frh5cejdp7xmtlc3a foreign key (game_id) references Game
 /*C3*/SET SCHEMA PUBLIC
 DISCONNECT
+/*C2*/DISCONNECT
 /*C4*/SET SCHEMA PUBLIC
 DISCONNECT
 /*C5*/SET SCHEMA PUBLIC
+drop table if exists Game CASCADE 
+drop table if exists Notification CASCADE 
 drop table if exists User CASCADE 
-create table User (id bigint not null, EMAIL varchar(255) not null, FIRST_NAME varchar(255), LAST_NAME varchar(255), PASSWORD varchar(255), primary key (id))
-alter table User add constraint UK_gmrrm359qu7ogusdu9r2qr637 unique (EMAIL)
-INSERT INTO USER VALUES(1,'luke.skywalker@jedis.org','Luke','Skywalker',NULL)
-INSERT INTO USER VALUES(2,'leia.skywalker@jedis.org','Leia','Skywalker',NULL)
-COMMIT
+drop table if exists UserGame CASCADE 
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table Game (id integer not null, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
+create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
+create table UserGame (id bigint not null, gameId bigint, scores integer, statuses integer, userId bigint, game_id integer, primary key (id))
+alter table Notification add constraint FK47qcspfhqn5gd49dylmnu31fb foreign key (user_id) references User
+alter table UserGame add constraint FKgulhxba8frh5cejdp7xmtlc3a foreign key (game_id) references Game
+/*C6*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C5*/DISCONNECT
+/*C7*/SET SCHEMA PUBLIC
+drop table if exists Game CASCADE 
+drop table if exists Notification CASCADE 
+drop table if exists User CASCADE 
+drop table if exists User_User CASCADE 
+drop table if exists UserGame CASCADE 
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table Game (id integer not null, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
+create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
+create table User_User (User_id integer not null, followers_id integer not null)
+create table UserGame (id bigint not null, gameId bigint, scores integer, statuses integer, userId bigint, game_id integer, primary key (id))
+alter table Notification add constraint FK47qcspfhqn5gd49dylmnu31fb foreign key (user_id) references User
+alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
+alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
+alter table UserGame add constraint FKgulhxba8frh5cejdp7xmtlc3a foreign key (game_id) references Game
+/*C8*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C7*/DISCONNECT
+/*C9*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C10*/SET SCHEMA PUBLIC
+drop table if exists Game CASCADE 
+drop table if exists Notification CASCADE 
+drop table if exists User CASCADE 
+drop table if exists User_User CASCADE 
+drop table if exists UserGame CASCADE 
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
+create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
+create table User_User (User_id integer not null, followers_id integer not null)
+create table UserGame (id bigint not null, gameId bigint, scores integer, statuses integer, userId bigint, game_id integer, primary key (id))
+alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
+alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
+alter table Notification add constraint FK47qcspfhqn5gd49dylmnu31fb foreign key (user_id) references User
+alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
+alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
+alter table UserGame add constraint FKgulhxba8frh5cejdp7xmtlc3a foreign key (game_id) references Game
+/*C11*/SET SCHEMA PUBLIC
+DISCONNECT
+/*C10*/DISCONNECT
+/*C12*/SET SCHEMA PUBLIC
+drop table if exists Game CASCADE 
+drop table if exists Game_User CASCADE 
+drop table if exists Notification CASCADE 
+drop table if exists User CASCADE 
+drop table if exists User_User CASCADE 
+drop table if exists UserGame CASCADE 
+drop sequence hibernate_sequence if exists
+create sequence hibernate_sequence start with 1 increment by 1
+create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
+create table Game_User (Game_id integer not null, followers_id integer not null)
+create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
+create table User_User (User_id integer not null, followers_id integer not null)
+create table UserGame (id bigint not null, gameId bigint, scores integer, statuses integer, userId bigint, game_id integer, primary key (id))
+alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
+alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
+alter table Game_User add constraint FKrvvcwjig06e9ly4m42c0jqt9e foreign key (followers_id) references User
+alter table Game_User add constraint FKrtsnya9pu5s485ktb3gwnl87j foreign key (Game_id) references Game
+alter table Notification add constraint FK47qcspfhqn5gd49dylmnu31fb foreign key (user_id) references User
+alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
+alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
+alter table UserGame add constraint FKgulhxba8frh5cejdp7xmtlc3a foreign key (game_id) references Game
+/*C13*/SET SCHEMA PUBLIC
+DISCONNECT

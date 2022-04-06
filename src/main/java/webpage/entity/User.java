@@ -25,20 +25,20 @@ public class User {
     private String password;
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private List<User> followers = new ArrayList<>();
+    private List<User> followers;
 
-    @Embedded @Column (name = "GAME_LIST")
-    private GameList gameList;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "userId")
+    private List<UserGame> userGames;
 
-    @ElementCollection
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userId")
     private List<Notification> notifications;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Game> createdGames = new ArrayList<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "creatorId")
+    private List<Game> createdGames;
 
     public User() {
-
     }
+
 
     public int getId() {
         return id;
@@ -70,13 +70,5 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public List<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<Notification> notifications) {
-        this.notifications = notifications;
     }
 }
