@@ -3,12 +3,17 @@ package webpage.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import webpage.entity.User;
 
+import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyHandler extends AbstractHandler{
-    @Override
+    public MyHandler(EntityManagerFactory emf) {
+        super(emf);
+    }
+
+
     public void handle(HttpExchange t) throws IOException {
         User user = new User();
         user.setPassword("12345678");

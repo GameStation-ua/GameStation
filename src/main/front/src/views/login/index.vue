@@ -1,7 +1,7 @@
 <script setup>
-  import { ref } from 'vue'
+import {ref} from 'vue'
 
-  const user = ref({})
+const user = ref({})
   const input = ref({
     userName: "",
     password: ""
