@@ -1,13 +1,32 @@
+<script setup>
+  import Start from "@/views/start";
+</script>
 <template>
-  <div class="form-box">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">LogIn</router-link> |
-      <router-link to="/register">Register</router-link>
-    </nav>
+  <Start v-if="!$store.state.user">
+
+  </Start>
+  <template v-else>
+    <vs-navbar v-model="activeItem" class="nabarx">
+      <div slot="title">
+        <vs-navbar-title>
+          Hello world
+        </vs-navbar-title>
+      </div>
+      <vs-navbar-item index="0">
+        <a href="#">Home</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="1">
+        <a href="#">News</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="2">
+        <a href="#">Update</a>
+      </vs-navbar-item>
+      <vs-input icon="search" placeholder="Search" v-model="$store.state.search"/>
+    </vs-navbar>
     <router-view/>
-  </div>
+  </template>
 </template>
+
 
 <style>
 #app {
@@ -16,26 +35,12 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  width: 100%;
+  height: 100%;
+}
+.vs-navbar{
+  background: #1b9a59 !important;
 }
 
-nav {
-  padding: 30px;
-}
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-.form-box{
-  width: 500px;
-  background: rgba(0,0,0,0.8);
-  margin: -2% auto;
-  padding: 50px 0;
-  color: #fff;
-  box-shadow: 0 0 20px 2px rgba(0,0,0,0.5);
-}
 </style>

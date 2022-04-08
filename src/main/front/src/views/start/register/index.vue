@@ -24,8 +24,8 @@ function login () {
 </script>
 
 <template>
-  <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
-  <h1>Iniciar sesión</h1>
+
+  <h1>Register</h1>
   <vs-row>
     <vs-col >
       <div>
@@ -51,7 +51,8 @@ function login () {
 }
 .centerx  .vs-input{
   margin-top: 30px;
-  width: 100%;
+  width: 80%;
+  margin-left: 50px;
 
 }
 </style>
