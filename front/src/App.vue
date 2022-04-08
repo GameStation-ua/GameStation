@@ -1,29 +1,89 @@
-<template>
-  <div class="form-box">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">LogIn</router-link> |
-      <router-link to="/register">Register</router-link>
-    </nav>
-    <router-view/>
-  </div>
-  <div id="app">
-    <div class="container" style="width:600px">
-      <div class="my-4">
-      </div>
-      <upload-image></upload-image>
-    </div>
-  </div>
-</template>
-<script>
-import UploadImage from "./components/UploadImage";
-export default {
-  name: "App",
-  components: {
-    UploadImage
-  }
-};
+<script setup>
+  import Start from "@/views/start";
 </script>
+<template lang="html">
+  <Start v-if="!$store.state.user">
+
+  </Start>
+  <template v-else>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <vs-navbar v-model="activeItem" class="nabarx">
+      <div id="parentx">
+
+        <vs-button @click="active=!active" color="primary" type="filled">Open Sidebar</vs-button>
+        <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+
+          <div class="header-sidebar" slot="header">
+            <vs-avatar  size="70px" src="https://randomuser.me/api/portraits/men/85.jpg"/>
+
+            <h4>
+              My Name
+              <vs-button color="primary" icon="more_horiz" type="flat"></vs-button>
+            </h4>
+
+          </div>
+
+          <vs-sidebar-item index="1" icon="question_answer">
+            Dashboard
+          </vs-sidebar-item>
+
+          <vs-sidebar-item index="2" icon="gavel">
+            History
+          </vs-sidebar-item>
+
+          <vs-divider icon="person" position="left">
+            User
+          </vs-divider>
+
+          <vs-sidebar-item index="3" icon="verified_user">
+            Configurations
+          </vs-sidebar-item>
+          <vs-sidebar-item index="4" icon="account_box">
+            Profile
+          </vs-sidebar-item>
+          <vs-sidebar-item index="5" >
+            Card
+          </vs-sidebar-item>
+
+          <div class="footer-sidebar" slot="footer">
+            <vs-button icon="reply" color="danger" type="flat">log out</vs-button>
+            <vs-button icon="settings" color="primary" type="border"></vs-button>
+          </div>
+
+        </vs-sidebar>
+      </div>
+      <div>
+        <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
+      </div>
+      <div slot="title">
+        <vs-navbar-title>
+          Game Station
+        </vs-navbar-title>
+      </div>
+      <vs-navbar-item index="0">
+        <a href="#">Games</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="1">
+        <a href="#">News</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="2">
+        <a href="#">News</a>
+      </vs-navbar-item>
+      <vs-navbar-item index="3">
+        <a href="#">Update</a>
+      </vs-navbar-item>
+      <vs-input icon="search" placeholder="Search" v-model="$store.state.search"/>
+      <vs-button radius color="dark" type="flat" icon="notifications"></vs-button>
+      <div>
+
+      </div>
+    </vs-navbar>
+    <router-view/>
+  </template>
+</template>
+
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -31,26 +91,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  width: 100%;
+  height: 100%;
+}
+.vs-navbar{
+  background: #1b9a59 !important;
 }
 
-nav {
-  padding: 30px;
-}
+img{
+  width: 100px;
+  height: auto;
+  left: 100px;
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
 }
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-.form-box{
-  width: 500px;
-  background: rgba(0,0,0,0.8);
-  margin: -2% auto;
-  padding: 50px 0;
-  color: #fff;
-  box-shadow: 0 0 20px 2px rgba(0,0,0,0.5);
+.centerx  .vs-button{
+  left: 0px;
 }
 </style>
