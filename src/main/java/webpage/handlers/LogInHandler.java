@@ -15,7 +15,7 @@ public class LogInHandler extends AbstractHandler{
 
     public void handle(HttpExchange t) throws IOException {
         User user = new User();
-        user.setUserName("pedro");
+        user.setUsername("pedro");
         user.setPassword("wasd");
 
     }

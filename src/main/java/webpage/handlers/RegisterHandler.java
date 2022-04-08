@@ -1,58 +1,71 @@
 package webpage.handlers;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import webpage.entity.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import static webpage.util.MyValues.*;
 
 import static spark.Spark.*;
 
-public class RegisterHandler extends AbstractHandler{
+public class RegisterHandler extends AbstractHandler {
 
     public RegisterHandler(EntityManagerFactory emf) {
         super(emf);
     }
 
-    public void handle(EntityManagerFactory emf, String path) throws IOException {
+    public void handle(String path) throws IOException {
         enableCORS();
         post(path, "application/json", (req, res) -> {
             User user1 = new Gson().fromJson(req.body(), User.class);
-            final EntityManager em = this.emf.createEntityManager();
-            Query query = em.createQuery("FROM User user WHERE user.userName = " + user1.getUserName());
-//            query.setParameter(0, user1.getUserName());
-            try {
-//                List results = query.getFirstResult(0);
-            }catch (IllegalArgumentException e){
-                if (user1.getPassword().length() < 8){
-                    get(path, "application/json", ((request, response) -> {
-                        response.type("application/json");
-                        response.status(200);
-                        return "{\"message\":\"Password needs to be at least 8 characters Long.\"}";
-                    }));
-                }if (user1.getNickName().length() < 6){
-                    get(path, "application/json", ((request, response) -> {
-                        response.type("application/json");
-                        response.status(200);
-                        return "{\"message\":\"Set a nickname with more than 6 characters\"}";
-                    }));
+            final EntityManager em = emf.createEntityManager();
+            Query query = em.createQuery("FROM User user WHERE user.username = :username");
+            query = query.setParameter("username", user1.getUsername());
+            List results = query.getResultList();
+            if (results.isEmpty()) {
+                if (!(checkString(user1.getPassword())) || (user1.getPassword().length() < 8)){
+                        res.type("application/json");
+                        res.status(200);
+                        return "{\"message\":\"You need to meet password requirements.\"}";
                 }else{
-                    get(path, "application/json", ((request, response) -> {
-                        response.type("application/json");
-                        response.status(201);
-                        return "{\"message\":\"User created!\"}";
-                    }));
-                    em.persist(user1);
+                res.type("application/json");
+                res.status(201);
+                user1.setPassword(Hashing.sha512().hashString(user1.getPassword(), StandardCharsets.UTF_8).toString());
+                EntityTransaction transaction = em.getTransaction();
+                transaction.begin();
+                em.persist(user1);
+                transaction.commit();
+                    return "{\"message\":\"User created!\"}";
                 }
+            }else {
+                res.type("application/json");
+                res.status(200);
+                return "{\"message\":\"Username already taken.\"}";
             }
-            res.type("application/json");
-            res.status(200);
-            return "{\"message\":\"Username already taken.\"}";
         });
+    }
+
+    private static boolean checkString(String str) {
+        char ch;
+        boolean capitalFlag = false;
+        boolean lowerCaseFlag = false;
+        boolean numberFlag = false;
+        for(int i=0;i < str.length();i++) {
+            ch = str.charAt(i);
+            if( Character.isDigit(ch)) {
+                numberFlag = true;
+            }
+            else if (Character.isUpperCase(ch)) {
+                capitalFlag = true;
+            } else if (Character.isLowerCase(ch)) {
+                lowerCaseFlag = true;
+            }
+            if(numberFlag && capitalFlag && lowerCaseFlag)
+                return true;
+        }
+        return false;
     }
 }

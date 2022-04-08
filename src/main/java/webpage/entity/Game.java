@@ -9,20 +9,24 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private int id;
+
     @Column(name = "CREATOR_ID")
-    long creatorId;
+    private long creatorId;
 
     @Column(name = "TITLE")
-    String title;
+    private String title;
 
     @Column(name = "DESCRIPTION")
-    String description;
+    private String description;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<User> followers;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "gameId")
     private List<UserGame> userGames;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tag> tags;
 
     public int getId() {
         return id;

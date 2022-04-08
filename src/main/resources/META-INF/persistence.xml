@@ -8,11 +8,11 @@
             GameStation database.
         </description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
         <class>webpage.entity.User</class>
         <class>webpage.entity.Game</class>
         <class>webpage.entity.Notification</class>
         <class>webpage.entity.UserGame</class>
+        <class>webpage.entity.Tag</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />

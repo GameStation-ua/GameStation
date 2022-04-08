@@ -24,7 +24,6 @@ dependencies {
     implementation 'org.hsqldb:hsqldb:2.6.1'
     implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.6.7.Final'
     implementation 'com.sparkjava:spark-core:2.9.3'
-    implementation 'com.sparkjava:spark-template-freemarker:2.7.1'
     implementation 'com.google.code.gson:gson:2.9.0'
 
     // Use JUnit test framework
