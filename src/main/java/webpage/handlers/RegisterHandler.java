@@ -38,7 +38,7 @@ public class RegisterHandler extends AbstractHandler {
                 transaction.begin();
                 em.persist(user1);
                 transaction.commit();
-                    return "{\"message\":\"User created!\"}";
+                return "{\"message\":\"User created!\"}";
                 }
             }else {
                 res.type("application/json");
