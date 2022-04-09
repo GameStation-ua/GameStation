@@ -30,10 +30,10 @@ function login () {
     <vs-col >
       <div>
         <div class="centerx">
-          <vs-input label-placeholder="Email" v-model="input.email" size="large" type="email"/>
-          <vs-input label-placeholder="Username" v-model="input.userName" size="large"/>
-          <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password"/>
-          <vs-input label-placeholder="Verify password" v-model="input.verifypassword" size="large" type="password"/>
+          <vs-input label-placeholder="Email" v-model="input.email" size="large" type="email" color="success"/>
+          <vs-input label-placeholder="Username" v-model="input.userName" size="large" color="success"/>
+          <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password" color="success"/>
+          <vs-input label-placeholder="Verify password" v-model="input.verifypassword" size="large" type="password" color="success"/>
           <vs-button @click="login" color="success" type="gradient">Login</vs-button>
         </div>
         {{ user.nickName }}

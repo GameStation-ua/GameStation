@@ -11,6 +11,7 @@ import java.util.List;
 
 import static spark.Spark.*;
 
+
 public class RegisterHandler extends AbstractHandler {
 
     public RegisterHandler(EntityManagerFactory emf) {

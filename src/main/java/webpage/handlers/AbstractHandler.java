@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
