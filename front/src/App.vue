@@ -86,7 +86,7 @@
   height: 100%;
 }
 .vs-navbar{
-  background: #1b9a59 !important;
+  background: #309c61 !important;
   display: grid !important;
   width: 100% !important;
 }
@@ -134,6 +134,17 @@ h4{
   width: 100%;
   bottom: 0;
   position: absolute;
+}
+h4{
+  color: white;
+}
+
+.vs-sidebar--item{
+  color: white;
+}
+
+.vs-component vs-divider{
+  color: white;
 }
 
 
