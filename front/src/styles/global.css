@@ -17,8 +17,7 @@ body {
 
 .vs-input--placeholder{
     color: white;
-    position: absolute;
-    left: 0px;
+    top: 3px;
 }
 
 .vs-input--icon{

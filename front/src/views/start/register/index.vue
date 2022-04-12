@@ -10,7 +10,7 @@ const input = ref({
 })
 
 function login () {
-  fetch(process.env.VUE_APP_HTTP_URL + "/auth/signin", {
+  fetch(process.env.VUE_APP_HTTP_URL + "/auth/register", {
     method:"post",
     body: JSON.stringify(input.value)
   })
