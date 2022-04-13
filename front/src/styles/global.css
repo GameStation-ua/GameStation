@@ -8,11 +8,22 @@ body {
     height: 100%;
     display: flex;
     overflow: hidden;
+    background: #242222;
 }
 
 .vs-input{
     color: white;
 }
+
+.vs-input--placeholder{
+    color: white;
+    top: 3px;
+}
+
+.vs-input--icon{
+    color: white;
+}
+
 input{
     background-color: #242222;
 }

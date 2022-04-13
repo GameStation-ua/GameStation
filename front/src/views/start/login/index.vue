@@ -23,14 +23,13 @@
 
 </script>
 <template>
-    <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
-    <h1>Iniciar sesión</h1>
+    <h1>Login</h1>
     <vs-row>
       <vs-col>
         <div>
           <div class="centerx">
-            <vs-input label-placeholder="Username" v-model="input.username" size="large"/>
-            <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password"/>
+            <vs-input label-placeholder="Username" v-model="input.userName" size="large" color="success"/>
+            <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password" color="success"/>
             <vs-button @click="login" color="success" type="gradient">Login</vs-button>
           </div>
           {{ user.username }}

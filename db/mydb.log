@@ -1,8 +1,4 @@
-/*C15*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C16*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C17*/SET SCHEMA PUBLIC
+/*C80*/SET SCHEMA PUBLIC
 drop table if exists Game CASCADE 
 drop table if exists Game_Tag CASCADE 
 drop table if exists Game_User CASCADE 
@@ -19,7 +15,7 @@ create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
 create table Game_User (Game_id integer not null, followers_id integer not null)
 create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
 create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
 create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
 create table User_User (User_id integer not null, followers_id integer not null)
 create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
@@ -33,10 +29,8 @@ alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (lik
 alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
 alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
 alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-/*C18*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C17*/DISCONNECT
-/*C20*/SET SCHEMA PUBLIC
+/*C81*/SET SCHEMA PUBLIC
 drop table if exists Game CASCADE 
 drop table if exists Game_Tag CASCADE 
 drop table if exists Game_User CASCADE 
@@ -53,7 +47,7 @@ create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
 create table Game_User (Game_id integer not null, followers_id integer not null)
 create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
 create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
+create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), USER_NAME varchar(255), primary key (id))
 create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
 create table User_User (User_id integer not null, followers_id integer not null)
 create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
@@ -67,267 +61,10 @@ alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (lik
 alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
 alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
 alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'juan')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
-COMMIT
-INSERT INTO USER VALUES(2,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'OR 1=1')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 3
-COMMIT
-INSERT INTO USER VALUES(3,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'"OR 1=1')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 4
-COMMIT
-/*C21*/SET SCHEMA PUBLIC
+/*C82*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C20*/DISCONNECT
-/*C22*/SET SCHEMA PUBLIC
+/*C83*/SET SCHEMA PUBLIC
 DISCONNECT
-/*C23*/SET SCHEMA PUBLIC
-drop table if exists Game CASCADE 
-drop table if exists Game_Tag CASCADE 
-drop table if exists Game_User CASCADE 
-drop table if exists Notification CASCADE 
-drop table if exists Tag CASCADE 
-drop table if exists User CASCADE 
-drop table if exists User_Tag CASCADE 
-drop table if exists User_User CASCADE 
-drop table if exists UserGame CASCADE 
-drop sequence hibernate_sequence if exists
-create sequence hibernate_sequence start with 1 increment by 1
-create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
-create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
-create table Game_User (Game_id integer not null, followers_id integer not null)
-create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
-create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
-create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
-create table User_User (User_id integer not null, followers_id integer not null)
-create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
-alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
-alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
-alter table Game_Tag add constraint FKktbty8gmitno6peldph5w3gt1 foreign key (tags_TAG) references Tag
-alter table Game_Tag add constraint FKops6egco34l0ry7juvjtbar58 foreign key (Game_id) references Game
-alter table Game_User add constraint FKrvvcwjig06e9ly4m42c0jqt9e foreign key (followers_id) references User
-alter table Game_User add constraint FKrtsnya9pu5s485ktb3gwnl87j foreign key (Game_id) references Game
-alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (likedtags_TAG) references Tag
-alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
-alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
-alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-DISCONNECT
-/*C24*/SET SCHEMA PUBLIC
-drop table if exists Game CASCADE 
-drop table if exists Game_Tag CASCADE 
-drop table if exists Game_User CASCADE 
-drop table if exists Notification CASCADE 
-drop table if exists Tag CASCADE 
-drop table if exists User CASCADE 
-drop table if exists User_Tag CASCADE 
-drop table if exists User_User CASCADE 
-drop table if exists UserGame CASCADE 
-drop sequence hibernate_sequence if exists
-create sequence hibernate_sequence start with 1 increment by 1
-create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
-create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
-create table Game_User (Game_id integer not null, followers_id integer not null)
-create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
-create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
-create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
-create table User_User (User_id integer not null, followers_id integer not null)
-create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
-alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
-alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
-alter table Game_Tag add constraint FKktbty8gmitno6peldph5w3gt1 foreign key (tags_TAG) references Tag
-alter table Game_Tag add constraint FKops6egco34l0ry7juvjtbar58 foreign key (Game_id) references Game
-alter table Game_User add constraint FKrvvcwjig06e9ly4m42c0jqt9e foreign key (followers_id) references User
-alter table Game_User add constraint FKrtsnya9pu5s485ktb3gwnl87j foreign key (Game_id) references Game
-alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (likedtags_TAG) references Tag
-alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
-alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
-alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'"OR 1=1')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
-COMMIT
-/*C19*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C24*/DISCONNECT
-/*C26*/SET SCHEMA PUBLIC
-drop table if exists Game CASCADE 
-drop table if exists Game_Tag CASCADE 
-drop table if exists Game_User CASCADE 
-drop table if exists Notification CASCADE 
-drop table if exists Tag CASCADE 
-drop table if exists User CASCADE 
-drop table if exists User_Tag CASCADE 
-drop table if exists User_User CASCADE 
-drop table if exists UserGame CASCADE 
-drop sequence hibernate_sequence if exists
-create sequence hibernate_sequence start with 1 increment by 1
-create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
-create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
-create table Game_User (Game_id integer not null, followers_id integer not null)
-create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
-create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
-create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
-create table User_User (User_id integer not null, followers_id integer not null)
-create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
-alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
-alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
-alter table Game_Tag add constraint FKktbty8gmitno6peldph5w3gt1 foreign key (tags_TAG) references Tag
-alter table Game_Tag add constraint FKops6egco34l0ry7juvjtbar58 foreign key (Game_id) references Game
-alter table Game_User add constraint FKrvvcwjig06e9ly4m42c0jqt9e foreign key (followers_id) references User
-alter table Game_User add constraint FKrtsnya9pu5s485ktb3gwnl87j foreign key (Game_id) references Game
-alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (likedtags_TAG) references Tag
-alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
-alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
-alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-/*C27*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C28*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C26*/INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'juan')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
-COMMIT
-/*C29*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C30*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C31*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C32*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C33*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C25*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C34*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C26*/DISCONNECT
-/*C36*/SET SCHEMA PUBLIC
-drop table if exists Game CASCADE 
-drop table if exists Game_Tag CASCADE 
-drop table if exists Game_User CASCADE 
-drop table if exists Notification CASCADE 
-drop table if exists Tag CASCADE 
-drop table if exists User CASCADE 
-drop table if exists User_Tag CASCADE 
-drop table if exists User_User CASCADE 
-drop table if exists UserGame CASCADE 
-drop sequence hibernate_sequence if exists
-create sequence hibernate_sequence start with 1 increment by 1
-create table Game (id integer not null, CREATOR_ID bigint, DESCRIPTION varchar(255), TITLE varchar(255), primary key (id))
-create table Game_Tag (Game_id integer not null, tags_TAG varchar(255) not null)
-create table Game_User (Game_id integer not null, followers_id integer not null)
-create table Notification (id bigint not null, DESCRIPTION varchar(255), PATH varchar(255), TITLE varchar(255), USER_ID bigint, primary key (id))
-create table Tag (TAG varchar(255) not null, primary key (TAG))
-create table User (id integer not null, NICK_NAME varchar(255), PASSWORD varchar(255), TOKEN varchar(255), USER_NAME varchar(255), primary key (id))
-create table User_Tag (User_id integer not null, likedtags_TAG varchar(255) not null)
-create table User_User (User_id integer not null, followers_id integer not null)
-create table UserGame (id bigint not null, GAME_ID bigint, SCORE integer, STATUS integer, USER_ID bigint, primary key (id))
-alter table Game add constraint FKacf3glveoetjlcp4ka12po03g foreign key (id) references Game
-alter table Game add constraint FKyssc3o1pmlto9df3r7t4pi5o foreign key (CREATOR_ID) references User
-alter table Game_Tag add constraint FKktbty8gmitno6peldph5w3gt1 foreign key (tags_TAG) references Tag
-alter table Game_Tag add constraint FKops6egco34l0ry7juvjtbar58 foreign key (Game_id) references Game
-alter table Game_User add constraint FKrvvcwjig06e9ly4m42c0jqt9e foreign key (followers_id) references User
-alter table Game_User add constraint FKrtsnya9pu5s485ktb3gwnl87j foreign key (Game_id) references Game
-alter table User_Tag add constraint FKb2y1iu66ayy7yebhu7579dxtm foreign key (likedtags_TAG) references Tag
-alter table User_Tag add constraint FK7kbu231q5ds873yxanr6odrp7 foreign key (User_id) references User
-alter table User_User add constraint FKibcthdgq3a45afyil1ohqts32 foreign key (followers_id) references User
-alter table User_User add constraint FKf41ur8bhykv2qqqpvsan2l7bs foreign key (User_id) references User
-/*C37*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C36*/INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796',NULL,'juan')
-ALTER SEQUENCE PUBLIC.HIBERNATE_SEQUENCE RESTART WITH 2
-COMMIT
-/*C38*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C35*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C39*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C36*/DISCONNECT
-/*C42*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C43*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C45*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C44*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C46*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C47*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C48*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C49*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C50*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C51*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C52*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C53*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C40*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C54*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C55*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C41*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C56*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C57*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C58*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C59*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C60*/SET SCHEMA PUBLIC
-DELETE FROM USER WHERE ID=1
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796','jws','juan')
-COMMIT
-DISCONNECT
-/*C62*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C63*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C64*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C65*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C66*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C67*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C68*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C69*/SET SCHEMA PUBLIC
-DELETE FROM USER WHERE ID=1
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwiZXhwIjoxNjU3NTk4MTk1LCJpYXQiOjE2NDk4MjIxOTYsImlkIjoxfQ.p28X-xePPXJt1qMthLGsQVacDpAhXC84diGtEBGLwNo','juan')
-COMMIT
-DELETE FROM USER WHERE ID=1
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwiZXhwIjoxNjU3NTk4MjQwLCJpYXQiOjE2NDk4MjIyNDAsImlkIjoxfQ.hGIaZ8zgrJ93z-TFVt0cO_1ox_qna4uXi0qI54vKdZo','juan')
-COMMIT
-DISCONNECT
-/*C70*/SET SCHEMA PUBLIC
-DELETE FROM USER WHERE ID=1
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwiZXhwIjoxNjU3NTk4MjcwLCJpYXQiOjE2NDk4MjIyNzAsImlkIjoxfQ.KzgVMCipRlXt1AtQv2eOvAR3VoLK2b9MPMk8eDUBqZc','juan')
-COMMIT
-DISCONNECT
-/*C71*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C72*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C73*/SET SCHEMA PUBLIC
-DELETE FROM USER WHERE ID=1
-INSERT INTO USER VALUES(1,'seba','10328b8b924f7f9ce233de7a5e9d03063893f5fa6f3e93418bd321235832a8a131a931b714f338995a0ecc4611fc40a321fbdf780407762ab6be5c1b06c7b796','eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwiZXhwIjoxNjU3NTk4NDg1LCJpYXQiOjE2NDk4MjI0ODUsImlkIjoxfQ.OhsJHuPiVmTEGxI_3Vpyu0caQ2n89brcQ26eAPlb_6A','juan')
-COMMIT
-DISCONNECT
-/*C74*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C75*/SET SCHEMA PUBLIC
+/*C81*/DISCONNECT
+/*C84*/SET SCHEMA PUBLIC
 DISCONNECT

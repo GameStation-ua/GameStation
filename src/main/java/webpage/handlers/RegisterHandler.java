@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import static spark.Spark.post;
 
+
 public class RegisterHandler extends AbstractHandler {
 
     public RegisterHandler(EntityManagerFactory emf) {
