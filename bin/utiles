@@ -1,6 +1,0 @@
-Hashing.sha512().hashString(originalString, StandardCharsets.UTF_8).toString();
-// hashear y devolver un String
-
-Data data = new Gson().fromJson(json, Data.class);
-// Json a objeto
-
