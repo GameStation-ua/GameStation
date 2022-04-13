@@ -11,9 +11,6 @@ public class User {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column (name = "TOKEN")
-    private String token;
-
     @Column (name = "NICK_NAME")
     private String nickname;
 
@@ -38,15 +35,14 @@ public class User {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Tag> likedtags;
 
+    public User(String nickname, String username, String password) {
+        this.nickname = nickname;
+        this.username = username;
+        this.password = password;
+    }
+
     public User() {
-    }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public int getId() {

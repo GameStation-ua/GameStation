@@ -3,7 +3,13 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
+import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
+import webpage.entity.User;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +18,13 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 
+import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 import static spark.Spark.before;
 import static spark.Spark.options;
+import static webpage.util.SecretKey.key;
 
 public abstract class AbstractHandler{
         EntityManagerFactory emf;
@@ -49,42 +59,30 @@ public abstract class AbstractHandler{
 
         boolean verifyJWT(String token){
             String[] chunks = token.split("\\.");
+            if (chunks.length != 3) return false;
             Base64.Decoder decoder = Base64.getUrlDecoder();
-            String header = new String(decoder.decode(chunks[0]));
-            String payload = new String(decoder.decode(chunks[1]));
-            return false;
+//            String header = new String(decoder.decode(chunks[0]));
+//            String payload = new String(decoder.decode(chunks[1]));
+            SignatureAlgorithm sa = HS256;
+            SecretKeySpec secretKeySpec = new SecretKeySpec(TextCodec.BASE64.decode(key), sa.getJcaName());
+            String tokenWithoutSignature = chunks[0] + "." + chunks[1];
+            String signature = chunks[2];
+            DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(sa, secretKeySpec);
+            return validator.isValid(tokenWithoutSignature, signature);
         }
 
-        void sendJson(int statusCode, Object object, HttpExchange t) throws IOException {
-            Gson gson = new Gson();
-            String s = gson.toJson(object);
-            t.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-            t.getResponseHeaders().set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-            t.getResponseHeaders().set("Access-Control-Allow-Credentials", "true");
-            t.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
-            t.getResponseHeaders().set("Content-Type", "application/json");
-            t.sendResponseHeaders(statusCode, s.length());
-            OutputStream os = t.getResponseBody();
-            os.write(s.getBytes(StandardCharsets.UTF_8));
-            os.close();
-        }
-
-        String receiveJson(HttpExchange t){
-                try {
-                        Headers requestHeaders = t.getRequestHeaders();
-                        int contentLength = Integer.parseInt(requestHeaders.getFirst("Content-length"));
-                        InputStream is = t.getRequestBody();
-                        byte[] data = new byte[contentLength];
-                        is.read(data);
-                        t.sendResponseHeaders(HttpURLConnection.HTTP_OK, contentLength);
-                        OutputStream os = t.getResponseBody();
-                        String json = new String(data);
-                        os.write(data);
-                        t.close();
-                        return json;
-                } catch (NumberFormatException | IOException e) {
-                        return "error";
-                }
-        }
-
+    protected String generateToken(User user) {
+        Date dt = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(dt);
+        c.add(Calendar.DATE, 90);
+        dt = c.getTime();
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .setExpiration(dt)
+                .setIssuedAt(new Date())
+                .claim("id", user.getId())
+                .signWith(HS256, TextCodec.BASE64.decode(key)
+                ).compact();
+    }
 }

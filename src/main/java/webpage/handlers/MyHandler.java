@@ -26,24 +26,24 @@ public class MyHandler extends AbstractHandler{
 //        });
 //    }
 //}
-    public void handle(String path) throws IOException {
-        User user = new User();
-        user.setPassword("12345678");
-        user.setNickname("pedro");
-        user.setId(456789789);
-        User user2 = new User();
-        user2.setPassword("12345678");
-        user2.setNickname("pedro");
-        user2.setId(456789789);
-        List<User> users = new ArrayList<>();
-        users.add(user);
-        users.add(user2);
-        Gson gson = new Gson();
-        String s = gson.toJson(users);
-        post(path, (req,res) -> {
-            return s;
-        });
-    }
+//    public void handle(String path) throws IOException {
+//        User user = new User();
+//        user.setPassword("12345678");
+//        user.setNickname("pedro");
+//        user.setId(456789789);
+//        User user2 = new User();
+//        user2.setPassword("12345678");
+//        user2.setNickname("pedro");
+//        user2.setId(456789789);
+//        List<User> users = new ArrayList<>();
+//        users.add(user);
+//        users.add(user2);
+//        Gson gson = new Gson();
+//        String s = gson.toJson(users);
+//        post(path, (req,res) -> {
+//            return s;
+//        });
+//    }
 }
 
 

@@ -3,6 +3,7 @@ package webpage.handlers;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import webpage.entity.User;
+import webpage.requestFormats.RegisterRequest;
 
 import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
@@ -19,29 +20,32 @@ public class RegisterHandler extends AbstractHandler {
     public void handle(String path){
         enableCORS();
         post(path, "application/json", (req, res) -> {
-            User user1 = new Gson().fromJson(req.body(), User.class);
-            if (user1.getPassword() == null || user1.getUsername() == null || user1.getNickname() == null){
+            RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+            if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null){
                 return "{\"message\":\"You need to fill all the fields\"}";
             }
             final EntityManager em = emf.createEntityManager();
             Query query = em.createQuery("FROM User user WHERE user.username = :username");
-            query = query.setParameter("username", user1.getUsername());
+            query = query.setParameter("username", registerRequest.getUsername());
             try {
-                Object object = query.getSingleResult();
+                User user = (User) query.getSingleResult();
                 res.type("application/json");
                 res.status(200);
                 return "{\"message\":\"Username already taken.\"}";
             } catch(NoResultException e){
-                if (!(checkString(user1.getPassword())) || (user1.getPassword().length() < 8)){
+                if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)){
                     res.type("application/json");
                     res.status(200);
                     return "{\"message\":\"You need to meet password requirements.\"}";
                 }else{
                     res.type("application/json");
                     res.status(201);
-                    user1.setPassword(Hashing.sha512().hashString(user1.getPassword(), StandardCharsets.UTF_8).toString());
+                    registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
                     EntityTransaction transaction = em.getTransaction();
                     transaction.begin();
+                    User user1 = new User(registerRequest.getNickname(),
+                            registerRequest.getUsername(),
+                            registerRequest.getPassword());
                     em.persist(user1);
                     transaction.commit();
                     em.close();

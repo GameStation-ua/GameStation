@@ -20,6 +20,6 @@ public class Main {
         port(8443);
         new RegisterHandler(emf).handle(register);
         new LogInHandler(emf).handle(logIn);
-        new MyHandler(emf).handle("/main");
+//        new MyHandler(emf).handle("/main");
     }
 }
