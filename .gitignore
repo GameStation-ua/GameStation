@@ -9,7 +9,7 @@ db/
 gradle/
 .gradle/
 bin/utiles
-
+front/dist
 
 
 # local env files
