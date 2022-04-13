@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DdlMappings">
-    <mapping uuid="3b2c273d-25fc-4470-857e-0b124073114c" name="GameStation Mapping">
-      <data-sources db="739be544-edaf-4b07-ad17-cb708be5bd81" ddl="50e7697c-1a90-43f8-9d21-c4ae47b818be" />
-    </mapping>
-  </component>
-</project>
