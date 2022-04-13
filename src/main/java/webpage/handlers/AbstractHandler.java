@@ -1,18 +1,17 @@
 package webpage.handlers;
 
-import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
 
 import static spark.Spark.before;
 import static spark.Spark.options;
@@ -24,7 +23,6 @@ public abstract class AbstractHandler{
                 this.emf = emf;
         }
         public void enableCORS() {
-
                 options("/*", (request, response) -> {
 
                         String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
@@ -49,6 +47,14 @@ public abstract class AbstractHandler{
                 });
         }
 
+        boolean verifyJWT(String token){
+            String[] chunks = token.split("\\.");
+            Base64.Decoder decoder = Base64.getUrlDecoder();
+            String header = new String(decoder.decode(chunks[0]));
+            String payload = new String(decoder.decode(chunks[1]));
+            return false;
+        }
+
         void sendJson(int statusCode, Object object, HttpExchange t) throws IOException {
             Gson gson = new Gson();
             String s = gson.toJson(object);
@@ -61,24 +67,24 @@ public abstract class AbstractHandler{
             OutputStream os = t.getResponseBody();
             os.write(s.getBytes(StandardCharsets.UTF_8));
             os.close();
-    }
+        }
 
-    String receiveJson(HttpExchange t){
-            try {
-                    Headers requestHeaders = t.getRequestHeaders();
-                    int contentLength = Integer.parseInt(requestHeaders.getFirst("Content-length"));
-                    InputStream is = t.getRequestBody();
-                    byte[] data = new byte[contentLength];
-                    is.read(data);
-                    t.sendResponseHeaders(HttpURLConnection.HTTP_OK, contentLength);
-                    OutputStream os = t.getResponseBody();
-                    String json = new String(data);
-                    os.write(data);
-                    t.close();
-                    return json;
-            } catch (NumberFormatException | IOException e) {
-                    return "error";
-            }
-    }
+        String receiveJson(HttpExchange t){
+                try {
+                        Headers requestHeaders = t.getRequestHeaders();
+                        int contentLength = Integer.parseInt(requestHeaders.getFirst("Content-length"));
+                        InputStream is = t.getRequestBody();
+                        byte[] data = new byte[contentLength];
+                        is.read(data);
+                        t.sendResponseHeaders(HttpURLConnection.HTTP_OK, contentLength);
+                        OutputStream os = t.getResponseBody();
+                        String json = new String(data);
+                        os.write(data);
+                        t.close();
+                        return json;
+                } catch (NumberFormatException | IOException e) {
+                        return "error";
+                }
+        }
 
 }

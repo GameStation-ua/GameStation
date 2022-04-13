@@ -11,6 +11,9 @@ public class User {
     @Column(name = "id", nullable = false)
     private int id;
 
+    @Column (name = "TOKEN")
+    private String token;
+
     @Column (name = "NICK_NAME")
     private String nickname;
 
@@ -38,6 +41,13 @@ public class User {
     public User() {
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public int getId() {
         return id;

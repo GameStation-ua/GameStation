@@ -13,13 +13,13 @@ public class Notification {
     long userId;
 
     @Column(name = "TITLE")
-    String title;
+    private String title;
 
     @Column(name = "DESCRIPTION")
-    String description;
+    private String description;
 
     @Column(name = "PATH")
-    String path;
+    private String path;
 
     public Long getId() {
         return id;
