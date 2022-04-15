@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class Tag{
+public class Tag {
     @Id
     @Column(name = "TAG", nullable = false)
     private String name;

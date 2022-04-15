@@ -8,7 +8,7 @@ import webpage.requestFormats.RegisterRequest;
 import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
 
-import static spark.Spark.post;
+import static spark.Spark.put;
 
 
 public class RegisterHandler extends AbstractHandler {
@@ -19,16 +19,17 @@ public class RegisterHandler extends AbstractHandler {
 
     public void handle(String path){
         enableCORS();
-        post(path, "application/json", (req, res) -> {
+        put(path, "application/json", (req, res) -> {
             RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null){
+                res.status(406);
                 return "{\"message\":\"You need to fill all the fields\"}";
             }
             final EntityManager em = emf.createEntityManager();
             Query query = em.createQuery("FROM User user WHERE user.username = :username");
             query = query.setParameter("username", registerRequest.getUsername());
             try {
-                User user = (User) query.getSingleResult();
+                query.getSingleResult();
                 res.type("application/json");
                 res.status(200);
                 return "{\"message\":\"Username already taken.\"}";
@@ -49,6 +50,7 @@ public class RegisterHandler extends AbstractHandler {
                     em.persist(user1);
                     transaction.commit();
                     em.close();
+                    res.status(201);
                     return "{\"message\":\"User created!\"}";
                 }
             }

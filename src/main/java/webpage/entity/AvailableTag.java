@@ -1,13 +1,12 @@
 package webpage.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class AvailableTag {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "AVAILABLE_TAG")
@@ -19,5 +18,21 @@ public class AvailableTag {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AvailableTag(String availableTag) {
+        this.availableTag = availableTag;
+    }
+
+    public AvailableTag() {
+
+    }
+
+    public String getAvailableTag() {
+        return availableTag;
+    }
+
+    public void setAvailableTag(String availableTag) {
+        this.availableTag = availableTag;
     }
 }

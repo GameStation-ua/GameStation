@@ -9,8 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.io.IOException;
 
+import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class LogInHandler extends AbstractHandler{
@@ -21,6 +21,16 @@ public class LogInHandler extends AbstractHandler{
 
 
     public void handle(String path) {
+        get(path, (req, res) -> {
+            String token = req.headers("token");
+            if (verifyJWT(token)){
+                res.status(200);
+                return "{\"message\":\"Send to home.\"}";
+            }else {
+                res.status(406);
+                return "{\"message\":\"Invalid token.\"}";
+            }
+        });
         post(path, "application/json", (request, response) -> {
             LogInRequest logInRequest = new Gson().fromJson(request.body(), LogInRequest.class);
             if (logInRequest.getToken() == null) {
@@ -46,16 +56,19 @@ public class LogInHandler extends AbstractHandler{
                 User user = (User) query1.getSingleResult();
                 if (user.getPassword().equals(logInRequest.getPassword())) {
                     String jws = generateToken(user);
+                    response.status(200);
                     return "{\"message\":" + jws + "}";
                 } else {
+                    response.status(406);
                     return "{\"message\":\"Incorrect username or password\"}";
                 }
             } catch (NoResultException e) {
+                response.status(406);
                 return "{\"message\":\"Incorrect username or password\"}";
             }
 
         } else {
-            response.status(201);
+            response.status(406);
             return "{\"message\":\"You need to fill all the fields\"}";
         }
     }

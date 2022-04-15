@@ -6,11 +6,9 @@ import webpage.entity.User;
 import webpage.requestFormats.UserTagsRequest;
 
 import javax.persistence.EntityManagerFactory;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static spark.Spark.get;
-import static spark.Spark.post;
 
 public class MyHandler extends AbstractHandler{
     public MyHandler(EntityManagerFactory emf) {
