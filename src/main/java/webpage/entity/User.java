@@ -25,19 +25,21 @@ public class User {
     private boolean isAdmin;
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "FOLLOWERS")
     private List<User> followers;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "userId")
-    private List<UserGame> userGames;
+    private List<UserGame> userGame;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userId")
     private List<Notification> notifications;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "creatorId")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "GAME_CREATORS")
     private List<Game> createdGames;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Tag> likedtags;
+    private Set<Tag> likedTags;
 
     public User(String nickname, String username, String password) {
         this.nickname = nickname;
@@ -49,12 +51,12 @@ public class User {
 
     }
 
-    public Set<Tag> getLikedtags() {
-        return likedtags;
+    public Set<Tag> getLikedTags() {
+        return likedTags;
     }
 
-    public void setLikedtags(Set<Tag> likedtags) {
-        this.likedtags = likedtags;
+    public void setLikedTags(Set<Tag> likedtags) {
+        this.likedTags = likedtags;
     }
 
     public boolean isAdmin() {
@@ -67,10 +69,6 @@ public class User {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getNickname() {

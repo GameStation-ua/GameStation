@@ -6,16 +6,7 @@ import java.util.ArrayList;
 
 public class AvailableTagsRequest {
 
-    private String token;
     private ArrayList<Tag> tags;
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public ArrayList<Tag> getTags() {
         return tags;
