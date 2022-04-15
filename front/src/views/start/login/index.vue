@@ -3,23 +3,23 @@
 
   const user = ref({})
   const input = ref({
+    token: "",
     userName: "",
     password: ""
   })
 
   function login () {
-    fetch(process.env.VUE_APP_HTTP_URL + "/auth/login", {
+    fetch(process.env.VUE_APP_HTTP_URL + "/login", {
       method:"post",
       body: JSON.stringify(input.value)
-      })
-      .then(res=> {
-        return res.json()
-      })
-      .then(res => {
-        user.value = res
-      })
+    })
+        .then(res=> {
+          return res.json()
+        })
+        .then(res => {
+          user.value = res
+        })
   }
-
 
 </script>
 <template>

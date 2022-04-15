@@ -17,7 +17,6 @@
       <Login v-if="tab==='login'">
       </Login>
       <Register v-if="tab==='register'">
-
       </Register>
     </div>
   </div>

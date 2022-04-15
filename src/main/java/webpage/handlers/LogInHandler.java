@@ -44,7 +44,6 @@ public class LogInHandler extends AbstractHandler{
                 }
             }
         });
-
     }
 
     private String regularLogIn(Response response, LogInRequest logInRequest) {
@@ -66,7 +65,6 @@ public class LogInHandler extends AbstractHandler{
                 response.status(406);
                 return "{\"message\":\"Incorrect username or password\"}";
             }
-
         } else {
             response.status(406);
             return "{\"message\":\"You need to fill all the fields\"}";
