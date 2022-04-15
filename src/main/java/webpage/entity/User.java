@@ -2,6 +2,7 @@ package webpage.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -20,6 +21,9 @@ public class User {
     @Column (name = "PASSWORD")
     private String password;
 
+    @Column (name = "IS_ADMIN")
+    private boolean isAdmin;
+
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private List<User> followers;
 
@@ -33,7 +37,7 @@ public class User {
     private List<Game> createdGames;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Tag> likedtags;
+    private Set<Tag> likedtags;
 
     public User(String nickname, String username, String password) {
         this.nickname = nickname;
@@ -43,6 +47,22 @@ public class User {
 
     public User() {
 
+    }
+
+    public Set<Tag> getLikedtags() {
+        return likedtags;
+    }
+
+    public void setLikedtags(Set<Tag> likedtags) {
+        this.likedtags = likedtags;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 
     public int getId() {

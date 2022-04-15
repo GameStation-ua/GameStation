@@ -1,13 +1,15 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
+import webpage.entity.Tag;
 import webpage.entity.User;
+import webpage.requestFormats.UserTagsRequest;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
+import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class MyHandler extends AbstractHandler{
@@ -26,7 +28,8 @@ public class MyHandler extends AbstractHandler{
 //        });
 //    }
 //}
-//    public void handle(String path) throws IOException {
+    public void handle(String path) {
+        get(path, (req,res) -> {
 //        User user = new User();
 //        user.setPassword("12345678");
 //        user.setNickname("pedro");
@@ -34,16 +37,32 @@ public class MyHandler extends AbstractHandler{
 //        User user2 = new User();
 //        user2.setPassword("12345678");
 //        user2.setNickname("pedro");
+//        user2.setAdmin(true);
 //        user2.setId(456789789);
-//        List<User> users = new ArrayList<>();
+//        ArrayList<User> users = new ArrayList<>();
 //        users.add(user);
 //        users.add(user2);
-//        Gson gson = new Gson();
-//        String s = gson.toJson(users);
-//        post(path, (req,res) -> {
-//            return s;
-//        });
-//    }
+//        POJO pojo = new POJO("cosas", users);
+            UserTagsRequest tagsRequest = new UserTagsRequest();
+            Tag tag1 = new Tag(); tag1.setName("wasd");
+            Tag tag2 = new Tag(); tag2.setName("ert");
+            Tag tag3 = new Tag(); tag3.setName("qwerty");
+            ArrayList<Tag> tags = new ArrayList<>(); tags.add(tag1);tags.add(tag2);tags.add(tag3);
+            tagsRequest.setTags(tags);
+            tagsRequest.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoiMTUxNjIzOTAyMiIsImlkIjoiMSJ9.OWIP66rhu8RQrqi0S5ISjwUusDXFP2P2fI0xfuI5EO4");
+        Gson gson = new Gson();
+            return gson.toJson(tagsRequest);
+        });
+    }
+}
+class POJO{
+    String data;
+    ArrayList<User> users;
+
+    public POJO(String data, ArrayList<User> users) {
+        this.data = data;
+        this.users = users;
+    }
 }
 
 

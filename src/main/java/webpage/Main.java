@@ -3,14 +3,14 @@ package webpage;
 import webpage.handlers.LogInHandler;
 import webpage.handlers.MyHandler;
 import webpage.handlers.RegisterHandler;
+import webpage.handlers.UserTagsHandler;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import static spark.Spark.port;
 import static spark.Spark.staticFiles;
-import static webpage.util.Paths.logIn;
-import static webpage.util.Paths.register;
+import static webpage.util.Paths.*;
 
 public class Main {
 
@@ -20,6 +20,7 @@ public class Main {
         port(8443);
         new RegisterHandler(emf).handle(register);
         new LogInHandler(emf).handle(logIn);
-//        new MyHandler(emf).handle("/main");
+        new UserTagsHandler(emf).handle(userTags);
+        new MyHandler(emf).handle("/main");
     }
 }

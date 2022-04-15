@@ -13,6 +13,7 @@
         <class>webpage.entity.Notification</class>
         <class>webpage.entity.UserGame</class>
         <class>webpage.entity.Tag</class>
+        <class>webpage.entity.AvailableTag</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
