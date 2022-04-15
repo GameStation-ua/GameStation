@@ -1,5 +1,7 @@
 package webpage.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import javax.persistence.*;
 
 @Entity
@@ -20,6 +22,7 @@ public class UserGame {
      private Integer scores;
 
      @Column(name = "STATUS")
+     @SerializedName("STATUS")
      private Status status;
 
 
@@ -51,4 +54,7 @@ public class UserGame {
           this.id = id;
      }
 
+     public void setStatus(Status status) {
+          this.status = status;
+     }
 }

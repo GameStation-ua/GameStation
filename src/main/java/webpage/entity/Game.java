@@ -10,9 +10,6 @@ public class Game {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "CREATOR_ID")
-    private long creatorId;
-
     @Column(name = "TITLE")
     private String title;
 

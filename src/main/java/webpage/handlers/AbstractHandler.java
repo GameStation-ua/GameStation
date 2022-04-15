@@ -42,7 +42,6 @@ public abstract class AbstractHandler{
                         response.header("Access-Control-Allow-Origin", "*");
                         response.header("Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
                         response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-                        // Note: this may or may not be necessary in your particular application
                         response.type("application/json");
                 });
         }

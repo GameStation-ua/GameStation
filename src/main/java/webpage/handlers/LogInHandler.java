@@ -21,6 +21,7 @@ public class LogInHandler extends AbstractHandler{
 
 
     public void handle(String path) {
+        enableCORS();
         get(path, (req, res) -> {
             String token = req.headers("token");
             if (verifyJWT(token)){
@@ -33,10 +34,11 @@ public class LogInHandler extends AbstractHandler{
         });
         post(path, "application/json", (request, response) -> {
             LogInRequest logInRequest = new Gson().fromJson(request.body(), LogInRequest.class);
-            if (logInRequest.getToken() == null) {
+            String token = request.headers("token");
+            if (token == null) {
                 return regularLogIn(response,logInRequest);
             }else {
-                if (verifyJWT(logInRequest.getToken())) {
+                if (verifyJWT(token)) {
                     response.status(200);
                     return "{\"message\":\"Send to home.\"}";
                 } else {
@@ -44,7 +46,6 @@ public class LogInHandler extends AbstractHandler{
                 }
             }
         });
-
     }
 
     private String regularLogIn(Response response, LogInRequest logInRequest) {

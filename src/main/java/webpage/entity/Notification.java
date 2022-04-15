@@ -4,13 +4,14 @@ import javax.persistence.*;
 
 @Entity
 public class Notification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "USER_ID")
-    long userId;
+    private long userId;
 
     @Column(name = "TITLE")
     private String title;
@@ -21,9 +22,9 @@ public class Notification {
     @Column(name = "PATH")
     private String path;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "SEEN")
+    private boolean seen;
+
 
     public Notification(String title, String description, String path) {
         this.title = title;
