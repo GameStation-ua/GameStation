@@ -11,10 +11,10 @@ import static webpage.util.Paths.*;
 public class GameStation {
 
     public static void main(String[] args) {
+        enableCors();
         staticFiles.location("/public");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
         port(8443);
-        enableCors();
         before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
         new RegisterHandler(emf).handle(register);
         new LogInHandler(emf).handle(logIn);
