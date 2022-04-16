@@ -12,9 +12,9 @@ public class GameStation {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
-        enableCORS("*","Origin, X-Requested-With, Content-Type, Accept, Authorization, token, imgType, gameId","GET,POST,PUT,DELETE,OPTIONS,HEAD");
         staticFiles.location("/public");
         port(8443);
+        enableCORS("*","Origin, X-Requested-With, Content-Type, Accept, Authorization, token, imgType, gameId","GET,POST,PUT,DELETE,OPTIONS,HEAD");
         new RegisterHandler(emf).handle(register);
         new LogInHandler(emf).handle(logIn);
         new TagsHandler(emf).handle(tags);

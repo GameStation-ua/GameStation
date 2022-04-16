@@ -27,7 +27,6 @@ public class TagsHandler extends AbstractHandler {
     }
 
     public void handle(String path) {
-        enableCORS();
         patch(path + "/available_tags/add", "application/json", (req, res) -> {
             Gson gson = new Gson();
             AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);

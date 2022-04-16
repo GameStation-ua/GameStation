@@ -32,7 +32,6 @@ public class UploadHandler extends AbstractHandler{
     }
 
     public void handle(String path){
-        enableCORS();
         post(path + "/profilepic", (request, response) -> {
             String token = request.headers("token");
             if (verifyJWT(token)) {

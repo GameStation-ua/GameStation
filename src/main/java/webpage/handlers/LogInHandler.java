@@ -20,7 +20,6 @@ public class LogInHandler extends AbstractHandler{
 
 
     public void handle(String path) {
-        enableCORS();
         get(path, (req, res) -> {
             String token = req.headers("token");
             if (verifyJWT(token)){

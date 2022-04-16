@@ -18,7 +18,6 @@ public class RegisterHandler extends AbstractHandler {
     }
 
     public void handle(String path){
-        enableCORS();
         post(path, "application/json", (req, res) -> {
             RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null){
