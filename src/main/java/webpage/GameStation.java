@@ -11,8 +11,8 @@ import static webpage.util.Paths.*;
 public class GameStation {
 
     public static void main(String[] args) {
-        staticFiles.location("/public");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
+        staticFiles.location("/public");
         port(8443);
         enableCors();
         new RegisterHandler(emf).handle(register);
