@@ -7,6 +7,7 @@ import java.util.List;
 
 public class UserTagsRequest {
 
+
     private ArrayList<Tag> tags;
 
     public List<Tag> getTags() {
