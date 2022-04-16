@@ -16,6 +16,9 @@ public class Game {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "IMGS_IN_CAROUSEL")
+    private int imgsInCarousel;
+
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<User> followers;
 
@@ -25,11 +28,23 @@ public class Game {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Tag> tags;
 
+    public Game() {
+
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getImgsInCarousel() {
+        return imgsInCarousel;
+    }
+
+    public void setImgsInCarousel(int imgsInCarousel) {
+        this.imgsInCarousel = imgsInCarousel;
     }
 }

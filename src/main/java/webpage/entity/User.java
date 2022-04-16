@@ -21,8 +21,11 @@ public class User {
     @Column (name = "PASSWORD")
     private String password;
 
-    @Column (name = "IS_ADMIN")
+    @Column (name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
+
+    @Column (name = "IMGTYPE")
+    private String imgType;
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "FOLLOWERS")

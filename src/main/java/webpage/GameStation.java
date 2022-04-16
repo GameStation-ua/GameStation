@@ -19,7 +19,7 @@ public class GameStation {
         new LogInHandler(emf).handle(logIn);
         new TagsHandler(emf).handle(tags);
         new HomeHandler(emf).handle(home);
-        new ImageHandler(emf).handle("");
+        new UploadHandler(emf).handle(upload);
         new MyHandler(emf).handle("/main");
     }
 }
