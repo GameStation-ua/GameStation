@@ -21,4 +21,5 @@ public class GameStation {
         new HomeHandler(emf).handle(home);
         new MyHandler(emf).handle("/main");
     }
+
 }
