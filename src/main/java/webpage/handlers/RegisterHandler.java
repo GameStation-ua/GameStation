@@ -8,7 +8,7 @@ import webpage.requestFormats.RegisterRequest;
 import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
 
-import static spark.Spark.put;
+import static spark.Spark.post;
 
 
 public class RegisterHandler extends AbstractHandler {
@@ -19,7 +19,7 @@ public class RegisterHandler extends AbstractHandler {
 
     public void handle(String path){
         enableCORS();
-        put(path, "application/json", (req, res) -> {
+        post(path, "application/json", (req, res) -> {
             RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
             if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null){
                 res.status(406);

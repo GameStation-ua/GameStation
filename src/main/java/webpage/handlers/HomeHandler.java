@@ -1,13 +1,7 @@
 package webpage.handlers;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-
 import javax.persistence.EntityManagerFactory;
-
-import static spark.Spark.get;
-import static webpage.util.SecretKey.key;
 
 public class HomeHandler extends AbstractHandler{
     public HomeHandler(EntityManagerFactory emf) {

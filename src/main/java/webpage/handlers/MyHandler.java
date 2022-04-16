@@ -3,7 +3,6 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import webpage.entity.Status;
 import webpage.entity.Tag;
-import webpage.entity.User;
 import webpage.entity.UserGame;
 import webpage.requestFormats.UserTagsRequest;
 

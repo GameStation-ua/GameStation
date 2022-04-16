@@ -9,7 +9,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.servlet.MultipartConfigElement;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class UploadHandler extends AbstractHandler{
 
     public void handle(String path){
         enableCORS();
-        post("/upload/profilepic", (request, response) -> {
+        post(path + "/profilepic", (request, response) -> {
             String token = request.headers("token");
             if (verifyJWT(token)) {
                 Claims claims = Jwts.parser()
@@ -49,7 +48,7 @@ public class UploadHandler extends AbstractHandler{
                 query.setParameter("id", userId1);
                 try {
                     try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                        File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\profile_pictures\\" + userId + "." + imgType);
+                        File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\profile_pictures\\" + userId + ".png");
                         copyInputStreamToFile(is, file);
                     }
                     response.status(200);
@@ -64,7 +63,7 @@ public class UploadHandler extends AbstractHandler{
             }
         });
 
-        post("/upload/gameMain", (request, response) -> {
+        post(path + "/gameMain", (request, response) -> {
             String token = request.headers("token");
             if (verifyJWT(token)) {
                 Claims claims = Jwts.parser()
@@ -78,13 +77,13 @@ public class UploadHandler extends AbstractHandler{
                 EntityManager em = emf.createEntityManager();
                 Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
                 query.setParameter("id", userId1);
-                List<Game> gameList = query.getResultList();
+                @SuppressWarnings("unchecked") List<Game> gameList = query.getResultList();
                 boolean gameFound = false;
                 for (Game game : gameList) {
                     if (game.getId() == gameid1) {
                         request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                         try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                            File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\gameMain\\" + gameid1 + "." + imgType);
+                            File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\gameMain\\" + gameid1 + ".png");
                             copyInputStreamToFile(is, file);
                         }
                         return "{\"message\":\"File uploaded.\"}";
@@ -97,7 +96,7 @@ public class UploadHandler extends AbstractHandler{
             }
         });
 
-        post("/upload/gameCarousel", (request, response) -> {
+        post(path + "gameCarousel", (request, response) -> {
             String token = request.headers("token");
             if (verifyJWT(token)) {
                 Claims claims = Jwts.parser()
@@ -111,7 +110,7 @@ public class UploadHandler extends AbstractHandler{
                 EntityManager em = emf.createEntityManager();
                 Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
                 query.setParameter("id", userId1);
-                List<Game> gameList = query.getResultList();
+                @SuppressWarnings("unchecked") List<Game> gameList = query.getResultList();
                 em.close();
                 for (Game game : gameList) {
                     if (game.getId() == gameid1) {
@@ -123,7 +122,7 @@ public class UploadHandler extends AbstractHandler{
                         }
                         request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                         try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                            File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + "." + imgType);
+                            File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + ".png");
                             copyInputStreamToFile(is, file);
                         }
                         game.setImgsInCarousel(imgsInCarousel + 1);

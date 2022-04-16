@@ -24,9 +24,6 @@ public class User {
     @Column (name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
 
-    @Column (name = "IMGTYPE")
-    private String imgType;
-
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "FOLLOWERS")
     private List<User> followers;

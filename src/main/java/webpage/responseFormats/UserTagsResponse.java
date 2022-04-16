@@ -6,11 +6,9 @@ import webpage.entity.Tag;
 import java.util.List;
 
 public class UserTagsResponse {
-    List<AvailableTag> availableTags;
     List<Tag> userTags;
 
-    public UserTagsResponse(List<AvailableTag> availableTags, List<Tag> userTags) {
-        this.availableTags = availableTags;
+    public UserTagsResponse( List<Tag> userTags) {
         this.userTags = userTags;
     }
 }

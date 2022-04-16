@@ -8,6 +8,7 @@ import webpage.entity.Tag;
 import webpage.entity.User;
 import webpage.requestFormats.AvailableTagsRequest;
 import webpage.requestFormats.UserTagsRequest;
+import webpage.responseFormats.AvailableTagsResponse;
 import webpage.responseFormats.UserTagsResponse;
 
 import javax.persistence.EntityManager;
@@ -32,7 +33,7 @@ public class TagsHandler extends AbstractHandler {
             AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
             EntityManager em = emf.createEntityManager();
             Query query1 = em.createQuery("FROM AvailableTag");
-            List<AvailableTag> availableTags = query1.getResultList();
+            @SuppressWarnings("unchecked") List<AvailableTag> availableTags = query1.getResultList();
             String token = req.headers("token");
             if (verifyJWT(token)) {
                 Claims claims = Jwts.parser()
@@ -79,7 +80,7 @@ public class TagsHandler extends AbstractHandler {
             AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
             EntityManager em = emf.createEntityManager();
             Query query1 = em.createQuery("FROM AvailableTag");
-            List<AvailableTag> availableTags = query1.getResultList();
+            @SuppressWarnings("unchecked") List<AvailableTag> availableTags = query1.getResultList();
             String token = req.headers("token");
             if (verifyJWT(token)) {
                 Claims claims = Jwts.parser()
@@ -157,8 +158,8 @@ public class TagsHandler extends AbstractHandler {
             Gson gson = new Gson();
             UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
             EntityManager em = emf.createEntityManager();
-            Query query1 = em.createQuery("FROM AvailableTag");
-            List availableTags = query1.getResultList();
+            Query query1 = em.createQuery("SELECT availableTag FROM AvailableTag");
+            @SuppressWarnings("unchecked") List<String> availableTags = query1.getResultList();
             for (Tag tag : tagsRequest.getTags()) {
                 if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
             }
@@ -199,13 +200,11 @@ public class TagsHandler extends AbstractHandler {
                 String userId =  (String) claims.get("id");
                 Integer userId1 = Integer.parseInt(userId);
                 EntityManager em = emf.createEntityManager();
-                Query availableTagsQuery = em.createQuery("FROM AvailableTag");
                 Query userLikedTagsQuery = em.createQuery("SELECT likedTags FROM User u WHERE u.id = :id");
                 userLikedTagsQuery.setParameter("id", userId1);
                 try {
-                    List<AvailableTag> availableTags = availableTagsQuery.getResultList();
-                    List<Tag> userlikedTags = userLikedTagsQuery.getResultList();
-                    UserTagsResponse response = new UserTagsResponse(availableTags, userlikedTags);
+                    @SuppressWarnings("unchecked") List<Tag> userlikedTags = userLikedTagsQuery.getResultList();
+                    UserTagsResponse response = new UserTagsResponse(userlikedTags);
                     Gson gson = new Gson();
                     res.status(200);
                     return gson.toJson(response);
@@ -225,8 +224,8 @@ public class TagsHandler extends AbstractHandler {
                 EntityManager em = emf.createEntityManager();
                 Query availableTagsQuery = em.createQuery("FROM AvailableTag");
                 try {
-                    List<AvailableTag> availableTags = availableTagsQuery.getResultList();
-                    UserTagsResponse response = new UserTagsResponse(availableTags, null);
+                    @SuppressWarnings("unchecked") List<AvailableTag> availableTags = availableTagsQuery.getResultList();
+                    AvailableTagsResponse response = new AvailableTagsResponse(availableTags);
                     Gson gson = new Gson();
                     res.status(200);
                     return gson.toJson(response);
