@@ -47,7 +47,6 @@ public abstract class AbstractHandler{
         }
 
         boolean verifyJWT(String token){
-            if (token == null) return false;
             String[] chunks = token.split("\\.");
             if (chunks.length != 3) return false;
             SignatureAlgorithm sa = HS256;

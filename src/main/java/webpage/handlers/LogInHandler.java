@@ -33,11 +33,6 @@ public class LogInHandler extends AbstractHandler{
         });
 
         post(path, "application/json", (request, response) -> {
-            response.header("Access-Control-Allow-Origin", "*");
-            response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-            response.header("Access-Control-Allow-Credentials", "true");
-            response.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
-            response.header("Content-Type", "application/json");
             LogInRequest logInRequest = new Gson().fromJson(request.body(), LogInRequest.class);
             if (logInRequest.getUsername() != null && logInRequest.getPassword() != null) {
                 EntityManager em = emf.createEntityManager();
