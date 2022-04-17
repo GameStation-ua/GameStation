@@ -1,24 +1,37 @@
 <script setup>
   import { ref } from 'vue'
+  import Store from '../../../store'
+ // import {sha512} from "js-sha512";
+
+
 
   const user = ref({})
   const input = ref({
-    token: "",
-    userName: "",
+    username: "",
     password: ""
   })
 
   function login () {
-    fetch(process.env.VUE_APP_HTTP_URL + "/login", {
-      method:"post",
-      body: JSON.stringify(input.value)
-    })
-        .then(res=> {
-          return res.json()
-        })
-        .then(res => {
-          user.value = res
-        })
+
+    var xhr = new XMLHttpRequest()
+    const hashed = input.value
+//    hashed.password = sha512(hashed.password)
+    var json = JSON.stringify(hashed)
+    xhr.open("POST", "http://localhost:8443/login", false),
+    xhr.setRequestHeader("Content-Type", "application/json")
+    xhr.send(json)
+    console.log(json)
+    if (xhr.status == 200){
+      Store.state.mesage = 'send to home'
+      localStorage.setItem("token",xhr.responseText)
+      console.log(Store.state.tokenUser)
+      var res = new XMLHttpRequest()
+      res.open("GET", "http://localhost:8443/login", false),
+          res.setRequestHeader("Content-Type", "application/json")
+      res.send(localStorage.getItem("token"))
+
+    }
+
   }
 
 </script>
@@ -28,7 +41,7 @@
       <vs-col>
         <div>
           <div class="centerx">
-            <vs-input label-placeholder="Username" v-model="input.userName" size="large" color="success"/>
+            <vs-input label-placeholder="Username" v-model="input.username" size="large" color="success"/>
             <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password" color="success"/>
             <vs-button @click="login" color="success" type="gradient">Login</vs-button>
           </div>

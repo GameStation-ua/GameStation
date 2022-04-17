@@ -1,8 +1,11 @@
 package webpage;
 
+import webpage.entity.User;
 import webpage.handlers.*;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import static spark.Spark.*;
@@ -21,6 +24,11 @@ public class GameStation {
         new HomeHandler(emf).handle(home);
         new UploadHandler(emf).handle(upload);
         new MyHandler(emf).handle("/main");
+
+    }
+
+    public void createUser(){
+
     }
 
     private static void enableCORS(final String origin, final String methods, final String headers) {

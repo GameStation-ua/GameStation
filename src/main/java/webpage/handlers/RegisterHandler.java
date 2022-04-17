@@ -25,7 +25,7 @@ public class RegisterHandler extends AbstractHandler {
                 return "{\"message\":\"You need to fill all the fields\"}";
             }
             final EntityManager em = emf.createEntityManager();
-            Query query = em.createQuery("FROM User user WHERE user.username = :username");
+            Query query = em.createQuery("SELECT user FROM User user WHERE user.username like :username");
             query = query.setParameter("username", registerRequest.getUsername());
             try {
                 query.getSingleResult();

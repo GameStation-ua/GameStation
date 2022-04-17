@@ -2,7 +2,8 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    user: null,
+    mesage:'',
+    tokenUser:'',
     search:'',
     tag:'',
     tags: {
