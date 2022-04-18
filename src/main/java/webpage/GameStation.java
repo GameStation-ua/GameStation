@@ -1,11 +1,8 @@
 package webpage;
 
-import webpage.entity.User;
 import webpage.handlers.*;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import static spark.Spark.*;
@@ -17,12 +14,13 @@ public class GameStation {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
         staticFiles.location("/public");
         port(8443);
-        enableCORS("*","Origin, X-Requested-With, Content-Type, Accept, Authorization, token, imgType, gameId","GET,POST,PUT,DELETE,OPTIONS,HEAD");
+        enableCORS();
         new RegisterHandler(emf).handle(register);
         new LogInHandler(emf).handle(logIn);
         new TagsHandler(emf).handle(tags);
         new HomeHandler(emf).handle(home);
         new UploadHandler(emf).handle(upload);
+        new SearchHandler(emf).handle();
         new MyHandler(emf).handle("/main");
 
     }
@@ -31,7 +29,7 @@ public class GameStation {
 
     }
 
-    private static void enableCORS(final String origin, final String methods, final String headers) {
+    private static void enableCORS() {
 
         options("/*", (request, response) -> {
 
@@ -49,9 +47,9 @@ public class GameStation {
         });
 
         before((request, response) -> {
-            response.header("Access-Control-Allow-Origin", origin);
-            response.header("Access-Control-Request-Method", methods);
-            response.header("Access-Control-Allow-Headers", headers);
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Request-Method", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token, imgType, gameId");
+            response.header("Access-Control-Allow-Headers", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
             response.type("application/json");
         });
     }

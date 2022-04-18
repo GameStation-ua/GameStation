@@ -36,7 +36,7 @@ public class User {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "GAME_CREATORS")
-    private List<Game> createdGames;
+    private Set<Game> createdGames;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Tag> likedTags;

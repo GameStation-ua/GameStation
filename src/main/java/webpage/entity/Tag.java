@@ -1,14 +1,19 @@
 package webpage.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Tag {
     @Id
     @Column(name = "TAG", nullable = false)
     private String name;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Game> games;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<User> users;
 
     @Override
     public boolean equals(Object obj) {
