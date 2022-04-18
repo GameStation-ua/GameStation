@@ -40,12 +40,11 @@ public class UploadHandler extends AbstractHandler{
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
-                    String userId = (String) claims.get("id");
-                    Integer userId1 = Integer.parseInt(userId);
+                    Integer userId = (Integer) claims.get("id");
                     request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                     EntityManager em = emf.createEntityManager();
                     Query query = em.createQuery("FROM User u WHERE u.id = :id");
-                    query.setParameter("id", userId1);
+                    query.setParameter("id", userId);
                     try {
                         try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
                             File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
@@ -69,14 +68,12 @@ public class UploadHandler extends AbstractHandler{
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
-                    String userId = (String) claims.get("id");
-                    Integer userId1 = Integer.parseInt(userId);
+                    Integer userId = (Integer) claims.get("id");
                     String gameid = request.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
-                    String imgType = request.headers("imgType");
                     EntityManager em = emf.createEntityManager();
                     Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
-                    query.setParameter("id", userId1);
+                    query.setParameter("id", userId);
                     @SuppressWarnings("unchecked") List<Game> gameList = query.getResultList();
                     boolean gameFound = false;
                     for (Game game : gameList) {
@@ -102,11 +99,9 @@ public class UploadHandler extends AbstractHandler{
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
-                    String userId = (String) claims.get("id");
-                    Integer userId1 = Integer.parseInt(userId);
+                    Integer userId1 = (Integer) claims.get("id");
                     String gameid = request.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
-                    String imgType = request.headers("imgType");
                     EntityManager em = emf.createEntityManager();
                     Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
                     query.setParameter("id", userId1);

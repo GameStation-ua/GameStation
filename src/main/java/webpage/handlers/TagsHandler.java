@@ -65,11 +65,10 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId = (Integer) claims.get("id");
                         boolean isAdmin = (boolean) claims.get("isAdmin");
                         Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId1);
+                        query2.setParameter("id", userId);
                         try {
                             query2.getSingleResult();
                             em.close();
@@ -112,8 +111,7 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId1 = (Integer) claims.get("id");
                         boolean isAdmin = (boolean) claims.get("isAdmin");
                         Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
                         query2.setParameter("id", userId1);
@@ -154,8 +152,7 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId1 = (Integer) claims.get("id");
                         EntityManager em = emf.createEntityManager();
                         Query userLikedTagsQuery = em.createQuery("SELECT likedTags FROM User u WHERE u.id = :id");
                         userLikedTagsQuery.setParameter("id", userId1);
@@ -183,8 +180,7 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId1 = (Integer) claims.get("id");
                         EntityManager em = emf.createEntityManager();
                         Query query = em.createQuery("FROM User u WHERE u.id = :id");
                         query.setParameter("id", userId1);
@@ -223,8 +219,7 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId1 = (Integer) claims.get("id");
                         Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
                         query2.setParameter("id", userId1);
                         try {
@@ -262,8 +257,7 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        String userId = (String) claims.get("id");
-                        Integer userId1 = Integer.parseInt(userId);
+                        Integer userId1 = (Integer) claims.get("id");
                         Query query2 = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
                         query2.setParameter("id", userId1);
                         try {

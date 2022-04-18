@@ -28,8 +28,7 @@ public class HomeHandler extends AbstractHandler{
 //                Claims claims = Jwts.parser()
 //                        .setSigningKey(key)
 //                        .parseClaimsJws(token).getBody();
-//                String userId =  (String) claims.get("id");
-//                Integer userId1 = Integer.parseInt(userId);
+//                Integer userId =  claims.get("id");
 //                boolean isAdmin = (boolean) claims.get("isAdmin");
 //
 //            }else{

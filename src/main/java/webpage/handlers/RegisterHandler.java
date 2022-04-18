@@ -42,7 +42,6 @@ public class RegisterHandler extends AbstractHandler {
                     } else {
                         res.type("application/json");
                         res.status(201);
-                        registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
                         EntityTransaction transaction = em.getTransaction();
                         transaction.begin();
                         User user1 = new User(registerRequest.getNickname(),
