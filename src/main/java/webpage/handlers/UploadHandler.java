@@ -48,7 +48,7 @@ public class UploadHandler extends AbstractHandler{
                     query.setParameter("id", userId1);
                     try {
                         try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                            File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\profile_pictures\\" + userId + ".png");
+                            File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
                             copyInputStreamToFile(is, file);
                         }
                         response.status(200);
@@ -83,7 +83,7 @@ public class UploadHandler extends AbstractHandler{
                         if (game.getId() == gameid1) {
                             request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                             try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\gameMain\\" + gameid1 + ".png");
+                                File file = new File("src/main/resources/public/gameMain/" + gameid1 + ".png");
                                 copyInputStreamToFile(is, file);
                             }
                             return "{\"message\":\"File uploaded.\"}";
@@ -114,15 +114,15 @@ public class UploadHandler extends AbstractHandler{
                     em.close();
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {
-                            int imgsInCarousel = 1;
-                            Path path1 = Paths.get("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\Carousel=" + gameid1);
+                            int imgsInCarousel = game.getImgsInCarousel();
+                            Path path1 = Paths.get("src/main/resources/public/Carousel=" + gameid1);
                             try {
                                 Files.createDirectories(path1);
                             } catch (FileAlreadyExistsException ignored) {
                             }
                             request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                             try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("C:\\Users\\jorge\\IdeaProjects\\GameStation\\src\\main\\resources\\public\\Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + ".png");
+                                File file = new File("src/main/resources/public/Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + ".png");
                                 copyInputStreamToFile(is, file);
                             }
                             game.setImgsInCarousel(imgsInCarousel + 1);

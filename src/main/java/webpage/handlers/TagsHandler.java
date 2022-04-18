@@ -102,7 +102,7 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("SELECT a FROM AvailableTag a");
+                    Query query1 = em.createQuery("FROM AvailableTag a");
                     @SuppressWarnings("unchecked") List<AvailableTag> availableTags = query1.getResultList();
                     String token = req.headers("token");
                     if (verifyJWT(token)) {
@@ -182,7 +182,7 @@ public class TagsHandler extends AbstractHandler {
                         String userId = (String) claims.get("id");
                         Integer userId1 = Integer.parseInt(userId);
                         EntityManager em = emf.createEntityManager();
-                        Query query = em.createQuery("FROM User u WHERE u.id like :id");
+                        Query query = em.createQuery("FROM User u WHERE u.id = :id");
                         query.setParameter("id", userId1);
                         try {
                             User user = (User) query.getSingleResult();
