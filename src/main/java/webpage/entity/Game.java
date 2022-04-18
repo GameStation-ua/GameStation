@@ -17,7 +17,7 @@ public class Game {
     private String description;
 
     @Column(name = "IMGS_IN_CAROUSEL")
-    private int imgsInCarousel;
+    private int imgsInCarousel = 0;
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private List<User> followers;
