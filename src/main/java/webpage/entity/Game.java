@@ -2,6 +2,7 @@ package webpage.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Game {
@@ -19,24 +20,66 @@ public class Game {
     @Column(name = "IMGS_IN_CAROUSEL")
     private int imgsInCarousel = 0;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<User> followers;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "gameId")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private List<UserGame> userGames;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Tag> tags;
+    private Set<User> creators;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Tag> tags;
 
     public Game() {
-
     }
 
-    public List<Tag> getTags() {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
+    }
+
+    public List<UserGame> getUserGames() {
+        return userGames;
+    }
+
+    public void setUserGames(List<UserGame> userGames) {
+        this.userGames = userGames;
+    }
+
+    public Set<User> getCreators() {
+        return creators;
+    }
+
+    public void setCreators(Set<User> creators) {
+        this.creators = creators;
+    }
+
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 

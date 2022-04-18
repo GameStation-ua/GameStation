@@ -10,12 +10,15 @@ import webpage.entity.User;
 import webpage.requestFormats.AvailableTagsRequest;
 import webpage.requestFormats.UserTagsRequest;
 import webpage.responseFormats.AvailableTagsResponse;
+import webpage.responseFormats.GameForResponse;
+import webpage.responseFormats.SearchTagResponse;
 import webpage.responseFormats.UserTagsResponse;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -143,6 +146,7 @@ public class TagsHandler extends AbstractHandler {
                     return "{\"message\":\"Not logged in.\"}";
                 });
             });
+
             path("/users", () -> {
                 get("", (req, res) -> {
                     String token = req.headers("token");
@@ -242,6 +246,7 @@ public class TagsHandler extends AbstractHandler {
                     return "{\"message\":\"Not logged in.\"}";
                 });
             });
+
             path("/games", () -> {
                 patch("/add", (req, res) -> {
                     Gson gson = new Gson();
@@ -267,14 +272,13 @@ public class TagsHandler extends AbstractHandler {
                             int gameid1 = Integer.parseInt(gameId);
                             for (Game game : createdGames) {
                                 if (game.getId() == gameid1) {
-                                    List<Tag> gameTags = game.getTags();
-                                    for (Tag tag : tagsRequest.getTags()) {
-                                        if (!gameTags.contains(tag)) gameTags.add(tag);
-                                    }
+                                    Set<Tag> gameTags = game.getTags();
+                                    gameTags.addAll(tagsRequest.getTags());
                                     game.setTags(gameTags);
                                     em.getTransaction().begin();
                                     em.merge(game);
                                     em.getTransaction().commit();
+                                    res.status(200);
                                     return "{\"message\":\"Tags added.\"}";
                                 }
                             }
@@ -314,12 +318,13 @@ public class TagsHandler extends AbstractHandler {
                             int gameid1 = Integer.parseInt(gameId);
                             for (Game game : createdGames) {
                                 if (game.getId() == gameid1) {
-                                    List<Tag> gameTags = game.getTags();
-                                    gameTags.removeAll(tagsRequest.getTags());
+                                    Set<Tag> gameTags = game.getTags();
+                                    tagsRequest.getTags().forEach(gameTags::remove);
                                     game.setTags(gameTags);
                                     em.getTransaction().begin();
                                     em.merge(game);
                                     em.getTransaction().commit();
+                                    res.status(200);
                                     return "{\"message\":\"Tags removed.\"}";
                                 }
                             }
@@ -334,6 +339,29 @@ public class TagsHandler extends AbstractHandler {
                         return "{\"message\":\"Not logged in.\"}";
                     }
                 });
+            });
+
+            get("/search/:searchTag", (req,res) -> {
+                String searchTag = req.params(":searchTag");
+                String token = req.headers("token");
+                if (verifyJWT(token)) {
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    EntityManager em = emf.createEntityManager();
+                    Query query = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search");
+                    query.setParameter("search", searchTag);
+                    @SuppressWarnings("unchecked") List<Game> games = query.getResultList();
+                    List<GameForResponse> gamesForResponse = new ArrayList<>();
+                    for (Game game : games) {
+                        gamesForResponse.add(new GameForResponse(game));
+                    }
+                    Gson gson = new Gson();
+                    return gson.toJson(new SearchTagResponse(gamesForResponse));
+                }else {
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
             });
         });
     }

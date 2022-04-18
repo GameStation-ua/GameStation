@@ -43,7 +43,7 @@ public class LogInHandler extends AbstractHandler{
                         if (user.getPassword().equals(logInRequest.getPassword())) {
                             String jws = generateToken(user);
                             response.status(200);
-                            return "{\"message\":" + jws + "}";
+                            return jws;
                         } else {
                             response.status(406);
                             return "{\"message\":\"Incorrect username or password\"}";
