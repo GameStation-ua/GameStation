@@ -8,6 +8,7 @@ import webpage.requestFormats.RegisterRequest;
 import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
 
+import static spark.Spark.path;
 import static spark.Spark.post;
 
 
@@ -17,45 +18,46 @@ public class RegisterHandler extends AbstractHandler {
         super(emf);
     }
 
-    public void handle(String path){
-        post(path, "application/json", (req, res) -> {
-            RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-            if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null){
-                res.status(406);
-                return "{\"message\":\"You need to fill all the fields\"}";
-            }
-            final EntityManager em = emf.createEntityManager();
-            Query query = em.createQuery("SELECT user FROM User user WHERE user.username like :username");
-            query = query.setParameter("username", registerRequest.getUsername());
-            try {
-                query.getSingleResult();
-                res.type("application/json");
-                res.status(200);
-                return "{\"message\":\"Username already taken.\"}";
-            } catch(NoResultException e){
-                if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)){
+    public void handle(String path) {
+        path(path, () -> {
+            post("", "application/json", (req, res) -> {
+                RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+                if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) {
+                    res.status(406);
+                    return "{\"message\":\"You need to fill all the fields\"}";
+                }
+                final EntityManager em = emf.createEntityManager();
+                Query query = em.createQuery("SELECT user FROM User user WHERE user.username like :username");
+                query = query.setParameter("username", registerRequest.getUsername());
+                try {
+                    query.getSingleResult();
                     res.type("application/json");
                     res.status(200);
-                    return "{\"message\":\"You need to meet password requirements.\"}";
-                }else{
-                    res.type("application/json");
-                    res.status(201);
-                    registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
-                    EntityTransaction transaction = em.getTransaction();
-                    transaction.begin();
-                    User user1 = new User(registerRequest.getNickname(),
-                            registerRequest.getUsername(),
-                            registerRequest.getPassword());
-                    em.persist(user1);
-                    transaction.commit();
-                    em.close();
-                    res.status(201);
-                    return "{\"message\":\"User created!\"}";
+                    return "{\"message\":\"Username already taken.\"}";
+                } catch (NoResultException e) {
+                    if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
+                        res.type("application/json");
+                        res.status(200);
+                        return "{\"message\":\"You need to meet password requirements.\"}";
+                    } else {
+                        res.type("application/json");
+                        res.status(201);
+                        registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
+                        EntityTransaction transaction = em.getTransaction();
+                        transaction.begin();
+                        User user1 = new User(registerRequest.getNickname(),
+                                registerRequest.getUsername(),
+                                registerRequest.getPassword());
+                        em.persist(user1);
+                        transaction.commit();
+                        em.close();
+                        res.status(201);
+                        return "{\"message\":\"User created!\"}";
+                    }
                 }
-            }
+            });
         });
     }
-
     private static boolean checkString(String str) {
         char ch;
         boolean capitalFlag = false;
