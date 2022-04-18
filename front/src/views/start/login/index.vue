@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue'
   import Store from '../../../store'
- // import {sha512} from "js-sha512";
+  import {sha512} from "js-sha512";
 
 
 
@@ -11,27 +11,25 @@
     password: ""
   })
 
-  function login () {
 
+
+  function login () {
     var xhr = new XMLHttpRequest()
-    const hashed = input.value
-//    hashed.password = sha512(hashed.password)
+    const hashed = {
+      username : input.value.username,
+      password : input.value.password
+    }
+    hashed.password = sha512(hashed.password)
     var json = JSON.stringify(hashed)
     xhr.open("POST", "http://localhost:8443/login", false),
     xhr.setRequestHeader("Content-Type", "application/json")
     xhr.send(json)
     console.log(json)
-    if (xhr.status == 200){
-      Store.state.mesage = 'send to home'
+    if (xhr.status === 200){
+      Store.state.mesage = "send to home"
       localStorage.setItem("token",xhr.responseText)
-      console.log(Store.state.tokenUser)
-      var res = new XMLHttpRequest()
-      res.open("GET", "http://localhost:8443/login", false),
-          res.setRequestHeader("Content-Type", "application/json")
-      res.send(localStorage.getItem("token"))
-
+      console.log(localStorage.getItem("token"))
     }
-
   }
 
 </script>
