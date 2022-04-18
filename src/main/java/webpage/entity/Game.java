@@ -21,12 +21,13 @@ public class Game {
     private int imgsInCarousel = 0;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "GAME_FOLLOWERS")
     private List<User> followers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private List<UserGame> userGames;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "createdGames")
     private Set<User> creators;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

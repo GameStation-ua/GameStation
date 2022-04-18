@@ -10,6 +10,7 @@ import webpage.responseFormats.GameForResponse;
 import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.SearchTagResponse;
 import webpage.responseFormats.UserForResponse;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -56,5 +57,10 @@ public class SearchHandler extends AbstractHandler{
                }
            });
         });
+    }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.SEARCH;
     }
 }

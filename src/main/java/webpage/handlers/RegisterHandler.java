@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import webpage.entity.User;
 import webpage.requestFormats.RegisterRequest;
+import webpage.util.HandlerType;
 
 import javax.persistence.*;
 import java.nio.charset.StandardCharsets;
@@ -18,8 +19,8 @@ public class RegisterHandler extends AbstractHandler {
         super(emf);
     }
 
-    public void handle(String path) {
-        path(path, () -> {
+    public void handle() {
+        path("/register", () -> {
             post("", "application/json", (req, res) -> {
                 RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
                 if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) {
@@ -57,6 +58,12 @@ public class RegisterHandler extends AbstractHandler {
             });
         });
     }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.REGISTER;
+    }
+
     private static boolean checkString(String str) {
         char ch;
         boolean capitalFlag = false;

@@ -9,10 +9,10 @@ public class Tag {
     @Column(name = "TAG", nullable = false)
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tags")
     private Set<Game> games;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "likedTags")
     private Set<User> users;
 
     @Override

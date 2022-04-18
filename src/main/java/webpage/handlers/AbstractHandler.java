@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
 import webpage.entity.User;
+import webpage.util.Handler;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManagerFactory;
@@ -16,7 +17,7 @@ import static spark.Spark.before;
 import static spark.Spark.options;
 import static webpage.util.SecretKey.key;
 
-public abstract class AbstractHandler{
+public abstract class AbstractHandler implements Handler {
         EntityManagerFactory emf;
 
         public AbstractHandler(EntityManagerFactory emf) {

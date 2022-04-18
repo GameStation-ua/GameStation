@@ -1,12 +1,15 @@
 package webpage;
 
 import webpage.handlers.*;
+import webpage.util.Handler;
+import webpage.util.HandlerProvider;
+import webpage.util.HandlerProviderImpl;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import static spark.Spark.*;
-import static webpage.util.Paths.*;
 
 public class GameStation {
 
@@ -15,18 +18,10 @@ public class GameStation {
         staticFiles.location("/public");
         port(8443);
         enableCORS();
-        new RegisterHandler(emf).handle(register);
-        new LogInHandler(emf).handle(logIn);
-        new TagsHandler(emf).handle(tags);
-        new HomeHandler(emf).handle(home);
-        new UploadHandler(emf).handle(upload);
-        new SearchHandler(emf).handle();
-        new MyHandler(emf).handle("/main");
-
-    }
-
-    public void createUser(){
-
+        HandlerProvider handlerProvider = new HandlerProviderImpl(emf);
+        final Iterable<Handler> handlers = handlerProvider.getAllHandlers();
+        for (final Handler handler : handlers) handler.handle();
+        new MyHandler(emf).handle();
     }
 
     private static void enableCORS() {

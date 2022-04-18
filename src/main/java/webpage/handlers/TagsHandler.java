@@ -13,6 +13,7 @@ import webpage.responseFormats.AvailableTagsResponse;
 import webpage.responseFormats.GameForResponse;
 import webpage.responseFormats.SearchTagResponse;
 import webpage.responseFormats.UserTagsResponse;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -30,8 +31,8 @@ public class TagsHandler extends AbstractHandler {
         super(emf);
     }
 
-    public void handle(String path) {
-        path(path, () -> {
+    public void handle() {
+        path("/tags", () -> {
             path("/available_tags", () -> {
                 get("", (req, res) -> {
                     String token = req.headers("token");
@@ -358,5 +359,10 @@ public class TagsHandler extends AbstractHandler {
                 }
             });
         });
+    }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.TAGS;
     }
 }

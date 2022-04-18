@@ -4,6 +4,7 @@ package webpage.handlers;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import webpage.entity.Tag;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -21,21 +22,21 @@ public class HomeHandler extends AbstractHandler{
     }
 
 
-    public void handle(String path){
-//        get(path, (req, res) -> {
-//            String token = req.headers("token");
-//            if (verifyJWT(token)){
-//                Claims claims = Jwts.parser()
-//                        .setSigningKey(key)
-//                        .parseClaimsJws(token).getBody();
+    public void handle(){
+        get("/home", (req, res) -> {
+            String token = req.headers("token");
+            if (verifyJWT(token)){
+                Claims claims = Jwts.parser()
+                        .setSigningKey(key)
+                        .parseClaimsJws(token).getBody();
 //                Integer userId =  claims.get("id");
-//                boolean isAdmin = (boolean) claims.get("isAdmin");
-//
-//            }else{
-//                res.status(401);
-//                return "{\"message\":\"Not logged in.\"}";
-//            }
-//        });
+                return "";
+
+            }else{
+                res.status(401);
+                return "{\"message\":\"Not logged in.\"}";
+            }
+        });
         get("/isAdmin", (req, res) -> {
             String token = req.headers("token");
             if (verifyJWT(token)) {
@@ -43,9 +44,14 @@ public class HomeHandler extends AbstractHandler{
                         .setSigningKey(key)
                         .parseClaimsJws(token).getBody();
                 Boolean isAdmin = (Boolean) claims.get("isAdmin");
-                return "{\"message\":\"Es admin\"}";
+                return "{\"message\":\"Is admin\"}";
             } else return "{\"message\":\"Not logged in\"}";
         });
+    }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.HOME;
     }
 
     List<Tag> get5Elements(Set<Tag> mySet) {

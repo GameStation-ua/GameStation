@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import spark.Spark;
 import webpage.entity.User;
 import webpage.requestFormats.LogInRequest;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,8 +20,8 @@ public class LogInHandler extends AbstractHandler{
     }
 
 
-    public void handle(String path) {
-        path(path, () -> {
+    public void handle() {
+        path("login", () -> {
             get("", (req, res) -> {
                 String token = req.headers("token");
                 if (verifyJWT(token)) {
@@ -58,6 +59,11 @@ public class LogInHandler extends AbstractHandler{
                 }
             });
         });
+    }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.LOG_IN;
     }
 }
 

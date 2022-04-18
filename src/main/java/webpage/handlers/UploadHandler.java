@@ -3,6 +3,7 @@ package webpage.handlers;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import webpage.entity.Game;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,8 +33,8 @@ public class UploadHandler extends AbstractHandler{
         super(emf);
     }
 
-    public void handle(String path){
-        path(path, () -> {
+    public void handle(){
+        path("/upload", () -> {
             post("/profilepic", (request, response) -> {
                 String token = request.headers("token");
                 if (verifyJWT(token)) {
@@ -135,6 +136,11 @@ public class UploadHandler extends AbstractHandler{
                 }
             });
         });
+    }
+
+    @Override
+    public HandlerType getType() {
+        return HandlerType.UPLOAD;
     }
 
     private static void copyInputStreamToFile(InputStream inputStream, File file) throws IOException {

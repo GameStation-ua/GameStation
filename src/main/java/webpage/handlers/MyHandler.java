@@ -5,6 +5,7 @@ import webpage.entity.Status;
 import webpage.entity.Tag;
 import webpage.entity.UserGame;
 import webpage.requestFormats.UserTagsRequest;
+import webpage.util.HandlerType;
 
 import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class MyHandler extends AbstractHandler {
 //        });
 //    }
 //}
-    public void handle(String path) {
-        get(path, (req, res) -> {
+    public void handle() {
+        get("/main", (req, res) -> {
 //        User user = new User();
 //        user.setPassword("12345678");
 //        user.setNickname("pedro");
@@ -59,6 +60,12 @@ public class MyHandler extends AbstractHandler {
             Gson gson = new Gson();
             return gson.toJson(userGame);
         });
+    }
+
+
+    @Override
+    public HandlerType getType() {
+        return null;
     }
 }
 
