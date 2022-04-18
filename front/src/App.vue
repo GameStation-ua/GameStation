@@ -2,7 +2,7 @@
   import Start from "@/views/start";
   import {ref} from 'vue'
 
-  const active = ref(false)
+  let active = ref(false)
   const tab = ref('home')
   import AdminMenu from './views/menu/adminMenu'
   import Home from './views/menu/home'
@@ -11,14 +11,15 @@
 
   function logout(){
     setTimeout(()=>{
-      Store.state.user = null;
+      Store.state.mesage = "";
+      localStorage.setItem("token", "")
     },1000);
   }
 
 
 </script>
 <template lang="html">
-  <Start v-if="!$store.state.user">
+  <Start v-if="!$store.state.mesage">
 
   </Start>
   <template v-else>
@@ -77,7 +78,7 @@
         <vs-sidebar-item index="5" >
           Card
         </vs-sidebar-item>
-        <div v-if="$store.state.user.admin">
+        <div>
           <vs-divider  icon="code" position="left">
             User
           </vs-divider>

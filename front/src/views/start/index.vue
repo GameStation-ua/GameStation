@@ -4,10 +4,24 @@
   import Login from './login'
   // eslint-disable-next-line no-unused-vars
   import Register from './register'
+  import Store from "@/store";
   const tab = ref('login')
+
+
+  function verify (){
+    var res = new XMLHttpRequest()
+    res.open("GET", "http://localhost:8443/login", false)
+    res.setRequestHeader("Content-Type", "application/json")
+    res.setRequestHeader("token", localStorage.getItem("token"))
+    res.send(null)
+    if (res.status === 200){
+      Store.state.mesage = "send to home"
+    }
+  }
 </script>
 <template>
   <div class="start">
+    {{verify()}}
     <div class="form-box">
       <nav>
         <button @click="tab = 'login'" :class="{ active: tab === 'login' }">LogIn</button> |

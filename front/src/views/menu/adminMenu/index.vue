@@ -6,14 +6,28 @@ export default {
     return {
       popupActivo1:false,
       popupActivo2:false,
+      tags:["hola", "vos", "hola"]
+    }
+  },
+  methods:{
+    getTags(){
+      var res = new XMLHttpRequest()
+      res.open("GET", "http://localhost:8443/tags/available_tags", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      var data = JSON.parse(res.response)
+      if (res.status === 200){
+        console.log(data)
+      }
     }
   }
-
 }
 </script>
 
 <template>
   <div>
+    {{getTags()}}
     <h1>Admin Menu</h1>
     <div class="">
       <vs-tabs color="success">
@@ -39,7 +53,7 @@ export default {
             <p>
               Are you sure you want to delate the tags selected?
             </p>
-            <vs-button  color="success" type="filled">Yes</vs-button>
+            <vs-button  color="danger" type="filled">Yes</vs-button>
             <vs-button @click="popupActivo2=false" color="dark" type="flat">Cancel</vs-button>
           </vs-popup>
         </div>
