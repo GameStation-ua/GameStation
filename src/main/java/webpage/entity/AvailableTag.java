@@ -31,8 +31,4 @@ public class AvailableTag {
     public String getAvailableTag() {
         return availableTag;
     }
-
-    public void setAvailableTag(String availableTag) {
-        this.availableTag = availableTag;
-    }
 }
