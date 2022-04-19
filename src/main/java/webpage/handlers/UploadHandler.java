@@ -63,7 +63,7 @@ public class UploadHandler extends AbstractHandler{
                 }
             });
 
-            post("/gameMain", (request, response) -> {
+            post("/public/gameMain", (request, response) -> {
                 String token = request.headers("token");
                 if (verifyJWT(token)) {
                     Claims claims = Jwts.parser()
