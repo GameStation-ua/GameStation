@@ -16,6 +16,9 @@ public class Game {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "WIKI")
+    private String wiki;
+
     @Column(name = "IMGS_IN_CAROUSEL")
     private int imgsInCarousel = 0;
 
@@ -31,6 +34,9 @@ public class Game {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> tags;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
+    private Set<Comment> comments;
 
     public Game() {
     }

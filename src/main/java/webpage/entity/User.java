@@ -24,22 +24,31 @@ public class User {
     @Column (name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
 
-    @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "FOLLOWERS")
     private Set<User> followers;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "userId")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserGame> userGame;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userId")
     private Set<Notification> notifications;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "GAME_CREATORS")
     private Set<Game> createdGames;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> likedTags;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
+    private Set<Comment> commentsMade;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
+    private Set<Comment> comments;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
+    private Set<Thread> createdThreads;
 
     public User(String nickname, String username, String password) {
         this.nickname = nickname;
