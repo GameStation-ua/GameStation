@@ -1,6 +1,9 @@
 package webpage.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Set;
 
 @Entity
@@ -14,6 +17,13 @@ public class Tag {
 
     @ManyToMany(mappedBy = "likedTags")
     private Set<User> users;
+
+    public Tag() {
+    }
+
+    public Tag(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object obj) {

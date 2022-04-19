@@ -19,12 +19,20 @@ public class UserGame {
      private Long gameId;
 
      @Column(name = "SCORE")
-     private Integer scores;
+     private Integer score;
 
      @Column(name = "STATUS")
+     @Enumerated(EnumType.STRING)
      @SerializedName("STATUS")
      private Status status;
 
+     public Long getGameId() {
+          return gameId;
+     }
+
+     public void setGameId(Long gameId) {
+          this.gameId = gameId;
+     }
 
      public Long getUserId() {
           return userId;
@@ -34,12 +42,12 @@ public class UserGame {
           this.userId = userId;
      }
 
-     public Integer getScores() {
-          return scores;
+     public Integer getScore() {
+          return score;
      }
 
-     public void setScores(Integer scores) {
-          this.scores = scores;
+     public void setScore(Integer score) {
+          this.score = score;
      }
 
      public Status getStatus() {

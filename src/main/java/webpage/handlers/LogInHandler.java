@@ -1,7 +1,6 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
-import spark.Spark;
 import webpage.entity.User;
 import webpage.requestFormats.LogInRequest;
 import webpage.util.HandlerType;

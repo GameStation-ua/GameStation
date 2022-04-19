@@ -6,5 +6,6 @@ public enum HandlerType {
     REGISTER,
     SEARCH,
     TAGS,
-    UPLOAD
+    UPLOAD,
+    GAMELIST
 }

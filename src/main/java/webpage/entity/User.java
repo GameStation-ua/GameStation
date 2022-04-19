@@ -1,8 +1,8 @@
 package webpage.entity;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
+
 
 @Entity
 public class User {
@@ -26,13 +26,13 @@ public class User {
 
     @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "FOLLOWERS")
-    private List<User> followers;
+    private Set<User> followers;
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "userId")
-    private List<UserGame> userGame;
+    private Set<UserGame> userGame;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userId")
-    private List<Notification> notifications;
+    private Set<Notification> notifications;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "GAME_CREATORS")

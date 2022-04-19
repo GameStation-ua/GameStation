@@ -27,7 +27,8 @@ public class HandlerProviderImpl implements HandlerProvider {
         handlers.put(tagsHandler.getType(), tagsHandler);
         final UploadHandler uploadHandler = new UploadHandler(emf);
         handlers.put(uploadHandler.getType(), uploadHandler);
-
+        final GameListHandler gameListHandler = new GameListHandler(emf);
+        handlers.put(gameListHandler.getType(), gameListHandler);
     }
 
     @Override

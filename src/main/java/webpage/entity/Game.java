@@ -1,7 +1,6 @@
 package webpage.entity;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,10 +21,10 @@ public class Game {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "GAME_FOLLOWERS")
-    private List<User> followers;
+    private Set<User> followers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
-    private List<UserGame> userGames;
+    private Set<UserGame> userGames;
 
     @ManyToMany(mappedBy = "createdGames")
     private Set<User> creators;
@@ -52,19 +51,19 @@ public class Game {
         this.description = description;
     }
 
-    public List<User> getFollowers() {
+    public Set<User> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setFollowers(Set<User> followers) {
         this.followers = followers;
     }
 
-    public List<UserGame> getUserGames() {
+    public Set<UserGame> getUserGames() {
         return userGames;
     }
 
-    public void setUserGames(List<UserGame> userGames) {
+    public void setUserGames(Set<UserGame> userGames) {
         this.userGames = userGames;
     }
 

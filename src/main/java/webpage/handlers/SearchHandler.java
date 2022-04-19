@@ -1,14 +1,10 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import spark.Spark;
 import webpage.entity.Game;
 import webpage.entity.User;
 import webpage.responseFormats.GameForResponse;
 import webpage.responseFormats.SearchResponse;
-import webpage.responseFormats.SearchTagResponse;
 import webpage.responseFormats.UserForResponse;
 import webpage.util.HandlerType;
 
@@ -20,7 +16,6 @@ import java.util.List;
 
 import static spark.Spark.get;
 import static spark.Spark.path;
-import static webpage.util.SecretKey.key;
 
 public class SearchHandler extends AbstractHandler{
     public SearchHandler(EntityManagerFactory emf) {
@@ -33,12 +28,11 @@ public class SearchHandler extends AbstractHandler{
                String searchTag = req.params(":searchString");
                String token = req.headers("token");
                if (verifyJWT(token)) {
-                   Claims claims = Jwts.parser()
-                           .setSigningKey(key)
-                           .parseClaimsJws(token).getBody();
                    EntityManager em = emf.createEntityManager();
-                   Query query = em.createQuery("FROM Game g WHERE g.title LIKE '%" + searchTag + "%'");
-                   Query query1 = em.createQuery("FROM User u WHERE u.nickname LIKE '%" + searchTag + "%'");
+                   Query query = em.createQuery("FROM Game g WHERE UPPER(g.title) LIKE ?1");
+                   query.setParameter(1, "%" + searchTag.toUpperCase() + "%");
+                   Query query1 = em.createQuery("FROM User u WHERE UPPER(u.nickname) LIKE ?1");
+                   query1.setParameter(1, "%" + searchTag.toUpperCase() + "%");
                    @SuppressWarnings("unchecked") List<Game> games = query.getResultList();
                    @SuppressWarnings("unchecked") List<User> users = query1.getResultList();
                    List<GameForResponse> gamesForResponse = new ArrayList<>();

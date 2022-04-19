@@ -2,8 +2,6 @@
 import { ref } from 'vue'
 import Store from "@/store";
 
-const numeros = require("core-js/internals/array-includes");
-const letras_mayusculas = require("core-js/internals/array-includes");
 
 
 
@@ -26,7 +24,7 @@ function register () {
     nickname : input.value.nickname,
     password : input.value.password
   }
-//    hashed.password = sha512(hashed.password)
+
   var json = JSON.stringify(hashed)
   xhr.open("POST", "http://localhost:8443/register", false),
       xhr.setRequestHeader("Content-Type", "application/json")
@@ -39,35 +37,7 @@ function register () {
   }
 }
 
-function passwords(){
-  if (tiene_numeros(input.value.password) && tiene_mayusculas(input.value.password)){
-    two=true
-    if (input.value.password === input.value.verifypassword){
-      four=true
-      register()
-    }else three=true
-  }else one=true
-}
 
-function tiene_numeros(texto){
-  let i;
-  for(i=0; i<texto.length; i++){
-    if (numeros.indexOf(texto.charAt(i),0)!==-1){
-      return 1;
-    }
-  }
-  return 0;
-}
-
-function tiene_mayusculas(texto){
-  let i;
-  for(i=0; i<texto.length; i++){
-    if (letras_mayusculas.indexOf(texto.charAt(i),0)!==-1){
-      return 1;
-    }
-  }
-  return 0;
-}
 
 
 
@@ -86,7 +56,7 @@ function tiene_mayusculas(texto){
           <vs-input label-placeholder="Nickname" v-model="input.nickname" size="large" color="success"/>
           <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password" color="success" :danger="one"  :success="two"   description-text="the password needs 8 or more characters, numbers and capital letters"/>
           <vs-input label-placeholder="Verify password" v-model="input.verifypassword" size="large" type="password" color="success" :danger="three"  :success="four"  description-text="wright the same password"/>
-          <vs-button @click="passwords" color="success" type="gradient">Register</vs-button>
+          <vs-button @click="register" color="success" type="gradient">Register</vs-button>
         </div>
         {{ user.nickName }}
       </div>

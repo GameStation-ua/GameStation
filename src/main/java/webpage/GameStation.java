@@ -1,10 +1,9 @@
 package webpage;
 
-import webpage.handlers.*;
+import webpage.handlers.MyHandler;
 import webpage.util.Handler;
 import webpage.util.HandlerProvider;
 import webpage.util.HandlerProviderImpl;
-import webpage.util.HandlerType;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
