@@ -60,7 +60,7 @@ public class UploadHandler extends AbstractHandler{
                 }
             });
 
-            post("/public/gameMain", (request, response) -> {
+            post("/gameMain", (request, response) -> {
                 String token = request.headers("token");
                 if (verifyJWT(token)) {
                     Claims claims = Jwts.parser()
@@ -77,7 +77,7 @@ public class UploadHandler extends AbstractHandler{
                         if (game.getId() == gameid1) {
                             request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                             try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("src/main/resources/public/gameMain/" + gameid1 + ".png");
+                                File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png");
                                 copyInputStreamToFile(is, file);
                             }
                             return "{\"message\":\"File uploaded.\"}";
@@ -107,14 +107,9 @@ public class UploadHandler extends AbstractHandler{
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {
                             int imgsInCarousel = game.getImgsInCarousel();
-                            Path path1 = Paths.get("src/main/resources/public/Carousel=" + gameid1);
-                            try {
-                                Files.createDirectories(path1);
-                            } catch (FileAlreadyExistsException ignored) {
-                            }
                             req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                             try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("src/main/resources/public/Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + ".png");
+                                File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png");
                                 copyInputStreamToFile(is, file);
                             }
                             game.setImgsInCarousel(imgsInCarousel + 1);
