@@ -9,7 +9,7 @@ public class AvailableTag {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "AVAILABLE_TAG")
+    @Column(name = "AVAILABLE_TAG", nullable = false)
     private String availableTag;
 
     public Long getId() {

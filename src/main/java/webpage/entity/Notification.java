@@ -1,6 +1,7 @@
 package webpage.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Notification {
@@ -10,27 +11,18 @@ public class Notification {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "USER_ID")
-    private long userId;
+    @ManyToMany(mappedBy = "notifications")
+    private Set<User> users;
 
-    @Column(name = "TITLE")
-    private String title;
+    @Column(name = "CONTENT", nullable = false)
+    private String content;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
-
-    @Column(name = "PATH")
+    @Column(name = "PATH", nullable = false)
     private String path;
 
-    @Column(name = "SEEN")
-    private boolean seen;
+    @Column(name = "SEEN", nullable = false)
+    private boolean seen = false;
 
-
-    public Notification(String title, String description, String path) {
-        this.title = title;
-        this.description = description;
-        this.path = path;
-    }
 
     public Notification() {
     }

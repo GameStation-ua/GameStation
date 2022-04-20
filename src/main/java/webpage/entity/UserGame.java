@@ -12,10 +12,10 @@ public class UserGame {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "USER_ID")
+     @Column(name = "USER_ID", nullable = false)
      private Long userId;
 
-     @Column(name = "GAME_ID")
+     @Column(name = "GAME_ID", nullable = false)
      private Long gameId;
 
      @Column(name = "SCORE")

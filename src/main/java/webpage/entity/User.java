@@ -5,34 +5,45 @@ import java.util.Set;
 
 
 @Entity
-public class User {
+public class User implements Actor{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column (name = "NICK_NAME")
+    @Column (name = "NICK_NAME", nullable = false)
     private String nickname;
 
-    @Column (name = "USER_NAME")
+    @Column (name = "USER_NAME", nullable = false)
     private String username;
 
-    @Column (name = "PASSWORD")
+    @Column (name = "PASSWORD", nullable = false)
     private String password;
 
     @Column (name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
 
-    @ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "FOLLOWERS")
-    private Set<User> followers;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserGame> userGame;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userId")
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinTable(name = "GAME_FOLLOWERS")
+    private Set<Game> followedGames;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "THREAD_FOLLOWERS")
+    private Set<Thread> followedThreads;
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinTable(name = "USER_FOLLOWERS")
+    private Set<User> followedUsers;
+
+    @ManyToMany(mappedBy = "followedUsers")
+    private Set<User> followers;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "GAME_CREATORS")
@@ -45,7 +56,7 @@ public class User {
     private Set<Comment> commentsMade;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
-    private Set<Comment> comments;
+    private Set<Comment> profileComments;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<Thread> createdThreads;
@@ -105,5 +116,33 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void addNotification(Notification notification){
+        notifications.add(notification);
+    }
+
+    @Override
+    public boolean sendNotification(Notification notification, EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            for (User follower : followers) {
+                follower.addNotification(notification);
+            }
+            em.getTransaction().commit();
+            return true;
+        }catch (Throwable e){
+            return false;
+        }
+    }
+
+    @Override
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    @Override
+    public String getName() {
+        return nickname;
     }
 }

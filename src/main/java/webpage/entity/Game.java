@@ -4,26 +4,25 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-public class Game {
+public class Game implements Actor{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private int id;
 
-    @Column(name = "TITLE")
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
     @Column(name = "WIKI")
     private String wiki;
 
-    @Column(name = "IMGS_IN_CAROUSEL")
+    @Column(name = "IMGS_IN_CAROUSEL", nullable = false)
     private int imgsInCarousel = 0;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "GAME_FOLLOWERS")
+    @ManyToMany(mappedBy = "followedGames")
     private Set<User> followers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
@@ -64,8 +63,27 @@ public class Game {
         this.description = description;
     }
 
+    @Override
+    public boolean sendNotification(Notification notification, EntityManager em) {
+        try {
+            em.getTransaction().begin();
+            for (User follower : followers) {
+                follower.addNotification(notification);
+            }
+            em.getTransaction().commit();
+            return true;
+        }catch (Throwable e){
+            return false;
+        }
+    }
+
     public Set<User> getFollowers() {
         return followers;
+    }
+
+    @Override
+    public String getName() {
+        return title;
     }
 
     public void setFollowers(Set<User> followers) {

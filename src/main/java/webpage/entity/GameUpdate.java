@@ -10,20 +10,21 @@ public class GameUpdate {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "game_id")
+    @Column(name = "game_id", nullable = false)
     private Long gameId;
 
-    @Column(name = "TITLE")
+    @Column(name = "TITLE", nullable = false)
     private String tile;
 
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @Column(name = "DATE")
+    @Column(name = "DATE", nullable = false)
     private Date date;
 
-    @Column(name = "HAS_ATTACHED_IMG")
+    @Column(name = "HAS_ATTACHED_IMG", nullable = false)
     private boolean hasAttachedImg;
+
     public Long getId() {
         return id;
     }

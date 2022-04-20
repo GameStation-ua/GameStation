@@ -14,13 +14,13 @@ public class Comment {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "COMMENTER_ID")
+    @Column(name = "COMMENTER_ID", nullable = false)
     private Long userId;
 
-    @Column(name = "DATE")
+    @Column(name = "DATE", nullable = false)
     private Date date;
 
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -30,7 +30,7 @@ public class Comment {
     @Column(name = "ENTITY_ID", nullable = false)
     private Long entityId;
 
-    @Column(name = "VOTES")
+    @Column(name = "VOTES", nullable = false)
     private int votes = 0;
 
     public Long getId() {
