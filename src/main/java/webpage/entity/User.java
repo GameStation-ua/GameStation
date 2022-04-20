@@ -57,7 +57,10 @@ public class User {
     }
 
     public User() {
+    }
 
+    public void removeTag(Tag tag){
+        likedTags.remove(tag);
     }
 
     public Set<Tag> getLikedTags() {

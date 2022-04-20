@@ -43,16 +43,20 @@ public class RegisterHandler extends AbstractHandler {
                     } else {
                         res.type("application/json");
                         registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
-                        EntityTransaction transaction = em.getTransaction();
-                        transaction.begin();
                         User user1 = new User(registerRequest.getNickname(),
                                 registerRequest.getUsername(),
                                 registerRequest.getPassword());
+                        try{
+                        em.getTransaction().begin();
                         em.persist(user1);
-                        transaction.commit();
-                        em.close();
+                        em.getTransaction().commit();
                         res.status(201);
                         return "{\"message\":\"User created!\"}";
+                        }catch (Throwable r) {
+                            em.getTransaction().rollback();
+                            res.status(500);
+                            return "{\"message\":\"Something went wrong, try again.\"}";
+                        }
                     }
                 }
             });

@@ -41,6 +41,10 @@ public class Game {
     public Game() {
     }
 
+    public void removeTag(Tag tag){
+        tags.remove(tag);
+    }
+
     public String getTitle() {
         return title;
     }

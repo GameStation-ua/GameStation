@@ -94,14 +94,14 @@ public class UploadHandler extends AbstractHandler{
                 }
             });
 
-            post("/gameCarousel", (request, response) -> {
-                String token = request.headers("token");
+            post("/gameCarousel", (req, res) -> {
+                String token = req.headers("token");
                 if (verifyJWT(token)) {
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
                     Integer userId1 = (Integer) claims.get("id");
-                    String gameid = request.headers("gameId");
+                    String gameid = req.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
                     EntityManager em = emf.createEntityManager();
                     Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
@@ -116,22 +116,28 @@ public class UploadHandler extends AbstractHandler{
                                 Files.createDirectories(path1);
                             } catch (FileAlreadyExistsException ignored) {
                             }
-                            request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                            try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
+                            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+                            try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
                                 File file = new File("src/main/resources/public/Carousel=" + gameid1 + "\\" + (imgsInCarousel + 1) + ".png");
                                 copyInputStreamToFile(is, file);
                             }
                             game.setImgsInCarousel(imgsInCarousel + 1);
                             EntityManager em2 = emf.createEntityManager();
+                            try{
                             em2.getTransaction().begin();
                             em2.merge(game);
                             em2.getTransaction().commit();
                             return "{\"message\":\"File uploaded.\"}";
+                            }catch (Throwable r) {
+                                em2.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong, try again.\"}";
+                            }
                         }
                     }
                     return "{\"message\":\"Unauthorized.\"}";
                 } else {
-                    response.status(401);
+                    res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
             });

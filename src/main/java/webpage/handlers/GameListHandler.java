@@ -61,11 +61,17 @@ public class GameListHandler extends AbstractHandler{
                             userGame.setStatus(gameListRequest.getStatus());
                             userGame.setScore(gameListRequest.getScore());
                             userGame.setGameId(gameListRequest.getGameId());
-                            em.getTransaction().begin();
-                            em.merge(userGame);
-                            em.getTransaction().commit();
-                            res.status(200);
-                            return "{\"message\":\"Game added to game list.\"}";
+                            try {
+                                em.getTransaction().begin();
+                                em.merge(userGame);
+                                em.getTransaction().commit();
+                                res.status(200);
+                                return "{\"message\":\"Game added to game list.\"}";
+                            }catch (Throwable e) {
+                                em.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong, try again.\"}";
+                            }
                         } else{
                             res.status(409);
                             return "{\"message\":\"Game already in game list.\"}";
@@ -98,11 +104,17 @@ public class GameListHandler extends AbstractHandler{
                         @SuppressWarnings("unchecked") List<UserGame> game = query.getResultList();
                         if (!game.isEmpty()) {
                             UserGame userGame = game.get(0);
-                            em.getTransaction().begin();
-                            em.remove(userGame);
-                            em.getTransaction().commit();
-                            res.status(200);
-                            return "{\"message\":\"Game removed to game list.\"}";
+                            try {
+                                em.getTransaction().begin();
+                                em.remove(userGame);
+                                em.getTransaction().commit();
+                                res.status(200);
+                                return "{\"message\":\"Game removed to game list.\"}";
+                            }catch (Throwable e){
+                                em.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong, try again.\"}";
+                            }
                         } else{
                             res.status(409);
                             return "{\"message\":\"Game not in game list.\"}";
@@ -137,11 +149,17 @@ public class GameListHandler extends AbstractHandler{
                             UserGame userGame = game.get(0);
                             userGame.setStatus(gameListRequest.getStatus());
                             userGame.setScore(gameListRequest.getScore());
-                            em.getTransaction().begin();
-                            em.merge(userGame);
-                            em.getTransaction().commit();
-                            res.status(200);
-                            return "{\"message\":\"Game edited.\"}";
+                            try {
+                                em.getTransaction().begin();
+                                em.merge(userGame);
+                                em.getTransaction().commit();
+                                res.status(200);
+                                return "{\"message\":\"Game edited.\"}";
+                            }catch (Throwable e) {
+                                em.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong, try again.\"}";
+                            }
                         } else{
                             res.status(409);
                             return "{\"message\":\"Game not in game list.\"}";

@@ -66,26 +66,28 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        Integer userId = (Integer) claims.get("id");
                         boolean isAdmin = (boolean) claims.get("isAdmin");
-                        Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId);
                         try {
-                            query2.getSingleResult();
                             em.close();
                             EntityManager em2 = emf.createEntityManager();
                             if (isAdmin) {
                                 for (Tag tag : tagsRequest.getTags()) {
-                                    em2.getTransaction().begin();
-                                    boolean isContained = false;
-                                    for (AvailableTag availableTag : availableTags) {
-                                        if (availableTag.getAvailableTag().equals(tag.getName())) {
-                                            isContained = true;
-                                            break;
+                                    try{
+                                        em2.getTransaction().begin();
+                                        boolean isContained = false;
+                                        for (AvailableTag availableTag : availableTags) {
+                                            if (availableTag.getAvailableTag().equals(tag.getName())) {
+                                                isContained = true;
+                                                break;
+                                            }
                                         }
+                                        if (!isContained) em2.persist(new AvailableTag(tag.getName()));
+                                        em2.getTransaction().commit();
+                                    }catch (Throwable r) {
+                                        em2.getTransaction().rollback();
+                                        res.status(500);
+                                        return "{\"message\":\"Something went wrong, try again.\"}";
                                     }
-                                    if (!isContained) em2.persist(new AvailableTag(tag.getName()));
-                                    em2.getTransaction().commit();
                                 }
                                 res.status(200);
                                 return "{\"message\":\"Tags successfully added.\"}";
@@ -112,27 +114,43 @@ public class TagsHandler extends AbstractHandler {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
-                        Integer userId1 = (Integer) claims.get("id");
                         boolean isAdmin = (boolean) claims.get("isAdmin");
-                        Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId1);
                         try {
-                            query2.getSingleResult();
                             em.close();
                             EntityManager em2 = emf.createEntityManager();
                             if (isAdmin) {
-                                for (Tag tag : tagsRequest.getTags()) {
+                                try{
                                     em2.getTransaction().begin();
-                                    for (AvailableTag availableTag : availableTags) {
-                                        if (availableTag.getAvailableTag().equals(tag.getName())) {
-                                            em2.remove(em2.contains(availableTag) ? availableTag : em2.merge(availableTag));
-                                            break;
+                                    for (Tag tag : tagsRequest.getTags()) {
+                                        for (AvailableTag availableTag : availableTags) {
+                                            if (availableTag.getAvailableTag().equals(tag.getName())) {
+                                                em2.remove(em2.contains(availableTag) ? availableTag : em2.merge(availableTag));
+                                                break;
+                                            }
                                         }
                                     }
                                     em2.getTransaction().commit();
+                                    em2.getTransaction().begin();
+                                    for (Tag tag : tagsRequest.getTags()) {
+                                        @SuppressWarnings("unchecked") List<Game> games = (List<Game>) em2.createQuery("SELECT t.games FROM Tag t WHERE t.name = ?1").setParameter(1, tag.getName()).getResultList();
+                                        @SuppressWarnings("unchecked") List<User> users = (List<User>) em2.createQuery("SELECT t.users FROM Tag t WHERE t.name = ?1").setParameter(1, tag.getName()).getResultList();
+                                        for (Game game : games) {
+                                            game.removeTag(tag);
+                                            em2.merge(game);
+                                        }
+                                        for (User user : users) {
+                                            user.removeTag(tag);
+                                            em2.merge(user);
+                                        }
+                                    }
+                                    em2.getTransaction().commit();
+                                    res.status(200);
+                                    return "{\"message\":\"Tags successfully removed.\"}";
+                                }catch (Throwable r) {
+                                    em2.getTransaction().rollback();
+                                    res.status(500);
+                                    return "{\"message\":\"Something went wrong, try again.\"}";
                                 }
-                                res.status(200);
-                                return "{\"message\":\"Tags successfully removed.\"}";
                             }
                             res.status(401);
                             return "{\"message\":\"Not authorized.\"}";
@@ -192,11 +210,17 @@ public class TagsHandler extends AbstractHandler {
                                 userLikedTags.remove(tag);
                             }
                             user.setLikedTags(userLikedTags);
+                            try{
                             em.getTransaction().begin();
                             em.merge(user);
                             em.getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags successfully removed\"}";
+                            } catch (Throwable e) {
+                                em.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong.\"}";
+                            }
                         } catch (NoResultException e) {
                             res.status(400);
                             return "{\"message\":\"User not found\"}";
@@ -228,11 +252,17 @@ public class TagsHandler extends AbstractHandler {
                             Set<Tag> userLikedTags = user.getLikedTags();
                             userLikedTags.addAll(tagsRequest.getTags());
                             user.setLikedTags(userLikedTags);
+                            try{
                             em.getTransaction().begin();
                             em.merge(user);
                             em.getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags successfully added.\"}";
+                            } catch (Throwable e) {
+                                em.getTransaction().rollback();
+                                res.status(500);
+                                return "{\"message\":\"Something went wrong.\"}";
+                            }
                         } catch (NoResultException e) {
                             res.status(400);
                             return "{\"message\":\"User not found.\"}";
@@ -270,11 +300,17 @@ public class TagsHandler extends AbstractHandler {
                                     Set<Tag> gameTags = game.getTags();
                                     gameTags.addAll(tagsRequest.getTags());
                                     game.setTags(gameTags);
+                                    try {
                                     em.getTransaction().begin();
                                     em.merge(game);
                                     em.getTransaction().commit();
                                     res.status(200);
                                     return "{\"message\":\"Tags added.\"}";
+                                    } catch (Throwable e) {
+                                        em.getTransaction().rollback();
+                                        res.status(500);
+                                        return "{\"message\":\"Something went wrong.\"}";
+                                    }
                                 }
                             }
                             res.status(401);
@@ -316,11 +352,17 @@ public class TagsHandler extends AbstractHandler {
                                     Set<Tag> gameTags = game.getTags();
                                     tagsRequest.getTags().forEach(gameTags::remove);
                                     game.setTags(gameTags);
-                                    em.getTransaction().begin();
-                                    em.merge(game);
-                                    em.getTransaction().commit();
-                                    res.status(200);
-                                    return "{\"message\":\"Tags removed.\"}";
+                                    try {
+                                        em.getTransaction().begin();
+                                        em.merge(game);
+                                        em.getTransaction().commit();
+                                        res.status(200);
+                                        return "{\"message\":\"Tags removed.\"}";
+                                    } catch (Throwable e) {
+                                        em.getTransaction().rollback();
+                                        res.status(500);
+                                        return "{\"message\":\"Something went wrong.\"}";
+                                    }
                                 }
                             }
                             res.status(401);
