@@ -38,33 +38,38 @@ public class HomeHandler extends AbstractHandler{
                         .parseClaimsJws(token).getBody();
                 Integer userId = (Integer) claims.get("id");
                 EntityManager em = emf.createEntityManager();
-                Query query = em.createQuery("FROM User u WHERE u.id = ?1");
-                query.setParameter(1, userId);
-                User user = (User) query.getSingleResult();
+                User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        .setParameter(1, userId)
+                        .getSingleResult();
                 UserForResponse userForResponse = new UserForResponse(user);            // User ready
-                Query query1 = em.createQuery("SELECT likedTags FROM User u WHERE u.id = ?1");
-                query1.setParameter(1, userId);
-                @SuppressWarnings("unchecked") List<Tag> tags = (List<Tag>) query1.getResultList();
+                @SuppressWarnings("unchecked") List<Tag> tags = (List<Tag>) em.createQuery("SELECT likedTags FROM User u WHERE u.id = ?1")
+                        .setParameter(1, userId)
+                        .getResultList();
                 fillTags(em, tags);                                                    // Tags ready
-                Query query2 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1").setMaxResults(5);
-                query2.setParameter(1, tags.get(0).getName());
-                @SuppressWarnings("unchecked")List<Game> gamesTag1 = (List<Game>) query2.getResultList();
+                @SuppressWarnings("unchecked")List<Game> gamesTag1 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                        .setMaxResults(5)
+                        .setParameter(1, tags.get(0).getName())
+                        .getResultList();
                 List<GameForResponse> gamesForResponse1 = gameForResponseList(gamesTag1);
-                Query query3 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1").setMaxResults(5);
-                query3.setParameter(1, tags.get(1).getName());
-                @SuppressWarnings("unchecked")List<Game> gamesTag2 = (List<Game>)query3.getResultList();
+                @SuppressWarnings("unchecked")List<Game> gamesTag2 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                        .setMaxResults(5)
+                        .setParameter(1, tags.get(1).getName())
+                        .getResultList();
                 List<GameForResponse> gamesForResponse2 = gameForResponseList(gamesTag2);
-                Query query4 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1").setMaxResults(5);
-                query4.setParameter(1, tags.get(2).getName());
-                @SuppressWarnings("unchecked")List<Game> gamesTag3 = (List<Game>)query4.getResultList();
+                @SuppressWarnings("unchecked")List<Game> gamesTag3 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                        .setMaxResults(5)
+                        .setParameter(1, tags.get(2).getName())
+                        .getResultList();
                 List<GameForResponse> gamesForResponse3 = gameForResponseList(gamesTag3);
-                Query query5 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1").setMaxResults(5);
-                query5.setParameter(1, tags.get(3).getName());
-                @SuppressWarnings("unchecked")List<Game> gamesTag4 = (List<Game>)query5.getResultList();
+                @SuppressWarnings("unchecked")List<Game> gamesTag4 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                        .setMaxResults(5)
+                        .setParameter(1, tags.get(3).getName())
+                        .getResultList();
                 List<GameForResponse> gamesForResponse4 = gameForResponseList(gamesTag4);
-                Query query6 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1").setMaxResults(5);
-                query6.setParameter(1, tags.get(4).getName());
-                @SuppressWarnings("unchecked")List<Game> gamesTag5 = (List<Game>)query6.getResultList();
+                @SuppressWarnings("unchecked")List<Game> gamesTag5 = (List<Game>)em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                        .setMaxResults(5)
+                        .setParameter(1, tags.get(4).getName())
+                        .getResultList();
                 List<GameForResponse> gamesForResponse5 = gameForResponseList(gamesTag5);
                 List<TagForResponse> tagForResponseList = tagForResponseList(tags);
                 HomeResponse homeResponse = new HomeResponse(userForResponse, tagForResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
@@ -95,8 +100,8 @@ public class HomeHandler extends AbstractHandler{
 
     private void fillTags(EntityManager em, List<Tag> tags) {
         if (tags.size() < 5){
-            Query query2 = em.createQuery("SELECT availableTag FROM AvailableTag a");
-            @SuppressWarnings("unchecked") List<String> availableTags = (List<String>) query2.getResultList();
+            @SuppressWarnings("unchecked") List<String> availableTags = (List<String>) em.createQuery("SELECT availableTag FROM AvailableTag a")
+                    .getResultList();
             for (String availableTag : availableTags) {
                 boolean isContained = false;
                 for (Tag tag : tags) {

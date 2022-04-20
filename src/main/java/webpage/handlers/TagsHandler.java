@@ -59,8 +59,8 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("FROM AvailableTag");
-                    @SuppressWarnings("unchecked") List<AvailableTag> availableTags = query1.getResultList();
+                    @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")
+                            .getResultList();
                     String token = req.headers("token");
                     if (verifyJWT(token)) {
                         Claims claims = Jwts.parser()
@@ -81,7 +81,7 @@ public class TagsHandler extends AbstractHandler {
                                                 break;
                                             }
                                         }
-                                        if (!isContained) em2.persist(new AvailableTag(tag.getName()));
+                                        if (!isContained) em2.merge(new AvailableTag(tag.getName()));
                                         em2.getTransaction().commit();
                                     }catch (Throwable r) {
                                         em2.getTransaction().rollback();
@@ -107,8 +107,9 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("FROM AvailableTag a");
-                    @SuppressWarnings("unchecked") List<AvailableTag> availableTags = query1.getResultList();
+
+                    @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag a")
+                            .getResultList();
                     String token = req.headers("token");
                     if (verifyJWT(token)) {
                         Claims claims = Jwts.parser()
@@ -132,8 +133,12 @@ public class TagsHandler extends AbstractHandler {
                                     em2.getTransaction().commit();
                                     em2.getTransaction().begin();
                                     for (Tag tag : tagsRequest.getTags()) {
-                                        @SuppressWarnings("unchecked") List<Game> games = (List<Game>) em2.createQuery("SELECT t.games FROM Tag t WHERE t.name = ?1").setParameter(1, tag.getName()).getResultList();
-                                        @SuppressWarnings("unchecked") List<User> users = (List<User>) em2.createQuery("SELECT t.users FROM Tag t WHERE t.name = ?1").setParameter(1, tag.getName()).getResultList();
+                                        @SuppressWarnings("unchecked") List<Game> games = (List<Game>) em2.createQuery("SELECT t.games FROM Tag t WHERE t.name = ?1")
+                                                .setParameter(1, tag.getName())
+                                                .getResultList();
+                                        @SuppressWarnings("unchecked") List<User> users = (List<User>) em2.createQuery("SELECT t.users FROM Tag t WHERE t.name = ?1")
+                                                .setParameter(1, tag.getName())
+                                                .getResultList();
                                         for (Game game : games) {
                                             game.removeTag(tag);
                                             em2.merge(game);
@@ -173,10 +178,10 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         Integer userId1 = (Integer) claims.get("id");
                         EntityManager em = emf.createEntityManager();
-                        Query userLikedTagsQuery = em.createQuery("SELECT likedTags FROM User u WHERE u.id = :id");
-                        userLikedTagsQuery.setParameter("id", userId1);
                         try {
-                            @SuppressWarnings("unchecked") List<Tag> userlikedTags = userLikedTagsQuery.getResultList();
+                            @SuppressWarnings("unchecked") List<Tag> userlikedTags = em.createQuery("SELECT likedTags FROM User u WHERE u.id = :id")
+                                    .setParameter("id", userId1)
+                                    .getResultList();
                             UserTagsResponse response = new UserTagsResponse(userlikedTags);
                             Gson gson = new Gson();
                             res.status(200);
@@ -201,10 +206,10 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         Integer userId1 = (Integer) claims.get("id");
                         EntityManager em = emf.createEntityManager();
-                        Query query = em.createQuery("FROM User u WHERE u.id = :id");
-                        query.setParameter("id", userId1);
                         try {
-                            User user = (User) query.getSingleResult();
+                            User user = (User) em.createQuery("FROM User u WHERE u.id = :id")
+                                    .setParameter("id", userId1)
+                                    .getSingleResult();
                             Set<Tag> userLikedTags = user.getLikedTags();
                             for (Tag tag : tagsRequest.getTags()) {
                                 userLikedTags.remove(tag);
@@ -234,8 +239,8 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("SELECT availableTag FROM AvailableTag");
-                    @SuppressWarnings("unchecked") List<String> availableTags = query1.getResultList();
+                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag")
+                            .getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
                     }
@@ -245,10 +250,10 @@ public class TagsHandler extends AbstractHandler {
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
                         Integer userId1 = (Integer) claims.get("id");
-                        Query query2 = em.createQuery("FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId1);
                         try {
-                            User user = (User) query2.getSingleResult();
+                            User user = (User) em.createQuery("FROM User u WHERE u.id = :id")
+                                    .setParameter("id", userId1)
+                                    .getSingleResult();
                             Set<Tag> userLikedTags = user.getLikedTags();
                             userLikedTags.addAll(tagsRequest.getTags());
                             user.setLikedTags(userLikedTags);
@@ -278,8 +283,8 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("SELECT availableTag FROM AvailableTag");
-                    @SuppressWarnings("unchecked") List<String> availableTags = query1.getResultList();
+                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag")
+                            .getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
                     }
@@ -289,10 +294,10 @@ public class TagsHandler extends AbstractHandler {
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
                         Integer userId1 = (Integer) claims.get("id");
-                        Query query2 = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId1);
                         try {
-                            @SuppressWarnings("unchecked") List<Game> createdGames = (List<Game>) query2.getResultList();
+                            @SuppressWarnings("unchecked") List<Game> createdGames = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                                    .setParameter("id", userId1)
+                                    .getResultList();
                             String gameId = req.headers("gameId");
                             int gameid1 = Integer.parseInt(gameId);
                             for (Game game : createdGames) {
@@ -329,8 +334,7 @@ public class TagsHandler extends AbstractHandler {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("SELECT availableTag FROM AvailableTag");
-                    @SuppressWarnings("unchecked") List<String> availableTags = query1.getResultList();
+                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag").getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
                     }
@@ -341,10 +345,10 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         String userId = (String) claims.get("id");
                         Integer userId1 = Integer.parseInt(userId);
-                        Query query2 = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
-                        query2.setParameter("id", userId1);
                         try {
-                            @SuppressWarnings("unchecked") List<Game> createdGames = (List<Game>) query2.getResultList();
+                            @SuppressWarnings("unchecked") List<Game> createdGames = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                                    .setParameter("id", userId1)
+                                    .getResultList();
                             String gameId = req.headers("gameId");
                             int gameid1 = Integer.parseInt(gameId);
                             for (Game game : createdGames) {
@@ -382,13 +386,10 @@ public class TagsHandler extends AbstractHandler {
                 String searchTag = req.params(":searchTag");
                 String token = req.headers("token");
                 if (verifyJWT(token)) {
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
                     EntityManager em = emf.createEntityManager();
-                    Query query = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search");
-                    query.setParameter("search", searchTag);
-                    @SuppressWarnings("unchecked") List<Game> games = query.getResultList();
+                    @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
+                            .setParameter("search", searchTag)
+                            .getResultList();
                     List<GameForResponse> gamesForResponse = new ArrayList<>();
                     for (Game game : games) {
                         gamesForResponse.add(new GameForResponse(game));

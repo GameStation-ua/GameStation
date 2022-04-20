@@ -28,10 +28,11 @@ public class RegisterHandler extends AbstractHandler {
                     return "{\"message\":\"You need to fill all the fields\"}";
                 }
                 final EntityManager em = emf.createEntityManager();
-                Query query = em.createQuery("SELECT user FROM User user WHERE user.username like :username");
-                query = query.setParameter("username", registerRequest.getUsername());
+
                 try {
-                    query.getSingleResult();
+                    em.createQuery("SELECT user FROM User user WHERE user.username like :username")
+                            .setParameter("username", registerRequest.getUsername())
+                            .getSingleResult();
                     res.type("application/json");
                     res.status(200);
                     return "{\"message\":\"Username already taken.\"}";

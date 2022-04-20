@@ -8,6 +8,7 @@ import webpage.requestFormats.UserTagsRequest;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.ArrayList;
 
 import static spark.Spark.get;
@@ -62,7 +63,7 @@ public class MyHandler extends AbstractHandler {
         });
     }
 
-
+@PrimaryKeyJoinColumn
     @Override
     public HandlerType getType() {
         return null;

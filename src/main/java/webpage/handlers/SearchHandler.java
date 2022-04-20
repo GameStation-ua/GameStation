@@ -29,12 +29,12 @@ public class SearchHandler extends AbstractHandler{
                String token = req.headers("token");
                if (verifyJWT(token)) {
                    EntityManager em = emf.createEntityManager();
-                   Query query = em.createQuery("FROM Game g WHERE UPPER(g.title) LIKE ?1");
-                   query.setParameter(1, "%" + searchTag.toUpperCase() + "%");
-                   Query query1 = em.createQuery("FROM User u WHERE UPPER(u.nickname) LIKE ?1");
-                   query1.setParameter(1, "%" + searchTag.toUpperCase() + "%");
-                   @SuppressWarnings("unchecked") List<Game> games = query.getResultList();
-                   @SuppressWarnings("unchecked") List<User> users = query1.getResultList();
+                   @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.title) LIKE ?1")
+                           .setParameter(1, "%" + searchTag.toUpperCase() + "%")
+                           .getResultList();
+                   @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.nickname) LIKE ?1")
+                           .setParameter(1, "%" + searchTag.toUpperCase() + "%")
+                           .getResultList();
                    List<GameForResponse> gamesForResponse = new ArrayList<>();
                    for (Game game : games) {
                        gamesForResponse.add(new GameForResponse(game));

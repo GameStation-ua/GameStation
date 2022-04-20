@@ -27,10 +27,10 @@ public class GameListHandler extends AbstractHandler{
                 String token = req.headers("token");
                 if (verifyJWT(token)){
                     EntityManager em = emf.createEntityManager();
-                    Query query = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1");
                     Long userId = (long) Integer.parseInt(req.params("userId"));
-                    query.setParameter(1, userId);
-                    @SuppressWarnings("unchecked") List<UserGame> gameList = (List<UserGame>) query.getResultList();
+                    @SuppressWarnings("unchecked") List<UserGame> gameList = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1")
+                            .setParameter(1, userId)
+                            .getResultList();
                     Gson gson = new Gson();
                     res.status(200);
                     return gson.toJson(gameList);
@@ -52,9 +52,9 @@ public class GameListHandler extends AbstractHandler{
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
                         EntityManager em = emf.createEntityManager();
-                        Query query = em.createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1");
-                        query.setParameter(1, (long) userId1);
-                        @SuppressWarnings("unchecked") List<Long> gamesIds = query.getResultList();
+                        @SuppressWarnings("unchecked") List<Long> gamesIds = em.createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1")
+                                .setParameter(1, (long) userId1)
+                                .getResultList();
                         if (!gamesIds.contains(gameListRequest.getGameId())) {
                             UserGame userGame = new UserGame();
                             userGame.setUserId((long) userId1);
@@ -98,10 +98,10 @@ public class GameListHandler extends AbstractHandler{
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
                         EntityManager em = emf.createEntityManager();
-                        Query query = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2");
-                        query.setParameter(1, gameListRequest.getGameId());
-                        query.setParameter(2, (long) userId1);
-                        @SuppressWarnings("unchecked") List<UserGame> game = query.getResultList();
+                        @SuppressWarnings("unchecked") List<UserGame> game = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
+                                .setParameter(1, gameListRequest.getGameId())
+                                .setParameter(2, (long) userId1)
+                                .getResultList();
                         if (!game.isEmpty()) {
                             UserGame userGame = game.get(0);
                             try {
@@ -141,10 +141,10 @@ public class GameListHandler extends AbstractHandler{
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
                         EntityManager em = emf.createEntityManager();
-                        Query query = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2");
-                        query.setParameter(1, gameListRequest.getGameId());
-                        query.setParameter(2, (long) userId1);
-                        @SuppressWarnings("unchecked") List<UserGame> game = query.getResultList();
+                        @SuppressWarnings("unchecked") List<UserGame> game = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
+                                .setParameter(1, gameListRequest.getGameId())
+                                .setParameter(2, (long) userId1)
+                                .getResultList();
                         if (!game.isEmpty()) {
                             UserGame userGame = game.get(0);
                             userGame.setStatus(gameListRequest.getStatus());

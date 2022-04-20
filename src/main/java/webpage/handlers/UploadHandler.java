@@ -43,9 +43,6 @@ public class UploadHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Integer userId = (Integer) claims.get("id");
                     request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                    EntityManager em = emf.createEntityManager();
-                    Query query = em.createQuery("FROM User u WHERE u.id = :id");
-                    query.setParameter("id", userId);
                     try {
                         try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
                             File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
@@ -73,10 +70,9 @@ public class UploadHandler extends AbstractHandler{
                     String gameid = request.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
                     EntityManager em = emf.createEntityManager();
-                    Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
-                    query.setParameter("id", userId);
-                    @SuppressWarnings("unchecked") List<Game> gameList = query.getResultList();
-                    boolean gameFound = false;
+                    @SuppressWarnings("unchecked") List<Game> gameList = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                            .setParameter("id", userId)
+                            .getResultList();
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {
                             request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
@@ -104,9 +100,9 @@ public class UploadHandler extends AbstractHandler{
                     String gameid = req.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
                     EntityManager em = emf.createEntityManager();
-                    Query query = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id");
-                    query.setParameter("id", userId1);
-                    @SuppressWarnings("unchecked") List<Game> gameList = query.getResultList();
+                    @SuppressWarnings("unchecked") List<Game> gameList = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                            .setParameter("id", userId1)
+                            .getResultList();
                     em.close();
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {

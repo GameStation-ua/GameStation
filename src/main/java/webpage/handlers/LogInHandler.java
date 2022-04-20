@@ -36,10 +36,10 @@ public class LogInHandler extends AbstractHandler{
                 LogInRequest logInRequest = new Gson().fromJson(request.body(), LogInRequest.class);
                 if (logInRequest.getUsername() != null && logInRequest.getPassword() != null) {
                     EntityManager em = emf.createEntityManager();
-                    Query query1 = em.createQuery("FROM User u WHERE u.username = :username");
-                    query1.setParameter("username", logInRequest.getUsername());
                     try {
-                        User user = (User) query1.getSingleResult();
+                        User user = (User) em.createQuery("FROM User u WHERE u.username = :username")
+                                .setParameter("username", logInRequest.getUsername())
+                                .getSingleResult();
                         if (user.getPassword().equals(logInRequest.getPassword())) {
                             String jws = generateToken(user);
                             response.status(200);
