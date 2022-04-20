@@ -20,8 +20,8 @@ public class Thread {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "CREATION_DATE")
-    private Date creationDate;
+    @Column(name = "DATE")
+    private Date Date;
 
     @Column(name = "DESCRIPTION")
     private String description;

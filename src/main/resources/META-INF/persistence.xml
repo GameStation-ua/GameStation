@@ -16,6 +16,7 @@
         <class>webpage.entity.AvailableTag</class>
         <class>webpage.entity.Thread</class>
         <class>webpage.entity.Comment</class>
+        <class>webpage.entity.GameUpdate</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />

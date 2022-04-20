@@ -38,6 +38,9 @@ public class Game {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
     private Set<Comment> comments;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
+    private Set<GameUpdate> gameUpdates;
+
     public Game() {
     }
 
