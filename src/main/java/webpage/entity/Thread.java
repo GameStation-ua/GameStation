@@ -21,7 +21,7 @@ public class Thread implements Actor{
     private String title;
 
     @Column(name = "DATE", nullable = false)
-    private Date Date;
+    private Date Date = new Date();
 
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;

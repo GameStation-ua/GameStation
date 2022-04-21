@@ -27,8 +27,14 @@ public class User implements Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserGame> userGame;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Comment> likedComments;
+
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<GameRequest> gameRequests;
 
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinTable(name = "GAME_FOLLOWERS")

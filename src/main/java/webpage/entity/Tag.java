@@ -1,9 +1,6 @@
 package webpage.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -17,6 +14,9 @@ public class Tag {
 
     @ManyToMany(mappedBy = "likedTags")
     private Set<User> users;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<GameRequest> gameRequestsWithTag;
 
     public Tag() {
     }

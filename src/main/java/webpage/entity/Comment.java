@@ -3,6 +3,7 @@ package webpage.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 public class Comment {
@@ -15,7 +16,7 @@ public class Comment {
     private Long userId;
 
     @Column(name = "DATE", nullable = false)
-    private Date date;
+    private Date date = new Date();
 
     @Column(name = "CONTENT", nullable = false)
     private String content;
@@ -29,6 +30,9 @@ public class Comment {
 
     @Column(name = "VOTES", nullable = false)
     private int votes = 0;
+
+    @ManyToMany(mappedBy = "likedComments")
+    private Set<User> userWhoLiked;
 
     public Long getId() {
         return id;
