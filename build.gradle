@@ -11,9 +11,14 @@ plugins {
     id 'java'
     id 'application'
 }
+gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
+
 
 repositories {
     mavenCentral()
+}
+application {
+    mainClass = 'org.example.Main'
 }
 
 dependencies {
@@ -21,11 +26,11 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.hibernate:hibernate-core:5.6.7.Final'
     implementation 'org.hsqldb:hsqldb:2.6.1'
-    implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.6.7.Final'
+    implementation 'org.hibernate:hibernate-entitymanager:5.6.7.Final'
     implementation 'com.sparkjava:spark-core:2.9.3'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation 'org.json:json:20210307'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
 
 
     testImplementation 'junit:junit:4.13.2'
