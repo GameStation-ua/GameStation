@@ -94,9 +94,9 @@
     </div>
     <home v-if="tab==='home'"></home>
     <AdminMenu v-if="tab==='adminMenu'"></AdminMenu>
-
     <router-view/>
   </template>
+  <notifications />
 </template>
 
 <style>
