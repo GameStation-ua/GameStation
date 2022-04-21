@@ -61,7 +61,7 @@ public class TagsHandler extends AbstractHandler {
                     EntityManager em = emf.createEntityManager();
                     @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")
                             .getResultList();
-                    String token = req.headers("token");
+                    String token = req.headers("Authorization");
                     if (verifyJWT(token)) {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)

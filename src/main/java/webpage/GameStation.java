@@ -14,9 +14,9 @@ public class GameStation {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
+        enableCORS();
         staticFiles.location("/public");
         port(8443);
-        enableCORS();
         HandlerProvider handlerProvider = new HandlerProviderImpl(emf);
         final Iterable<Handler> handlers = handlerProvider.getAllHandlers();
         for (final Handler handler : handlers) handler.handle();
