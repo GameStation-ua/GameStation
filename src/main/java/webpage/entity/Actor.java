@@ -1,7 +1,6 @@
 package webpage.entity;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.Set;
 
 public interface Actor {

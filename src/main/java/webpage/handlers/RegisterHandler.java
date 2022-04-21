@@ -6,7 +6,9 @@ import webpage.entity.User;
 import webpage.requestFormats.RegisterRequest;
 import webpage.util.HandlerType;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import java.nio.charset.StandardCharsets;
 
 import static spark.Spark.path;

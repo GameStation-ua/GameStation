@@ -17,9 +17,7 @@ gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 repositories {
     mavenCentral()
 }
-application {
-    mainClass = 'org.example.Main'
-}
+
 
 dependencies {
     // This dependency is used by the application.

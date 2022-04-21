@@ -9,7 +9,6 @@ import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import java.util.List;
 
 import static spark.Spark.*;
