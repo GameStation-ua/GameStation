@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from 'vue'
-import Store from "@/store";
+
+import { ref , defineEmits} from 'vue'
+import { notify } from "@kyvg/vue3-notification";
 
 
 
+const emit = defineEmits(['changeTab'])
 
 const user = ref({})
 const input = ref({
@@ -13,10 +15,6 @@ const input = ref({
   verifypassword: "",
 })
 
-var one = false;
-var two = false;
-var three = false;
-var four = false
 function register () {
   var xhr = new XMLHttpRequest()
   const hashed = {
@@ -24,18 +22,20 @@ function register () {
     nickname : input.value.nickname,
     password : input.value.password
   }
-
+//  hashed.password = sha512(hashed.password)
   var json = JSON.stringify(hashed)
-  xhr.open("POST", "http://localhost:8443/register", false),
+  xhr.open("POST", "http://localhost:8443/register", false)
       xhr.setRequestHeader("Content-Type", "application/json")
   xhr.send(json)
   console.log(json)
   if (xhr.status === 200){
-    Store.state.mesage = ""
-    localStorage.setItem("token",xhr.responseText)
-    console.log(localStorage.getItem("token"))
+    notify({
+      title: "Vue 3 notification 🎉",
+    });
+    emit('changeTab', 'login')
   }
 }
+
 
 
 
@@ -76,5 +76,9 @@ function register () {
   width: 80%;
   margin-left: 50px;
 
+}
+
+.vue-notification{
+  color: #42b983;
 }
 </style>

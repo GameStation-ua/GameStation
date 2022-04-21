@@ -5,7 +5,7 @@
   // eslint-disable-next-line no-unused-vars
   import Register from './register'
   import Store from "@/store";
-  const tab = ref('login')
+  var tab = ref('login')
 
 
   function verify (){
@@ -18,6 +18,7 @@
       Store.state.mesage = "send to home"
     }
   }
+
 </script>
 <template>
   <div class="start">
@@ -30,7 +31,7 @@
       <img class="logo" alt="GS logo" src="@/assets/logo_tp_medios.png">
       <Login v-if="tab==='login'">
       </Login>
-      <Register v-if="tab==='register'">
+      <Register @changeTab="(newtab)=>tab = newtab" v-if="tab==='register'">
       </Register>
     </div>
   </div>

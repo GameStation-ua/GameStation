@@ -6,7 +6,10 @@ export default {
     return {
       popupActivo1:false,
       popupActivo2:false,
-      tags:["hola", "vos", "hola"]
+      tag:'',
+      tags:{
+        tags:[]
+      }
     }
   },
   methods:{
@@ -16,18 +19,31 @@ export default {
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
-      var data = JSON.parse(res.response)
-      if (res.status === 200){
-        console.log(data)
-      }
+      this.tags = JSON.parse(res.response)
+
+    },
+
+    sendTags(){
+      var res = new XMLHttpRequest()
+      var json = JSON.stringify(this.tags)
+      res.open("POST", "localhost:8443/tags/available_tags/add", false)
+      res.setRequestHeader("Accept", "application/json")
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("Authorization", localStorage.getItem("token"))
+      console.log(json)
+      res.send(json)
+    },
+
+    addTag(){
+      this.tags.tags.push({"name": this.tag})
+      this.sendTags()
     }
-  }
+  },
 }
 </script>
 
 <template>
   <div>
-    {{getTags()}}
     <h1>Admin Menu</h1>
     <div class="">
       <vs-tabs color="success">
@@ -45,8 +61,8 @@ export default {
             <p>
               Add tag here
             </p>
-            <vs-input placeholder="Tag" color="success" v-model="$store.state.tag"/>
-            <vs-button  color="success" type="filled">Add Tag</vs-button>
+            <vs-input placeholder="Tag" color="success" v-model="this.tag"/>
+            <vs-button @click="addTag" color="success" type="filled">Add Tag</vs-button>
             <vs-button @click="popupActivo1=false" color="dark" type="flat">Cancel</vs-button>
           </vs-popup>
           <vs-popup class="tagpopup"  title="Delate Tag" :active.sync="popupActivo2" button-close-hidden="true">
