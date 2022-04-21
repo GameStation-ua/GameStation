@@ -21,7 +21,7 @@
     }
     hashed.password = sha512(hashed.password)
     var json = JSON.stringify(hashed)
-    xhr.open("POST", "http://localhost:8443/login", false),
+    xhr.open("POST", "/login", false),
     xhr.setRequestHeader("Content-Type", "application/json")
     xhr.send(json)
     console.log(json)

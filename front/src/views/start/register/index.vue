@@ -24,7 +24,7 @@ function register () {
   }
 //  hashed.password = sha512(hashed.password)
   var json = JSON.stringify(hashed)
-  xhr.open("POST", "http://localhost:8443/register", false)
+  xhr.open("POST", "/register", false)
       xhr.setRequestHeader("Content-Type", "application/json")
   xhr.send(json)
   console.log(json)

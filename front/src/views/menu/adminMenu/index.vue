@@ -15,7 +15,7 @@ export default {
   methods:{
     getTags(){
       var res = new XMLHttpRequest()
-      res.open("GET", "http://localhost:8443/tags/available_tags", false)
+      res.open("GET", "/tags/available_tags", false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
@@ -26,7 +26,7 @@ export default {
     sendTags(){
       var res = new XMLHttpRequest()
       var json = JSON.stringify(this.tags)
-      res.open("POST", "localhost:8443/tags/available_tags/add", false)
+      res.open("PATCH", "/tags/available_tags/add", false)
       res.setRequestHeader("Accept", "application/json")
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("Authorization", localStorage.getItem("token"))
