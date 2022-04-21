@@ -55,13 +55,13 @@ public class TagsHandler extends AbstractHandler {
                     }
                 });
 
-                post("/add", "application/json", (req, res) -> {
+                patch("/add", "application/json", (req, res) -> {
                     Gson gson = new Gson();
                     AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
                     @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")
                             .getResultList();
-                    String token = req.headers("Authorization");
+                    String token = req.headers("token");
                     if (verifyJWT(token)) {
                         Claims claims = Jwts.parser()
                                 .setSigningKey(key)

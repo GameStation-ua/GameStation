@@ -42,7 +42,7 @@ public class GameStation {
 
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
-            response.header("Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
+            response.header("Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH");
             response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token, imgType, gameId");
             response.type("application/json");
         });
