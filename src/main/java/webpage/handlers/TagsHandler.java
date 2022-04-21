@@ -55,7 +55,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                 });
 
-                patch("/add", "application/json", (req, res) -> {
+                post("/add", "application/json", (req, res) -> {
                     Gson gson = new Gson();
                     AvailableTagsRequest tagsRequest = gson.fromJson(req.body(), AvailableTagsRequest.class);
                     EntityManager em = emf.createEntityManager();
