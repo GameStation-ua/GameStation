@@ -4,14 +4,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-public class Game implements Actor{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private int id;
-
-    @Column(name = "TITLE", nullable = false)
-    private String title;
+public class Game extends Actor{
 
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
@@ -21,9 +14,6 @@ public class Game implements Actor{
 
     @Column(name = "IMGS_IN_CAROUSEL", nullable = false)
     private int imgsInCarousel = 0;
-
-    @ManyToMany(mappedBy = "followedGames")
-    private Set<User> followers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<UserGame> userGames;
@@ -43,16 +33,40 @@ public class Game implements Actor{
     public Game() {
     }
 
+    public String getWiki() {
+        return wiki;
+    }
+
+    public void setWiki(String wiki) {
+        this.wiki = wiki;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<GameUpdate> getGameUpdates() {
+        return gameUpdates;
+    }
+
+    public void setGameUpdates(Set<GameUpdate> gameUpdates) {
+        this.gameUpdates = gameUpdates;
+    }
+
     public void removeTag(Tag tag){
         tags.remove(tag);
     }
 
     public String getTitle() {
-        return title;
+        return super.getName();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        super.setName(title);
     }
 
     public String getDescription() {
@@ -61,33 +75,6 @@ public class Game implements Actor{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public boolean sendNotification(Notification notification, EntityManager em) {
-        try {
-            em.getTransaction().begin();
-            for (User follower : followers) {
-                follower.addNotification(notification);
-            }
-            em.getTransaction().commit();
-            return true;
-        }catch (Throwable e){
-            return false;
-        }
-    }
-
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    @Override
-    public String getName() {
-        return title;
-    }
-
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
     }
 
     public Set<UserGame> getUserGames() {
@@ -114,12 +101,12 @@ public class Game implements Actor{
         this.tags = tags;
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return super.getId();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long id) {
+        super.setId(id);
     }
 
     public int getImgsInCarousel() {

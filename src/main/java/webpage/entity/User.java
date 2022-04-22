@@ -5,15 +5,7 @@ import java.util.Set;
 
 
 @Entity
-public class User implements Actor{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private int id;
-
-    @Column (name = "NICK_NAME", nullable = false)
-    private String nickname;
+public class User extends Actor{
 
     @Column (name = "USER_NAME", nullable = false)
     private String username;
@@ -36,24 +28,12 @@ public class User implements Actor{
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<GameRequest> gameRequests;
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinTable(name = "GAME_FOLLOWERS")
-    private Set<Game> followedGames;
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "THREAD_FOLLOWERS")
-    private Set<Thread> followedThreads;
-
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinTable(name = "USER_FOLLOWERS")
-    private Set<User> followedUsers;
-
-    @ManyToMany(mappedBy = "followedUsers")
-    private Set<User> followers;
-
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "GAME_CREATORS")
     private Set<Game> createdGames;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Actor> followedActors;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> likedTags;
@@ -68,12 +48,84 @@ public class User implements Actor{
     private Set<Thread> createdThreads;
 
     public User(String nickname, String username, String password) {
-        this.nickname = nickname;
+        super.setName(nickname);
         this.username = username;
         this.password = password;
     }
 
     public User() {
+    }
+
+    public Set<UserGame> getUserGame() {
+        return userGame;
+    }
+
+    public void setUserGame(Set<UserGame> userGame) {
+        this.userGame = userGame;
+    }
+
+    public Set<Comment> getLikedComments() {
+        return likedComments;
+    }
+
+    public void setLikedComments(Set<Comment> likedComments) {
+        this.likedComments = likedComments;
+    }
+
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public Set<GameRequest> getGameRequests() {
+        return gameRequests;
+    }
+
+    public void setGameRequests(Set<GameRequest> gameRequests) {
+        this.gameRequests = gameRequests;
+    }
+
+    public Set<Game> getCreatedGames() {
+        return createdGames;
+    }
+
+    public void setCreatedGames(Set<Game> createdGames) {
+        this.createdGames = createdGames;
+    }
+
+    public Set<Actor> getFollowedActors() {
+        return followedActors;
+    }
+
+    public void setFollowedActors(Set<Actor> followedActors) {
+        this.followedActors = followedActors;
+    }
+
+    public Set<Comment> getCommentsMade() {
+        return commentsMade;
+    }
+
+    public void setCommentsMade(Set<Comment> commentsMade) {
+        this.commentsMade = commentsMade;
+    }
+
+    public Set<Comment> getProfileComments() {
+        return profileComments;
+    }
+
+    public void setProfileComments(Set<Comment> profileComments) {
+        this.profileComments = profileComments;
+    }
+
+    public Set<Thread> getCreatedThreads() {
+        return createdThreads;
+    }
+
+    public void setCreatedThreads(Set<Thread> createdThreads) {
+        this.createdThreads = createdThreads;
     }
 
     public void removeTag(Tag tag){
@@ -96,16 +148,16 @@ public class User implements Actor{
         isAdmin = admin;
     }
 
-    public int getId() {
-        return id;
+    public Long getId() {
+        return super.getId();
     }
 
     public String getNickname() {
-        return nickname;
+        return super.getName();
     }
 
-    public void setNickname(String nickName) {
-        this.nickname = nickName;
+    public void setNickname(String nickname) {
+        super.setName(nickname);
     }
 
     public String getUsername() {
@@ -128,27 +180,5 @@ public class User implements Actor{
         notifications.add(notification);
     }
 
-    @Override
-    public boolean sendNotification(Notification notification, EntityManager em) {
-        try {
-            em.getTransaction().begin();
-            for (User follower : followers) {
-                follower.addNotification(notification);
-            }
-            em.getTransaction().commit();
-            return true;
-        }catch (Throwable e){
-            return false;
-        }
-    }
 
-    @Override
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    @Override
-    public String getName() {
-        return nickname;
-    }
 }

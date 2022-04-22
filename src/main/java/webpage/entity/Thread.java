@@ -5,20 +5,13 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-public class Thread implements Actor{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class Thread extends Actor{
 
     @Column(name = "CREATOR_ID", nullable = false)
     private long creatorId;
 
     @Column(name = "FORUM_ID", nullable = false)
     private Long forumId;
-
-    @Column(name = "TITLE", nullable = false)
-    private String title;
 
     @Column(name = "DATE", nullable = false)
     private Date Date = new Date();
@@ -29,38 +22,59 @@ public class Thread implements Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
     private Set<Comment> comments;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "followedThreads")
-    private Set<User> followers;
+    public long getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(long creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public Long getForumId() {
+        return forumId;
+    }
+
+    public void setForumId(Long forumId) {
+        this.forumId = forumId;
+    }
+
+    public String getTitle() {
+        return super.getName();
+    }
+
+    public void setTitle(String title) {
+        super.setName(title);
+    }
+
+    public java.util.Date getDate() {
+        return Date;
+    }
+
+    public void setDate(java.util.Date date) {
+        Date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 
     public Long getId() {
-        return id;
+        return super.getId();
     }
 
     public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean sendNotification(Notification notification, EntityManager em) {
-        try {
-            em.getTransaction().begin();
-            for (User follower : followers) {
-                follower.addNotification(notification);
-            }
-            em.getTransaction().commit();
-            return true;
-        }catch (Throwable e){
-            return false;
-        }
-    }
-
-    @Override
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    @Override
-    public String getName() {
-        return title;
+        super.setId(id);
     }
 }

@@ -3,7 +3,7 @@ package webpage.responseFormats;
 import webpage.entity.Game;
 
 public class GameForResponse {
-    private final int id;
+    private final long id;
     private final String title;
     private final String description;
     private final int  imgsInCarousel;

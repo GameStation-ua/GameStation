@@ -14,7 +14,11 @@ public class GameStation {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
-        staticFiles.location("/public");
+//        staticFiles.location("/public");
+        String projectDir = System.getProperty("user.dir");
+        String staticDir = "/src/main/resources/public";
+        staticFiles.externalLocation(projectDir + staticDir);
+        // use location on real server
         port(8443);
         enableCORS();
         HandlerProvider handlerProvider = new HandlerProviderImpl(emf);

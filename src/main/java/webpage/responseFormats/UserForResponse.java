@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserForResponse {
-    private final int id;
+    private final long id;
     private final String nickname;
     private final Set<String> likedTags;
 
