@@ -10,8 +10,8 @@ public class Thread extends Actor{
     @Column(name = "CREATOR_ID", nullable = false)
     private long creatorId;
 
-    @Column(name = "FORUM_ID", nullable = false)
-    private Long forumId;
+    @Column(name = "GAME_ID", nullable = false)
+    private Long gameId;
 
     @Column(name = "DATE", nullable = false)
     private Date Date = new Date();
@@ -27,12 +27,12 @@ public class Thread extends Actor{
         this.creatorId = creatorId;
     }
 
-    public Long getForumId() {
-        return forumId;
+    public Long getGameId() {
+        return gameId;
     }
 
-    public void setForumId(Long forumId) {
-        this.forumId = forumId;
+    public void setGameId(Long gameId) {
+        this.gameId = gameId;
     }
 
     public String getTitle() {

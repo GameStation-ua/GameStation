@@ -28,7 +28,7 @@ public class ABMGamesHandler extends AbstractHandler{
     @Override
     public void handle() {
 // todo implementar ABM juegos
-        path("/game", () -> {
+        path("", () -> {
             get("/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (verifyJWT(token)){
@@ -63,43 +63,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 }
             });
 
-            post("/comment/:gameId", (req, res) -> {
-                String token = req.headers("token");
-                if (verifyJWT(token)) {
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    Long userId = Long.valueOf((Integer) claims.get("id"));
-                    Long gameId = Long.valueOf(req.params(":gameId"));
-                    EntityManager em = emf.createEntityManager();
-                    Game game;
-                    try {
-                        game = (Game) em.createQuery("FROM Game g WHERE g.id = ?1")
-                                .setParameter(1, gameId)
-                                .getSingleResult();
-                    } catch (NoResultException e) {
-                        res.status(400);
-                        return "{\"message\":\"Game not found.\"}";
-                    }
-                    Gson gson = new Gson();
-                    CommentRequest commentRequest = gson.fromJson(req.body(), CommentRequest.class);
-                    Comment comment = new Comment(userId, gameId, commentRequest.getContent());
-                    game.addComment(comment);
-                    try{
-                        em.getTransaction().begin();
-                        em.merge(game);
-                        em.getTransaction().commit();
-                        res.status(200);
-                        return "{\"message\":\"OK.\"}";
-                    }catch (Throwable e){
-                        res.status(500);
-                        return "{\"message\":\"Something went wrong.\"}";
-                    }
-                }else {
-                    res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
-                }
-            });
+
         });
     }
 

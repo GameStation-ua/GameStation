@@ -16,6 +16,9 @@ public class Game extends Actor{
     private int imgsInCarousel = 0;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
+    private Set<Thread> threads;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<UserGame> userGames;
 
     @ManyToMany(mappedBy = "createdGames")

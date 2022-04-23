@@ -33,6 +33,8 @@ public class HandlerProviderImpl implements HandlerProvider {
         handlers.put(abmGamesHandler.getType(), abmGamesHandler);
         final FollowHandler followHandler = new FollowHandler(emf);
         handlers.put(followHandler.getType(), followHandler);
+        final CommentHandler commentHandler = new CommentHandler(emf);
+        handlers.put(commentHandler.getType(), commentHandler);
     }
 
     @Override

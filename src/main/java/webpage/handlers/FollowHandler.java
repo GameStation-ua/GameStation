@@ -1,9 +1,13 @@
 package webpage.handlers;
 
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import webpage.entity.Actor;
+import webpage.entity.Notification;
+import webpage.entity.NotificationType;
 import webpage.entity.User;
+import webpage.requestFormats.FollowRequest;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
@@ -32,12 +36,14 @@ public class FollowHandler extends AbstractHandler{
                    Claims claims = Jwts.parser()
                            .setSigningKey(key)
                            .parseClaimsJws(token).getBody();
+                   Gson gson = new Gson();
+                   FollowRequest followRequest = gson.fromJson(req.body(), FollowRequest.class);
                    Long userId = Long.valueOf((Integer) claims.get("id"));
                    EntityManager em = emf.createEntityManager();
-                   Actor actor;
+                   User actor;
                    User user;
                    try {
-                       actor = (Actor) em.createQuery("FROM ACTOR a WHERE a.id = ?1")
+                       actor = (User) em.createQuery("FROM ACTOR a WHERE a.id = ?1")
                                .setParameter(1, Long.valueOf(req.params(":actorId")))
                                .getSingleResult();
                        user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
@@ -56,6 +62,7 @@ public class FollowHandler extends AbstractHandler{
                    }
                    if (!alreadyFollows) {
                        user.addFollowedActor(actor);
+                       actor.addNotification(new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath()));
                        try {
                            em.getTransaction().begin();
                            em.merge(user);

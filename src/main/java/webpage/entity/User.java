@@ -53,6 +53,8 @@ public class User extends Actor{
     public User() {
     }
 
+
+
     public Set<UserGame> getUserGame() {
         return userGame;
     }
