@@ -29,6 +29,10 @@ public class HandlerProviderImpl implements HandlerProvider {
         handlers.put(uploadHandler.getType(), uploadHandler);
         final GameListHandler gameListHandler = new GameListHandler(emf);
         handlers.put(gameListHandler.getType(), gameListHandler);
+        final ABMGamesHandler abmGamesHandler = new ABMGamesHandler(emf);
+        handlers.put(abmGamesHandler.getType(), abmGamesHandler);
+        final FollowHandler followHandler = new FollowHandler(emf);
+        handlers.put(followHandler.getType(), followHandler);
     }
 
     @Override

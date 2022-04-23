@@ -27,13 +27,15 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(NotificationType notType, Actor actor, Actor additional, String path){
-        this.path = path;
-        switch (notType){
-            case USER_COMMENTED_ON_GAME: this.content = actor.getName() + " posted a comment on " + additional.getName();
-            break;
 
-            default:
-        }
-    }
+    // todo implement notification constructor
+
+//    public Notification(NotificationType notType, Actor actor, Actor additional, String path){
+//        this.path = path;
+//        switch (notType){
+//            case USER_COMMENTED_ON_PROFILE: this.content = actor.getName() + "posted a comment on your profile";
+//            case USER_STARTED_FOLLOWING:
+//            default:
+//        }
+//    }
 }

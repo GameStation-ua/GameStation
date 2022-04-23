@@ -32,7 +32,7 @@ public class RegisterHandler extends AbstractHandler {
                 final EntityManager em = emf.createEntityManager();
 
                 try {
-                    em.createQuery("SELECT user FROM User user WHERE user.username like :username")
+                    em.createQuery("FROM User user WHERE user.username like :username")
                             .setParameter("username", registerRequest.getUsername())
                             .getSingleResult();
                     res.type("application/json");
@@ -50,11 +50,11 @@ public class RegisterHandler extends AbstractHandler {
                                 registerRequest.getUsername(),
                                 registerRequest.getPassword());
                         try{
-                        em.getTransaction().begin();
-                        em.persist(user1);
-                        em.getTransaction().commit();
-                        res.status(201);
-                        return "{\"message\":\"User created!\"}";
+                            em.getTransaction().begin();
+                            em.persist(user1);
+                            em.getTransaction().commit();
+                            res.status(201);
+                            return "{\"message\":\"User created!\"}";
                         }catch (Throwable r) {
                             em.getTransaction().rollback();
                             res.status(500);

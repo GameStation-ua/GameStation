@@ -181,4 +181,11 @@ public class User extends Actor{
     }
 
 
+    public void addFollowedActor(Actor actor) {
+        followedActors.add(actor);
+    }
+
+    public void removeFollowedActor(Actor actor) {
+        followedActors.remove(actor);
+    }
 }
