@@ -13,6 +13,9 @@ public class Actor {
     @ManyToMany(mappedBy = "followedActors")
     private Set<User> followers;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "actorId")
+    private Set<Comment> comments;
+
     private String name;
 
 
@@ -30,6 +33,10 @@ public class Actor {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void addComment(Comment comment){
+        comments.add(comment);
     }
 
     public boolean sendNotification(Notification notification, EntityManager em) {
@@ -50,6 +57,6 @@ public class Actor {
     }
 
     public String getName(){
-        return null;
+        return name;
     }
 }

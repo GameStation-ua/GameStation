@@ -7,7 +7,7 @@ import io.jsonwebtoken.Jwts;
 import webpage.entity.Game;
 import webpage.entity.Tag;
 import webpage.entity.User;
-import webpage.responseFormats.GameForResponse;
+import webpage.responseFormats.SoftGameForResponse;
 import webpage.responseFormats.HomeResponse;
 import webpage.responseFormats.TagForResponse;
 import webpage.responseFormats.UserForResponse;
@@ -49,27 +49,27 @@ public class HomeHandler extends AbstractHandler{
                         .setMaxResults(5)
                         .setParameter(1, tags.get(0).getName())
                         .getResultList();
-                List<GameForResponse> gamesForResponse1 = gameForResponseList(gamesTag1);
+                List<SoftGameForResponse> gamesForResponse1 = gameForResponseList(gamesTag1);
                 @SuppressWarnings("unchecked")List<Game> gamesTag2 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(1).getName())
                         .getResultList();
-                List<GameForResponse> gamesForResponse2 = gameForResponseList(gamesTag2);
+                List<SoftGameForResponse> gamesForResponse2 = gameForResponseList(gamesTag2);
                 @SuppressWarnings("unchecked")List<Game> gamesTag3 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(2).getName())
                         .getResultList();
-                List<GameForResponse> gamesForResponse3 = gameForResponseList(gamesTag3);
+                List<SoftGameForResponse> gamesForResponse3 = gameForResponseList(gamesTag3);
                 @SuppressWarnings("unchecked")List<Game> gamesTag4 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(3).getName())
                         .getResultList();
-                List<GameForResponse> gamesForResponse4 = gameForResponseList(gamesTag4);
+                List<SoftGameForResponse> gamesForResponse4 = gameForResponseList(gamesTag4);
                 @SuppressWarnings("unchecked")List<Game> gamesTag5 = (List<Game>)em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(4).getName())
                         .getResultList();
-                List<GameForResponse> gamesForResponse5 = gameForResponseList(gamesTag5);
+                List<SoftGameForResponse> gamesForResponse5 = gameForResponseList(gamesTag5);
                 List<TagForResponse> tagForResponseList = tagForResponseList(tags);
                 HomeResponse homeResponse = new HomeResponse(userForResponse, tagForResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
                 Gson gson = new Gson();
@@ -120,10 +120,10 @@ public class HomeHandler extends AbstractHandler{
         return HandlerType.HOME;
     }
 
-    private List<GameForResponse> gameForResponseList(List<Game> games){
-        List<GameForResponse> gamesForResponse = new ArrayList<>();
+    private List<SoftGameForResponse> gameForResponseList(List<Game> games){
+        List<SoftGameForResponse> gamesForResponse = new ArrayList<>();
         for (Game game : games) {
-            gamesForResponse.add(new GameForResponse(game));
+            gamesForResponse.add(new SoftGameForResponse(game));
         }
         return gamesForResponse;
     }

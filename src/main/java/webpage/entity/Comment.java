@@ -2,7 +2,9 @@ package webpage.entity;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,23 +18,28 @@ public class Comment {
     private Long userId;
 
     @Column(name = "DATE", nullable = false)
-    private Date date = new Date();
+    private final Date date = new Date();
 
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TARGET_ENTITY_TYPE", nullable = false)
-    private EntityType entityType;
-
-    @Column(name = "ENTITY_ID", nullable = false)
-    private Long entityId;
+    @Column(name = "ACTOR_ID")
+    private Long actorId;
 
     @Column(name = "VOTES", nullable = false)
     private int votes = 0;
 
     @ManyToMany(mappedBy = "likedComments")
-    private Set<User> userWhoLiked;
+    private Set<User> userWhoLiked = new HashSet<>();
+
+    public Comment(Long userId, Long actorId, String content) {
+        this.userId = userId;
+        this.actorId = actorId;
+        this.content = content;
+    }
+
+    public Comment() {
+    }
 
     public Long getId() {
         return id;

@@ -19,9 +19,6 @@ public class Thread extends Actor{
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
-    private Set<Comment> comments;
-
     public long getCreatorId() {
         return creatorId;
     }
@@ -60,14 +57,6 @@ public class Thread extends Actor{
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
     }
 
     public Long getId() {

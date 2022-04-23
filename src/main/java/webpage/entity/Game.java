@@ -24,9 +24,6 @@ public class Game extends Actor{
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
-    private Set<Comment> comments;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<GameUpdate> gameUpdates;
 
@@ -41,12 +38,14 @@ public class Game extends Actor{
         this.wiki = wiki;
     }
 
-    public Set<Comment> getComments() {
-        return comments;
+
+    @Override
+    public Set<User> getFollowers() {
+        return super.getFollowers();
     }
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
+    public void addComment(Comment comment){
+        super.addComment(comment);
     }
 
     public Set<GameUpdate> getGameUpdates() {

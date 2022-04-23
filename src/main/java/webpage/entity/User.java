@@ -41,9 +41,6 @@ public class User extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<Comment> commentsMade;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entityId")
-    private Set<Comment> profileComments;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<Thread> createdThreads;
 
@@ -110,14 +107,6 @@ public class User extends Actor{
 
     public void setCommentsMade(Set<Comment> commentsMade) {
         this.commentsMade = commentsMade;
-    }
-
-    public Set<Comment> getProfileComments() {
-        return profileComments;
-    }
-
-    public void setProfileComments(Set<Comment> profileComments) {
-        this.profileComments = profileComments;
     }
 
     public Set<Thread> getCreatedThreads() {

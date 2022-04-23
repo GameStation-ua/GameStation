@@ -3,7 +3,7 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import webpage.entity.Game;
 import webpage.entity.User;
-import webpage.responseFormats.GameForResponse;
+import webpage.responseFormats.SoftGameForResponse;
 import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.UserForResponse;
 import webpage.util.HandlerType;
@@ -28,15 +28,15 @@ public class SearchHandler extends AbstractHandler{
                String token = req.headers("token");
                if (verifyJWT(token)) {
                    EntityManager em = emf.createEntityManager();
-                   @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.title) LIKE ?1")
+                   @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                            .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                            .getResultList();
-                   @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.nickname) LIKE ?1")
+                   @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
                            .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                            .getResultList();
-                   List<GameForResponse> gamesForResponse = new ArrayList<>();
+                   List<SoftGameForResponse> gamesForResponse = new ArrayList<>();
                    for (Game game : games) {
-                       gamesForResponse.add(new GameForResponse(game));
+                       gamesForResponse.add(new SoftGameForResponse(game));
                    }
                    List<UserForResponse> usersForResponse = new ArrayList<>();
                    for (User user : users) {
