@@ -3,8 +3,8 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import webpage.entity.*;
 import webpage.entity.Thread;
+import webpage.entity.*;
 import webpage.requestFormats.CommentRequest;
 import webpage.responseFormats.CommentForResponse;
 import webpage.responseFormats.CommentListResponse;
@@ -13,7 +13,6 @@ import webpage.util.HandlerType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -240,6 +239,7 @@ public class CommentHandler extends AbstractHandler{
                     Long commentId =  Long.valueOf(req.params(":commentId"));
                     EntityManager em = emf.createEntityManager();
                     UserComment userComment = null;
+                    Comment comment;
                     try{
                         userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
@@ -247,12 +247,26 @@ public class CommentHandler extends AbstractHandler{
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
+                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                                .setParameter(1, commentId)
+                                .getSingleResult();
+                        if (comment == null){
+                            res.status(400);
+                            return "{\"message\":\"Bad request.\"}";
+                        }
                         if (userComment == null) {
                             userComment = new UserComment(userId, commentId, 1);
+                            comment.setVotes(comment.getVotes() + 1);
                         }else{
-                            userComment.setVote(1);
+                            Integer votes = userComment.getVote();
+                            switch (votes){
+                                case 1: break;
+                                case 0: userComment.setVote(1); comment.setVotes(comment.getVotes() + 1); break;
+                                case -1: userComment.setVote(1); comment.setVotes(comment.getVotes() + 2); break;
+                            }
                         }
                         em.getTransaction().begin();
+                        em.merge(comment);
                         em.merge(userComment);
                         em.getTransaction().commit();
                         return "{\"message\":\"OK.\"}";
@@ -277,6 +291,7 @@ public class CommentHandler extends AbstractHandler{
                     Long commentId =  Long.valueOf(req.params(":commentId"));
                     EntityManager em = emf.createEntityManager();
                     UserComment userComment = null;
+                    Comment comment;
                     try{
                         userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
@@ -284,12 +299,26 @@ public class CommentHandler extends AbstractHandler{
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
+                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                                .setParameter(1, commentId)
+                                .getSingleResult();
+                        if (comment == null){
+                            res.status(400);
+                            return "{\"message\":\"Bad request.\"}";
+                        }
                         if (userComment == null) {
                             userComment = new UserComment(userId, commentId, -1);
+                            comment.setVotes(comment.getVotes() - 1);
                         }else{
-                            userComment.setVote(-1);
+                            Integer votes = userComment.getVote();
+                            switch (votes){
+                                case 1: userComment.setVote(-1); comment.setVotes(comment.getVotes() - 2);break;
+                                case 0: userComment.setVote(-1); comment.setVotes(comment.getVotes() - 1); break;
+                                case -1: break;
+                            }
                         }
                         em.getTransaction().begin();
+                        em.merge(comment);
                         em.merge(userComment);
                         em.getTransaction().commit();
                         return "{\"message\":\"OK.\"}";
@@ -314,6 +343,7 @@ public class CommentHandler extends AbstractHandler{
                     Long commentId =  Long.valueOf(req.params(":commentId"));
                     EntityManager em = emf.createEntityManager();
                     UserComment userComment = null;
+                    Comment comment;
                     try{
                         userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
@@ -321,12 +351,25 @@ public class CommentHandler extends AbstractHandler{
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
+                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                                .setParameter(1, commentId)
+                                .getSingleResult();
+                        if (comment == null){
+                            res.status(400);
+                            return "{\"message\":\"Bad request.\"}";
+                        }
                         if (userComment == null) {
                             userComment = new UserComment(userId, commentId, 0);
                         }else{
-                            userComment.setVote(0);
+                            Integer votes = userComment.getVote();
+                            switch (votes){
+                                case 1: userComment.setVote(0); comment.setVotes(comment.getVotes() - 1); break;
+                                case 0: break;
+                                case -1: userComment.setVote(0); comment.setVotes(comment.getVotes() + 1); break;
+                            }
                         }
                         em.getTransaction().begin();
+                        em.merge(comment);
                         em.merge(userComment);
                         em.getTransaction().commit();
                         return "{\"message\":\"OK.\"}";

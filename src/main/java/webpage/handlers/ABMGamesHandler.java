@@ -1,10 +1,10 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import webpage.entity.*;
-import webpage.requestFormats.CommentRequest;
+import webpage.entity.Game;
+import webpage.entity.Tag;
+import webpage.entity.User;
+import webpage.entity.UserGame;
 import webpage.responseFormats.HardGameForResponse;
 import webpage.responseFormats.TagForResponse;
 import webpage.responseFormats.UserForResponse;
@@ -12,13 +12,11 @@ import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static spark.Spark.*;
-import static webpage.util.SecretKey.key;
+import static spark.Spark.get;
+import static spark.Spark.path;
 
 public class ABMGamesHandler extends AbstractHandler{
     public ABMGamesHandler(EntityManagerFactory emf) {

@@ -11,19 +11,19 @@ public class GameRequest {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "TITLE")
+    @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
-    @Column(name = "WIKI")
+    @Column(name = "WIKI", nullable = false)
     private String wiki;
 
-    @Column(name = "IMGS_IN_CAROUSEL")
+    @Column(name = "IMGS_IN_CAROUSEL", nullable = false)
     private Integer imgsInCarousel;
 
-    @Column(name = "DATE")
+    @Column(name = "DATE", nullable = false)
     private Date date = new Date();
 
     @ManyToMany(mappedBy = "gameRequests")

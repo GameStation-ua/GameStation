@@ -1,8 +1,8 @@
 package webpage.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 public class Thread extends Actor{

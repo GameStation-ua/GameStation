@@ -10,8 +10,8 @@ import webpage.entity.User;
 import webpage.requestFormats.AvailableTagsRequest;
 import webpage.requestFormats.UserTagsRequest;
 import webpage.responseFormats.AvailableTagsResponse;
-import webpage.responseFormats.SoftGameForResponse;
 import webpage.responseFormats.SearchTagResponse;
+import webpage.responseFormats.SoftGameForResponse;
 import webpage.responseFormats.UserTagsResponse;
 import webpage.util.HandlerType;
 

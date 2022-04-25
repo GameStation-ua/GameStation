@@ -1,7 +1,5 @@
 package webpage.responseFormats;
 
-import webpage.entity.Comment;
-
 import java.util.List;
 
 public class CommentListResponse {
