@@ -6,12 +6,12 @@ import webpage.entity.User;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserForResponse {
+public class UserResponse {
     private final long id;
     private final String nickname;
     private final Set<String> likedTags;
 
-    public UserForResponse(User user){
+    public UserResponse(User user){
         this.id = user.getId();
         this.nickname = user.getNickname();
         Set<String> tags = new HashSet<>();

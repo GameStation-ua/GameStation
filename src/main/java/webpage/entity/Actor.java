@@ -14,6 +14,7 @@ public class Actor {
     private Set<User> followers;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "actorId")
+    @OrderBy(value = "date ASC")
     private Set<Comment> comments;
 
     private String name;

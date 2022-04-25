@@ -2,10 +2,10 @@ package webpage.responseFormats;
 
 import webpage.entity.Tag;
 
-public class TagForResponse {
+public class TagResponse {
     private final String name;
 
-    public TagForResponse(Tag tag) {
+    public TagResponse(Tag tag) {
         this.name = tag.getName();
     }
 }

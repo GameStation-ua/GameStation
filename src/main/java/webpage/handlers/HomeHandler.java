@@ -9,8 +9,8 @@ import webpage.entity.Tag;
 import webpage.entity.User;
 import webpage.responseFormats.HomeResponse;
 import webpage.responseFormats.SoftGameForResponse;
-import webpage.responseFormats.TagForResponse;
-import webpage.responseFormats.UserForResponse;
+import webpage.responseFormats.TagResponse;
+import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
@@ -40,7 +40,7 @@ public class HomeHandler extends AbstractHandler{
                 User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
                         .setParameter(1, userId)
                         .getSingleResult();
-                UserForResponse userForResponse = new UserForResponse(user);            // User ready
+                UserResponse userResponse = new UserResponse(user);            // User ready
                 @SuppressWarnings("unchecked") List<Tag> tags = (List<Tag>) em.createQuery("SELECT likedTags FROM User u WHERE u.id = ?1")
                         .setParameter(1, userId)
                         .getResultList();
@@ -70,8 +70,8 @@ public class HomeHandler extends AbstractHandler{
                         .setParameter(1, tags.get(4).getName())
                         .getResultList();
                 List<SoftGameForResponse> gamesForResponse5 = gameForResponseList(gamesTag5);
-                List<TagForResponse> tagForResponseList = tagForResponseList(tags);
-                HomeResponse homeResponse = new HomeResponse(userForResponse, tagForResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
+                List<TagResponse> tagResponseList = tagForResponseList(tags);
+                HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
                 Gson gson = new Gson();
                 res.status(200);
                 return gson.toJson(homeResponse);
@@ -128,12 +128,12 @@ public class HomeHandler extends AbstractHandler{
         return gamesForResponse;
     }
 
-    private  List<TagForResponse> tagForResponseList(List<Tag> tags){
-        List<TagForResponse> tagForResponseList = new ArrayList<>();
+    private  List<TagResponse> tagForResponseList(List<Tag> tags){
+        List<TagResponse> tagResponseList = new ArrayList<>();
         for (Tag tag : tags) {
-            tagForResponseList.add(new TagForResponse(tag));
+            tagResponseList.add(new TagResponse(tag));
         }
-        return tagForResponseList;
+        return tagResponseList;
     }
 }
 

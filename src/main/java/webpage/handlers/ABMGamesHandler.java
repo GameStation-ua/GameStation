@@ -6,8 +6,8 @@ import webpage.entity.Tag;
 import webpage.entity.User;
 import webpage.entity.UserGame;
 import webpage.responseFormats.HardGameForResponse;
-import webpage.responseFormats.TagForResponse;
-import webpage.responseFormats.UserForResponse;
+import webpage.responseFormats.TagResponse;
+import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
@@ -47,13 +47,13 @@ public class ABMGamesHandler extends AbstractHandler{
                     }else {
                         meanScore = -1;
                     }
-                    List<UserForResponse> usersForResponse = new ArrayList<>();
+                    List<UserResponse> usersForResponse = new ArrayList<>();
                     for (User creator : game.getCreators()) {
-                        usersForResponse.add(new UserForResponse(creator));
+                        usersForResponse.add(new UserResponse(creator));
                     }
-                    List<TagForResponse> tagsForResponse = new ArrayList<>();
+                    List<TagResponse> tagsForResponse = new ArrayList<>();
                     for (Tag tag : game.getTags()) {
-                        tagsForResponse.add(new TagForResponse(tag));
+                        tagsForResponse.add(new TagResponse(tag));
                     }
                     Gson gson = new Gson();
                     HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.getFollowers().size(), game.getTitle(), game.getDescription(), game.getImgsInCarousel(), game.getWiki(), usersForResponse, tagsForResponse, game.getGameUpdates());

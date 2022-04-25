@@ -7,5 +7,5 @@ public enum HandlerType {
     SEARCH,
     TAGS,
     UPLOAD,
-    ABM_GAMES, FOLLOW, COMMENT, GAMELIST
+    ABM_GAMES, FOLLOW, COMMENT, FORUM, GAMELIST
 }

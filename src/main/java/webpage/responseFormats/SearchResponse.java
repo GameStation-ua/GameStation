@@ -4,9 +4,9 @@ import java.util.List;
 
 public class SearchResponse {
     private final List<SoftGameForResponse> foundGames;
-    private final List<UserForResponse> foundUsers;
+    private final List<UserResponse> foundUsers;
 
-    public SearchResponse(List<SoftGameForResponse> foundGames, List<UserForResponse> foundUsers) {
+    public SearchResponse(List<SoftGameForResponse> foundGames, List<UserResponse> foundUsers) {
         this.foundGames = foundGames;
         this.foundUsers = foundUsers;
     }

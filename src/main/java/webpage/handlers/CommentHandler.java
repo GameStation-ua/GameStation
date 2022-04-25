@@ -6,7 +6,7 @@ import io.jsonwebtoken.Jwts;
 import webpage.entity.Thread;
 import webpage.entity.*;
 import webpage.requestFormats.CommentRequest;
-import webpage.responseFormats.CommentForResponse;
+import webpage.responseFormats.CommentResponse;
 import webpage.responseFormats.CommentListResponse;
 import webpage.util.HandlerType;
 
@@ -196,7 +196,7 @@ public class CommentHandler extends AbstractHandler{
                                 .setFirstResult(pageNumber * 10 - 10)
                                 .setMaxResults(10)
                                 .getResultList();
-                        List<CommentForResponse> commentForResponseList = new ArrayList<>();
+                        List<CommentResponse> commentResponseList = new ArrayList<>();
                         try {
                             for (Comment comment : comments) {
                                 Integer vote;
@@ -211,14 +211,14 @@ public class CommentHandler extends AbstractHandler{
                                 String nickname = (String) em.createQuery("SELECT name FROM User u WHERE u.id = ?1")
                                         .setParameter(1, comment.getUserId())
                                         .getSingleResult();
-                                commentForResponseList.add(new CommentForResponse(comment, nickname, vote));
+                                commentResponseList.add(new CommentResponse(comment, nickname, vote));
                             }
                         }catch (Throwable e){
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }
                         Gson gson = new Gson();
-                        return gson.toJson(new CommentListResponse(commentForResponseList));
+                        return gson.toJson(new CommentListResponse(commentResponseList));
                     } catch (NoResultException e) {
                         res.status(400);
                         return "{\"message\":\"Wrong id.\"}";

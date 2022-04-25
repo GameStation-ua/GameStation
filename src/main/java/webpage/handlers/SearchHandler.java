@@ -5,7 +5,7 @@ import webpage.entity.Game;
 import webpage.entity.User;
 import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.SoftGameForResponse;
-import webpage.responseFormats.UserForResponse;
+import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
@@ -38,9 +38,9 @@ public class SearchHandler extends AbstractHandler{
                    for (Game game : games) {
                        gamesForResponse.add(new SoftGameForResponse(game));
                    }
-                   List<UserForResponse> usersForResponse = new ArrayList<>();
+                   List<UserResponse> usersForResponse = new ArrayList<>();
                    for (User user : users) {
-                       usersForResponse.add(new UserForResponse(user));
+                       usersForResponse.add(new UserResponse(user));
                    }
                    Gson gson = new Gson();
                    return gson.toJson(new SearchResponse(gamesForResponse,usersForResponse));

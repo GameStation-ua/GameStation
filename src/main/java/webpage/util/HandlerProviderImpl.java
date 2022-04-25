@@ -35,6 +35,8 @@ public class HandlerProviderImpl implements HandlerProvider {
         handlers.put(followHandler.getType(), followHandler);
         final CommentHandler commentHandler = new CommentHandler(emf);
         handlers.put(commentHandler.getType(), commentHandler);
+        final ForumHandler forumHandler = new ForumHandler(emf);
+        handlers.put(followHandler.getType(), forumHandler);
     }
 
     @Override

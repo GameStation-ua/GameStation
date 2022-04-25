@@ -4,7 +4,7 @@ import webpage.entity.Comment;
 
 import java.util.Date;
 
-public class CommentForResponse {
+public class CommentResponse {
     private final Long id;
     private final Long userId;
     private final String nickname;
@@ -13,7 +13,7 @@ public class CommentForResponse {
     private final String content;
     private final int votes;
 
-    public CommentForResponse(Comment comment, String nickname, Integer vote) {
+    public CommentResponse(Comment comment, String nickname, Integer vote) {
         this.userVote = vote;
         this.id = comment.getId();
         this.nickname = nickname;

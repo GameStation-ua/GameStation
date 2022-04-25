@@ -3,15 +3,15 @@ package webpage.responseFormats;
 import java.util.List;
 
 public class HomeResponse {
-    private final UserForResponse user;
-    private final List<TagForResponse> userLikedTags;
+    private final UserResponse user;
+    private final List<TagResponse> userLikedTags;
     private final List<SoftGameForResponse> gamesTag1;
     private final List<SoftGameForResponse> gamesTag2;
     private final List<SoftGameForResponse> gamesTag3;
     private final List<SoftGameForResponse> gamesTag4;
     private final List<SoftGameForResponse> gamesTag5;
 
-    public HomeResponse(UserForResponse user, List<TagForResponse> userLikedTags, List<SoftGameForResponse> gamesTag1, List<SoftGameForResponse> gamesTag2, List<SoftGameForResponse> gamesTag3, List<SoftGameForResponse> gamesTag4, List<SoftGameForResponse> gamesTag5) {
+    public HomeResponse(UserResponse user, List<TagResponse> userLikedTags, List<SoftGameForResponse> gamesTag1, List<SoftGameForResponse> gamesTag2, List<SoftGameForResponse> gamesTag3, List<SoftGameForResponse> gamesTag4, List<SoftGameForResponse> gamesTag5) {
         this.user = user;
         this.userLikedTags = userLikedTags;
         this.gamesTag1 = gamesTag1;
