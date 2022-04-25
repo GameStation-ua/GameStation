@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Entity
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -23,14 +24,14 @@ public class Comment {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @Column(name = "ACTOR_ID")
+    @Column(name = "ACTOR_ID", nullable = false)
     private Long actorId;
 
     @Column(name = "VOTES", nullable = false)
     private int votes = 0;
 
-    @ManyToMany(mappedBy = "likedComments")
-    private Set<User> userWhoLiked = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "commentId")
+    private Set<UserComment> usersWhoLiked;
 
     public Comment(Long userId, Long actorId, String content) {
         this.userId = userId;
@@ -39,6 +40,42 @@ public class Comment {
     }
 
     public Comment() {
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getActorId() {
+        return actorId;
+    }
+
+    public void setActorId(Long actorId) {
+        this.actorId = actorId;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
     }
 
     public Long getId() {

@@ -28,7 +28,7 @@ public class ABMGamesHandler extends AbstractHandler{
     @Override
     public void handle() {
 // todo implementar ABM juegos
-        path("", () -> {
+        path("/game", () -> {
             get("/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (verifyJWT(token)){
@@ -41,10 +41,14 @@ public class ABMGamesHandler extends AbstractHandler{
                             .setParameter(1, gameId)
                             .getResultList();
                     float meanScore = 0;
-                    for (UserGame userGame : userGames) {
-                        meanScore += userGame.getScore();
+                    if (!userGames.isEmpty()) {
+                        for (UserGame userGame : userGames) {
+                            meanScore += userGame.getScore();
+                        }
+                        meanScore = meanScore / userGames.size();
+                    }else {
+                        meanScore = -1;
                     }
-                    meanScore = meanScore / userGames.size();
                     List<UserForResponse> usersForResponse = new ArrayList<>();
                     for (User creator : game.getCreators()) {
                         usersForResponse.add(new UserForResponse(creator));

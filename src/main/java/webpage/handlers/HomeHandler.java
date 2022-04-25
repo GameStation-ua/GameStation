@@ -35,7 +35,7 @@ public class HomeHandler extends AbstractHandler{
                 Claims claims = Jwts.parser()
                         .setSigningKey(key)
                         .parseClaimsJws(token).getBody();
-                Integer userId = (Integer) claims.get("id");
+                Long userId = Long.valueOf((Integer) claims.get("id"));
                 EntityManager em = emf.createEntityManager();
                 User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
                         .setParameter(1, userId)

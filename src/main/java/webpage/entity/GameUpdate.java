@@ -5,6 +5,7 @@ import java.util.Date;
 
 @Entity
 public class GameUpdate {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

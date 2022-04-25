@@ -6,14 +6,18 @@ import io.jsonwebtoken.Jwts;
 import webpage.entity.*;
 import webpage.entity.Thread;
 import webpage.requestFormats.CommentRequest;
+import webpage.responseFormats.CommentForResponse;
+import webpage.responseFormats.CommentListResponse;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 
-import static spark.Spark.path;
-import static spark.Spark.post;
+import java.util.ArrayList;
+import java.util.List;
+
+import static spark.Spark.*;
 import static webpage.util.SecretKey.key;
 
 public class CommentHandler extends AbstractHandler{
@@ -173,6 +177,167 @@ public class CommentHandler extends AbstractHandler{
                 }else {
                     res.status(401);
                     return "{\"message\":\"Unauthorized.\"}";
+                }
+            });
+
+            get("/*/*", (req, res) ->{
+                String token = req.headers("token");
+                if (verifyJWT(token)) {
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    Long userId = Long.valueOf((Integer) claims.get("id"));
+                    String[] request = req.splat();
+                    Long actorId = Long.valueOf(request[0]);
+                    int pageNumber = Integer.parseInt(request[1]);
+                    EntityManager em = emf.createEntityManager();
+                    try {
+                        @SuppressWarnings("unchecked") List<Comment> comments = em.createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
+                                .setParameter(1, actorId)
+                                .setFirstResult(pageNumber * 10 - 10)
+                                .setMaxResults(10)
+                                .getResultList();
+                        List<CommentForResponse> commentForResponseList = new ArrayList<>();
+                        try {
+                            for (Comment comment : comments) {
+                                Integer vote;
+                                try{
+                                    vote = (Integer) em.createQuery("SELECT vote FROM UserComment uc WHERE uc.userId = ?1 AND uc.commentId = ?2")
+                                            .setParameter(1, userId)
+                                            .setParameter(2, comment.getId())
+                                            .getSingleResult();
+                                }catch (NoResultException e){
+                                    vote = 0;
+                                }
+                                String nickname = (String) em.createQuery("SELECT name FROM User u WHERE u.id = ?1")
+                                        .setParameter(1, comment.getUserId())
+                                        .getSingleResult();
+                                commentForResponseList.add(new CommentForResponse(comment, nickname, vote));
+                            }
+                        }catch (Throwable e){
+                            res.status(500);
+                            return "{\"message\":\"Something went wrong.\"}";
+                        }
+                        Gson gson = new Gson();
+                        return gson.toJson(new CommentListResponse(commentForResponseList));
+                    } catch (NoResultException e) {
+                        res.status(400);
+                        return "{\"message\":\"Wrong id.\"}";
+                    }
+                }else{
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
+            });
+
+            post("/upvote/:commentId", (req, res) -> {
+                String token = req.headers("token");
+                if (verifyJWT(token)) {
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    Long userId = Long.valueOf((Integer) claims.get("id"));
+                    Long commentId =  Long.valueOf(req.params(":commentId"));
+                    EntityManager em = emf.createEntityManager();
+                    UserComment userComment = null;
+                    try{
+                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                                .setParameter(1, commentId)
+                                .setParameter(2, userId)
+                                .getSingleResult();
+                    }catch (Throwable ignored){}
+                    try {
+                        if (userComment == null) {
+                            userComment = new UserComment(userId, commentId, 1);
+                        }else{
+                            userComment.setVote(1);
+                        }
+                        em.getTransaction().begin();
+                        em.merge(userComment);
+                        em.getTransaction().commit();
+                        return "{\"message\":\"OK.\"}";
+                    }catch(Throwable e){
+                        em.getTransaction().rollback();
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong.\"}";
+                    }
+                }else {
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
+            });
+
+            post("/downvote/:commentId", (req, res) -> {
+                String token = req.headers("token");
+                if (verifyJWT(token)) {
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    Long userId = Long.valueOf((Integer) claims.get("id"));
+                    Long commentId =  Long.valueOf(req.params(":commentId"));
+                    EntityManager em = emf.createEntityManager();
+                    UserComment userComment = null;
+                    try{
+                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                                .setParameter(1, commentId)
+                                .setParameter(2, userId)
+                                .getSingleResult();
+                    }catch (Throwable ignored){}
+                    try {
+                        if (userComment == null) {
+                            userComment = new UserComment(userId, commentId, -1);
+                        }else{
+                            userComment.setVote(-1);
+                        }
+                        em.getTransaction().begin();
+                        em.merge(userComment);
+                        em.getTransaction().commit();
+                        return "{\"message\":\"OK.\"}";
+                    }catch(Throwable e){
+                        em.getTransaction().rollback();
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong.\"}";
+                    }
+                }else {
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
+            });
+
+            post("/neutralvote/:commentId", (req, res) -> {
+                String token = req.headers("token");
+                if (verifyJWT(token)) {
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    Long userId = Long.valueOf((Integer) claims.get("id"));
+                    Long commentId =  Long.valueOf(req.params(":commentId"));
+                    EntityManager em = emf.createEntityManager();
+                    UserComment userComment = null;
+                    try{
+                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                                .setParameter(1, commentId)
+                                .setParameter(2, userId)
+                                .getSingleResult();
+                    }catch (Throwable ignored){}
+                    try {
+                        if (userComment == null) {
+                            userComment = new UserComment(userId, commentId, 0);
+                        }else{
+                            userComment.setVote(0);
+                        }
+                        em.getTransaction().begin();
+                        em.merge(userComment);
+                        em.getTransaction().commit();
+                        return "{\"message\":\"OK.\"}";
+                    }catch(Throwable e){
+                        em.getTransaction().rollback();
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong.\"}";
+                    }
+                }else {
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
                 }
             });
         });

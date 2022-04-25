@@ -19,8 +19,8 @@ public class User extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserGame> userGame;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Comment> likedComments;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
+    private Set<UserComment> votedComments;
 
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
@@ -63,12 +63,12 @@ public class User extends Actor{
         this.userGame = userGame;
     }
 
-    public Set<Comment> getLikedComments() {
-        return likedComments;
+    public Set<UserComment> getVotedComments() {
+        return votedComments;
     }
 
-    public void setLikedComments(Set<Comment> likedComments) {
-        this.likedComments = likedComments;
+    public void setVotedComments(Set<UserComment> votedComments) {
+        this.votedComments = votedComments;
     }
 
     public Set<Notification> getNotifications() {
