@@ -14,10 +14,20 @@ public class Thread extends Actor{
     private Long gameId;
 
     @Column(name = "DATE", nullable = false)
-    private Date Date = new Date();
+    private Date date = new Date();
 
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
+
+    public Thread(long creatorId, Long gameId, String description, String name) {
+        this.creatorId = creatorId;
+        this.gameId = gameId;
+        this.description = description;
+        setName(name);
+    }
+
+    public Thread() {
+    }
 
     public long getCreatorId() {
         return creatorId;
@@ -44,11 +54,11 @@ public class Thread extends Actor{
     }
 
     public java.util.Date getDate() {
-        return Date;
+        return date;
     }
 
     public void setDate(java.util.Date date) {
-        Date = date;
+        this.date = date;
     }
 
     public String getDescription() {

@@ -30,9 +30,7 @@ public class GameStation {
     private static void enableCORS() {
 
         options("/*", (request, response) -> {
-
             response.status(200);
-
             return "OK";
         });
 

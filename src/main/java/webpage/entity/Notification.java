@@ -18,7 +18,7 @@ public class Notification {
     @Column(name = "CONTENT", nullable = false)
     private String content;
 
-    @Column(name = "DATE")
+    @Column(name = "DATE", nullable = false)
     private final Date date = new Date();
 
     @Column(name = "PATH", nullable = false)

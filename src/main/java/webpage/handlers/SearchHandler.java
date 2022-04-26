@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import webpage.entity.Game;
 import webpage.entity.User;
 import webpage.responseFormats.SearchResponse;
-import webpage.responseFormats.SoftGameForResponse;
+import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
@@ -34,9 +34,9 @@ public class SearchHandler extends AbstractHandler{
                    @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
                            .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                            .getResultList();
-                   List<SoftGameForResponse> gamesForResponse = new ArrayList<>();
+                   List<GameResponse> gamesForResponse = new ArrayList<>();
                    for (Game game : games) {
-                       gamesForResponse.add(new SoftGameForResponse(game));
+                       gamesForResponse.add(new GameResponse(game));
                    }
                    List<UserResponse> usersForResponse = new ArrayList<>();
                    for (User user : users) {

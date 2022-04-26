@@ -1,11 +1,14 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import webpage.entity.Game;
 import webpage.entity.Tag;
 import webpage.entity.User;
 import webpage.entity.UserGame;
 import webpage.responseFormats.HardGameForResponse;
+import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.TagResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import static spark.Spark.get;
 import static spark.Spark.path;
+import static webpage.util.SecretKey.key;
 
 public class ABMGamesHandler extends AbstractHandler{
     public ABMGamesHandler(EntityManagerFactory emf) {
@@ -27,6 +31,28 @@ public class ABMGamesHandler extends AbstractHandler{
     public void handle() {
 // todo implementar ABM juegos
         path("/game", () -> {
+            get("/createdgames", (req, res) ->{
+                String token = req.headers("token");
+                if (verifyJWT(token)){
+                    Claims claims = Jwts.parser()
+                            .setSigningKey(key)
+                            .parseClaimsJws(token).getBody();
+                    Long userId = Long.valueOf((Integer) claims.get("id"));
+                    EntityManager em = emf.createEntityManager();
+                    @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT createdGames FROM User u WHERE u.id = ?1")
+                            .setParameter(1, userId)
+                            .getResultList();
+                    List<SoftGameResponse> softGameResponseList = new ArrayList<>();
+                    for (Game game : games) {
+                        softGameResponseList.add(new SoftGameResponse(game));
+                    }
+                    return new Gson().toJson(softGameResponseList);
+                }else{
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
+            });
+
             get("/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (verifyJWT(token)){
@@ -64,8 +90,6 @@ public class ABMGamesHandler extends AbstractHandler{
                     return "{\"message\":\"Unauthorized.\"}";
                 }
             });
-
-
         });
     }
 

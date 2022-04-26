@@ -11,7 +11,7 @@ import webpage.requestFormats.AvailableTagsRequest;
 import webpage.requestFormats.UserTagsRequest;
 import webpage.responseFormats.AvailableTagsResponse;
 import webpage.responseFormats.SearchTagResponse;
-import webpage.responseFormats.SoftGameForResponse;
+import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.UserTagsResponse;
 import webpage.util.HandlerType;
 
@@ -390,9 +390,9 @@ public class TagsHandler extends AbstractHandler {
                     @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                             .setParameter("search", searchTag)
                             .getResultList();
-                    List<SoftGameForResponse> gamesForResponse = new ArrayList<>();
+                    List<GameResponse> gamesForResponse = new ArrayList<>();
                     for (Game game : games) {
-                        gamesForResponse.add(new SoftGameForResponse(game));
+                        gamesForResponse.add(new GameResponse(game));
                     }
                     Gson gson = new Gson();
                     return gson.toJson(new SearchTagResponse(gamesForResponse));
