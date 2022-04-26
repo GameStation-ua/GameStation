@@ -1,11 +1,12 @@
 package webpage.util;
 
-import com.mortennobel.imagescaling.ProgressListener;
 import com.mortennobel.imagescaling.ResampleOp;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+
+import static com.mortennobel.imagescaling.ResampleFilters.*;
 
 public class ImageRescaler {
 
@@ -13,7 +14,6 @@ public class ImageRescaler {
         if (args.length!=4){
             System.exit(1);
         }
-
         try
         {
             String sourcefile = args[0];
@@ -23,6 +23,7 @@ public class ImageRescaler {
 
             BufferedImage sourceImage = ImageIO.read(new File(sourcefile));
             ResampleOp resizeOp = new ResampleOp(newwidth, newheight);
+            resizeOp.setFilter(getBiCubicHighFreqResponse());
             BufferedImage resizedImage = resizeOp.filter(sourceImage, null);
             ImageIO.write(resizedImage,"png", new File(destfile));
         }
