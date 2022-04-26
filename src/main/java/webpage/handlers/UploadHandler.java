@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import webpage.entity.Game;
 import webpage.util.HandlerType;
+import webpage.util.ImageRescaler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,6 +44,9 @@ public class UploadHandler extends AbstractHandler{
                             File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
                             copyInputStreamToFile(is, file);
                         }
+                        ImageRescaler imageRescaler = new ImageRescaler();
+                        String[] args = {"src/main/resources/public/profile_pictures/" + userId + ".png", "src/main/resources/public/profile_pictures/" + userId + ".png", "256", "256"};
+                        imageRescaler.rescale(args);
                         response.status(200);
                         return "{\"message\":\"File uploaded.\"}";
                     } catch (NoResultException e) {
@@ -75,6 +79,9 @@ public class UploadHandler extends AbstractHandler{
                                 File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png");
                                 copyInputStreamToFile(is, file);
                             }
+                            ImageRescaler imageRescaler = new ImageRescaler();
+                            String[] args = {"src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png","src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png", "256", "256"};
+                            imageRescaler.rescale(args);
                             return "{\"message\":\"File uploaded.\"}";
                         }
                     }
@@ -107,6 +114,8 @@ public class UploadHandler extends AbstractHandler{
                                 File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png");
                                 copyInputStreamToFile(is, file);
                             }
+                            ImageRescaler imageRescaler = new ImageRescaler();
+                            String[] args ={"src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "256", "256"};
                             game.setImgsInCarousel(imgsInCarousel + 1);
                             EntityManager em2 = emf.createEntityManager();
                             try{
