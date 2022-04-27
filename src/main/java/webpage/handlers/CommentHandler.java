@@ -6,8 +6,8 @@ import io.jsonwebtoken.Jwts;
 import webpage.entity.Thread;
 import webpage.entity.*;
 import webpage.requestFormats.CommentRequest;
-import webpage.responseFormats.CommentResponse;
 import webpage.responseFormats.CommentListResponse;
+import webpage.responseFormats.CommentResponse;
 import webpage.util.HandlerType;
 
 import javax.persistence.EntityManager;

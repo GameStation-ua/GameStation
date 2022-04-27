@@ -2,6 +2,8 @@ package webpage.handlers;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import spark.Session;
 import webpage.entity.Game;
 import webpage.util.HandlerType;
 import webpage.util.ImageRescaler;
@@ -24,49 +26,53 @@ public class UploadHandler extends AbstractHandler{
 
     public static final int DEFAULT_BUFFER_SIZE = 8192;
 
-
     public UploadHandler(EntityManagerFactory emf) {
         super(emf);
     }
 
     public void handle(){
         path("/upload", () -> {
-            post("/profilepic", (request, response) -> {
-                String token = request.headers("token");
+            post("/profilepic", (req, res) -> {
+                String token = req.headers("token");
                 if (verifyJWT(token)) {
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
                     Integer userId = (Integer) claims.get("id");
-                    request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+                    req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
                     try {
-                        try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
+                        try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
                             File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
                             copyInputStreamToFile(is, file);
                         }
                         ImageRescaler imageRescaler = new ImageRescaler();
                         String[] args = {"src/main/resources/public/profile_pictures/" + userId + ".png", "src/main/resources/public/profile_pictures/" + userId + ".png", "256", "256"};
-                        imageRescaler.rescale(args);
-                        response.status(200);
+                        try {
+                            imageRescaler.rescale(args);
+                        }catch (IOException e){
+                            res.status(500);
+                            return  "{\"message\":\"Error in rescaling.\"}";
+                        }
+                        res.status(200);
                         return "{\"message\":\"File uploaded.\"}";
                     } catch (NoResultException e) {
-                        response.status(404);
+                        res.status(404);
                         return "{\"message\":\"Something went wrong.\"}";
                     }
                 } else {
-                    response.status(401);
+                    res.status(401);
                     return "{\"message\":\"Unauthorized.\"}";
                 }
             });
 
-            post("/gameMain", (request, response) -> {
-                String token = request.headers("token");
+            post("/gameMain", (req, res) -> {
+                String token = req.headers("token");
                 if (verifyJWT(token)) {
                     Claims claims = Jwts.parser()
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
                     Integer userId = (Integer) claims.get("id");
-                    String gameid = request.headers("gameId");
+                    String gameid = req.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
                     EntityManager em = emf.createEntityManager();
                     @SuppressWarnings("unchecked") List<Game> gameList = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
@@ -74,20 +80,25 @@ public class UploadHandler extends AbstractHandler{
                             .getResultList();
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {
-                            request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                            try (InputStream is = request.raw().getPart("uploaded_file").getInputStream()) {
+                            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+                            try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
                                 File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png");
                                 copyInputStreamToFile(is, file);
                             }
                             ImageRescaler imageRescaler = new ImageRescaler();
                             String[] args = {"src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png","src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png", "256", "256"};
-                            imageRescaler.rescale(args);
+                            try {
+                                imageRescaler.rescale(args);
+                            }catch (IOException e){
+                                res.status(500);
+                                return  "{\"message\":\"Error in rescaling.\"}";
+                            }
                             return "{\"message\":\"File uploaded.\"}";
                         }
                     }
                     return "{\"message\":\"Unauthorized.\"}";
                 } else {
-                    response.status(401);
+                    res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
             });
@@ -116,6 +127,12 @@ public class UploadHandler extends AbstractHandler{
                             }
                             ImageRescaler imageRescaler = new ImageRescaler();
                             String[] args ={"src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "256", "256"};
+                            try {
+                                imageRescaler.rescale(args);
+                            }catch (IOException e){
+                                res.status(500);
+                                return  "{\"message\":\"Error in rescaling.\"}";
+                            }
                             game.setImgsInCarousel(imgsInCarousel + 1);
                             EntityManager em2 = emf.createEntityManager();
                             try{

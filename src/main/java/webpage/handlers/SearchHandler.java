@@ -3,8 +3,8 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import webpage.entity.Game;
 import webpage.entity.User;
-import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.GameResponse;
+import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 

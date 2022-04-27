@@ -12,9 +12,7 @@ import webpage.util.HandlerType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static spark.Spark.*;

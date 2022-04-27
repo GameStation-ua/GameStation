@@ -1,18 +1,20 @@
 package webpage.util;
 
 import com.mortennobel.imagescaling.ResampleOp;
+import net.bytebuddy.implementation.bytecode.Throw;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import static com.mortennobel.imagescaling.ResampleFilters.*;
 
 public class ImageRescaler {
 
-    public void rescale(String[] args){
+    public void rescale(String[] args) throws IOException {
         if (args.length!=4){
-            System.exit(1);
+            throw new IOException("Upload Error");
         }
         try
         {
