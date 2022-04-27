@@ -28,8 +28,7 @@ public class User extends Actor{
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<GameRequest> gameRequests;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "GAME_CREATORS")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<Game> createdGames;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -18,8 +18,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static spark.Spark.get;
-import static spark.Spark.path;
+import static spark.Spark.*;
 import static webpage.util.SecretKey.key;
 
 public class ABMGamesHandler extends AbstractHandler{
@@ -73,21 +72,31 @@ public class ABMGamesHandler extends AbstractHandler{
                     }else {
                         meanScore = -1;
                     }
-                    List<UserResponse> usersForResponse = new ArrayList<>();
-                    for (User creator : game.getCreators()) {
-                        usersForResponse.add(new UserResponse(creator));
-                    }
+                        User creator = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                                .setParameter(1, game.getCreatorId())
+                                .getSingleResult();
+                    UserResponse userResponse = new UserResponse(creator);
                     List<TagResponse> tagsForResponse = new ArrayList<>();
                     for (Tag tag : game.getTags()) {
                         tagsForResponse.add(new TagResponse(tag));
                     }
                     Gson gson = new Gson();
-                    HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.getFollowers().size(), game.getTitle(), game.getDescription(), game.getImgsInCarousel(), game.getWiki(), usersForResponse, tagsForResponse, game.getGameUpdates());
+                    HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.getFollowers().size(), game.getTitle(), game.getDescription(), game.getImgsInCarousel(), game.getWiki(), userResponse, tagsForResponse, game.getGameUpdates());
                     res.status(200);
                     return gson.toJson(gameForResponse);
                 }else {
                     res.status(401);
                     return "{\"message\":\"Unauthorized.\"}";
+                }
+            });
+
+            post("/create", (req, res) -> {
+                String token = req.headers("token");
+                if (verifyJWT(token)){
+                    return ""; // todo end method
+                }else {
+                    res.status(400);
+                    return "{\"message\":\"Not logged in.\"}";
                 }
             });
         });

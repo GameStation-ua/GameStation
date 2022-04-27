@@ -1,6 +1,7 @@
 package webpage;
 
 import webpage.handlers.MyHandler;
+import webpage.handlers.NotificationHandler;
 import webpage.util.Handler;
 import webpage.util.HandlerProvider;
 import webpage.util.HandlerProviderImpl;
@@ -19,6 +20,7 @@ public class GameStation {
         String staticDir = "/src/main/resources/public";
         staticFiles.externalLocation(projectDir + staticDir);
         // use location on real server
+        webSocket("/notifications", NotificationHandler.class);
         port(8443);
         enableCORS();
         HandlerProvider handlerProvider = new HandlerProviderImpl(emf);

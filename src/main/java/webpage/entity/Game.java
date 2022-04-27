@@ -6,6 +6,9 @@ import java.util.Set;
 @Entity
 public class Game extends Actor{
 
+    @Column(name = "CREATOR_ID")
+    private Long creatorId;
+
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
@@ -22,9 +25,6 @@ public class Game extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<UserGame> userGames;
 
-    @ManyToMany(mappedBy = "createdGames")
-    private Set<User> creators;
-
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
@@ -32,6 +32,10 @@ public class Game extends Actor{
     private Set<GameUpdate> gameUpdates;
 
     public Game() {
+    }
+
+    public Long getCreatorId() {
+        return creatorId;
     }
 
     public String getWiki() {
@@ -86,14 +90,6 @@ public class Game extends Actor{
 
     public void setUserGames(Set<UserGame> userGames) {
         this.userGames = userGames;
-    }
-
-    public Set<User> getCreators() {
-        return creators;
-    }
-
-    public void setCreators(Set<User> creators) {
-        this.creators = creators;
     }
 
     public Set<Tag> getTags() {
