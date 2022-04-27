@@ -67,6 +67,8 @@ public class CommentHandler extends AbstractHandler{
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);
@@ -124,6 +126,8 @@ public class CommentHandler extends AbstractHandler{
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);
@@ -172,6 +176,8 @@ public class CommentHandler extends AbstractHandler{
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);

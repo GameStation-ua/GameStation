@@ -3,6 +3,7 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import spark.Response;
 import webpage.entity.Actor;
 import webpage.entity.Notification;
 import webpage.entity.NotificationType;
@@ -60,17 +61,7 @@ public class FollowHandler extends AbstractHandler{
                    if (!alreadyFollows) {
                        user.addFollowedActor(actor);
                        actor.addNotification(new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath()));
-                       try {
-                           em.getTransaction().begin();
-                           em.merge(user);
-                           em.getTransaction().commit();
-                           res.status(200);
-                           return "{\"message\":\"OK.\"}";
-                       } catch (Throwable e) {
-                           em.getTransaction().rollback();
-                           res.status(500);
-                           return "{\"message\":\"Something went wrong.\"}";
-                       }
+                       return persist(res, em, user);
                    }else {
                        res.status(400);
                        return "{\"message\":\"Already follows.\"}";
@@ -110,17 +101,7 @@ public class FollowHandler extends AbstractHandler{
                        }
                        if (Follows) {
                            user.removeFollowedActor(actor);
-                           try {
-                               em.getTransaction().begin();
-                               em.merge(user);
-                               em.getTransaction().commit();
-                               res.status(200);
-                               return "{\"message\":\"OK.\"}";
-                           } catch (Throwable e) {
-                               em.getTransaction().rollback();
-                               res.status(500);
-                               return "{\"message\":\"Something went wrong.\"}";
-                           }
+                           return persist(res, em, user);
                        }else {
                            res.status(400);
                            return "{\"message\":\"Doesn't follow.\"}";
@@ -132,6 +113,22 @@ public class FollowHandler extends AbstractHandler{
            });
         });
 
+    }
+
+    private String persist(Response res, EntityManager em, User user) {
+        try {
+            em.getTransaction().begin();
+            em.merge(user);
+            em.getTransaction().commit();
+            res.status(200);
+            return "{\"message\":\"OK.\"}";
+        } catch (Throwable e) {
+            em.getTransaction().rollback();
+            res.status(500);
+            return "{\"message\":\"Something went wrong.\"}";
+        }finally {
+            em.close();
+        }
     }
 
     @Override

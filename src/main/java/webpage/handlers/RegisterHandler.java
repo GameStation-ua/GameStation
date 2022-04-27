@@ -29,8 +29,7 @@ public class RegisterHandler extends AbstractHandler {
                     res.status(406);
                     return "{\"message\":\"You need to fill all the fields\"}";
                 }
-                final EntityManager em = emf.createEntityManager();
-
+                EntityManager em = emf.createEntityManager();
                 try {
                     em.createQuery("FROM User user WHERE user.username like :username")
                             .setParameter("username", registerRequest.getUsername())
@@ -59,6 +58,8 @@ public class RegisterHandler extends AbstractHandler {
                             em.getTransaction().rollback();
                             res.status(500);
                             return "{\"message\":\"Something went wrong, try again.\"}";
+                        }finally {
+                            em.close();
                         }
                     }
                 }
