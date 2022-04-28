@@ -52,7 +52,9 @@ public class User extends Actor{
     public User() {
     }
 
-
+    public void addTag(Tag tag){
+        likedTags.add(tag);
+    }
 
     public Set<UserGame> getUserGame() {
         return userGame;

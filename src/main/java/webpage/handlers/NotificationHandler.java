@@ -13,10 +13,9 @@ import java.net.InetSocketAddress;
 public class NotificationHandler {
 
     @OnWebSocketConnect
-    public void onConnect(Session user){
+    public void onConnect(Session user) throws Exception{
         UpgradeRequest req = user.getUpgradeRequest();
         String token = req.getHeader("Sec-WebSocket-Protocol");
-        UpgradeResponse upgradeResponse = user.getUpgradeResponse();
-        upgradeResponse.setAcceptedSubProtocol("ws.localhost:8443/notifications");
+        user.getUpgradeResponse().setAcceptedSubProtocol(token);
     }
 }

@@ -42,6 +42,8 @@ public class ForumHandler extends AbstractHandler{
                         }catch (NoResultException e){
                             res.status(400);
                             return "{\"message\":\"Invalid Thread.\"}";
+                        }finally {
+                            em.close();
                         }
                     }else {
                         res.status(401);
@@ -70,6 +72,8 @@ public class ForumHandler extends AbstractHandler{
                         em.getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);
@@ -102,6 +106,8 @@ public class ForumHandler extends AbstractHandler{
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);

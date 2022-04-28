@@ -4,11 +4,12 @@ import webpage.entity.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UserTagsResponse {
     List<String> userTags = new ArrayList<>();
 
-    public UserTagsResponse( List<Tag> usersTags) {
+    public UserTagsResponse( Set<Tag> usersTags) {
         for (Tag userTags : usersTags) {
             this.userTags.add(userTags.getName());
         }

@@ -22,7 +22,8 @@ public class GameStation {
         // use location on real server
         webSocket("/notifications", NotificationHandler.class);
         port(8443);
-        enableCORS();
+//        enableCORS();
+
         HandlerProvider handlerProvider = new HandlerProviderImpl(emf);
         final Iterable<Handler> handlers = handlerProvider.getAllHandlers();
         for (final Handler handler : handlers) handler.handle();

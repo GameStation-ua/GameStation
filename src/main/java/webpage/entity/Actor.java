@@ -2,6 +2,7 @@ package webpage.entity;
 
 import javax.persistence.*;
 import java.util.Set;
+
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Actor {

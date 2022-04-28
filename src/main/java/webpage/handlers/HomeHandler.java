@@ -73,6 +73,7 @@ public class HomeHandler extends AbstractHandler{
                 List<TagResponse> tagResponseList = tagForResponseList(tags);
                 HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
                 Gson gson = new Gson();
+                em.close();
                 res.status(200);
                 return gson.toJson(homeResponse);
             }else{

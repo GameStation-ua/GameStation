@@ -50,6 +50,8 @@ public class LogInHandler extends AbstractHandler{
                     } catch (NoResultException e) {
                         response.status(406);
                         return "{\"message\":\"Incorrect username or password\"}";
+                    }finally {
+                        em.close();
                     }
                 } else {
                     response.status(406);

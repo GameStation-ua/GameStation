@@ -115,4 +115,8 @@ public class Game extends Actor{
     public void setImgsInCarousel(int imgsInCarousel) {
         this.imgsInCarousel = imgsInCarousel;
     }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
 }

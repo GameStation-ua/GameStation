@@ -50,6 +50,8 @@ public class CommentHandler extends AbstractHandler{
                     } catch (NoResultException e) {
                         res.status(400);
                         return "{\"message\":\"Game not found.\"}";
+                    }finally {
+                        em.close();
                     }
                     Comment comment = new Comment(userId, gameId, commentRequest.getContent());
                     game.addComment(comment);
@@ -219,15 +221,17 @@ public class CommentHandler extends AbstractHandler{
                                         .getSingleResult();
                                 commentResponseList.add(new CommentResponse(comment, nickname, vote));
                             }
+                            Gson gson = new Gson();
+                            return gson.toJson(new CommentListResponse(commentResponseList));
                         }catch (Throwable e){
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }
-                        Gson gson = new Gson();
-                        return gson.toJson(new CommentListResponse(commentResponseList));
                     } catch (NoResultException e) {
                         res.status(400);
                         return "{\"message\":\"Wrong id.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else{
                     res.status(401);
@@ -280,6 +284,8 @@ public class CommentHandler extends AbstractHandler{
                         em.getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);
@@ -332,6 +338,8 @@ public class CommentHandler extends AbstractHandler{
                         em.getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);
@@ -383,6 +391,8 @@ public class CommentHandler extends AbstractHandler{
                         em.getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
+                    }finally {
+                        em.close();
                     }
                 }else {
                     res.status(401);

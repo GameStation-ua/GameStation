@@ -26,13 +26,18 @@ public class GameListHandler extends AbstractHandler{
                 String token = req.headers("token");
                 if (verifyJWT(token)){
                     EntityManager em = emf.createEntityManager();
-                    Long userId = (long) Integer.parseInt(req.params("userId"));
-                    @SuppressWarnings("unchecked") List<UserGame> gameList = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1")
-                            .setParameter(1, userId)
-                            .getResultList();
-                    Gson gson = new Gson();
-                    res.status(200);
-                    return gson.toJson(gameList);
+                    try {
+                        Long userId = (long) Integer.parseInt(req.params("userId"));
+                        @SuppressWarnings("unchecked") List<UserGame> gameList = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1")
+                                .setParameter(1, userId)
+                                .getResultList();
+                        Gson gson = new Gson();
+                        res.status(200);
+                        return gson.toJson(gameList);
+                    }finally {
+                        em.close();
+                    }
+
                 }else{
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
@@ -70,6 +75,8 @@ public class GameListHandler extends AbstractHandler{
                                 em.getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
+                            }finally {
+                                em.close();
                             }
                         } else{
                             res.status(409);
@@ -113,6 +120,8 @@ public class GameListHandler extends AbstractHandler{
                                 em.getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
+                            }finally {
+                                em.close();
                             }
                         } else{
                             res.status(409);
@@ -158,6 +167,8 @@ public class GameListHandler extends AbstractHandler{
                                 em.getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
+                            }finally {
+                                em.close();
                             }
                         } else{
                             res.status(409);
