@@ -1,14 +1,13 @@
 package webpage.util;
 
 import com.mortennobel.imagescaling.ResampleOp;
-import net.bytebuddy.implementation.bytecode.Throw;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static com.mortennobel.imagescaling.ResampleFilters.*;
+import static com.mortennobel.imagescaling.ResampleFilters.getBiCubicHighFreqResponse;
 
 public class ImageRescaler {
 

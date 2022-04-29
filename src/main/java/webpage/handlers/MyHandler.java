@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import static spark.Spark.get;
 
 public class MyHandler extends AbstractHandler {
-    public MyHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     //    public void handle(EntityManagerFactory emf, String path) throws IOException {
 //        post("/main", "image/png", (req, res) -> {

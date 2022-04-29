@@ -1,7 +1,6 @@
 package webpage.requestFormats;
 
 import webpage.entity.AvailableTag;
-import webpage.entity.Tag;
 
 import java.util.ArrayList;
 

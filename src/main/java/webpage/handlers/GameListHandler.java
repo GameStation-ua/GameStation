@@ -12,12 +12,11 @@ import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class GameListHandler extends AbstractHandler{
-    public GameListHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     @Override
     public void handle() {
@@ -25,17 +24,17 @@ public class GameListHandler extends AbstractHandler{
             get("/:userId", (req, res) -> {
                 String token = req.headers("token");
                 if (verifyJWT(token)){
-                    EntityManager em = emf.createEntityManager();
+                    
                     try {
                         Long userId = (long) Integer.parseInt(req.params("userId"));
-                        @SuppressWarnings("unchecked") List<UserGame> gameList = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1")
+                        @SuppressWarnings("unchecked") List<UserGame> gameList = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.userId = ?1")
                                 .setParameter(1, userId)
                                 .getResultList();
                         Gson gson = new Gson();
                         res.status(200);
                         return gson.toJson(gameList);
                     }finally {
-                        em.close();
+                        close();
                     }
 
                 }else{
@@ -55,8 +54,8 @@ public class GameListHandler extends AbstractHandler{
                     GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
-                        EntityManager em = emf.createEntityManager();
-                        @SuppressWarnings("unchecked") List<Long> gamesIds = em.createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1")
+                        
+                        @SuppressWarnings("unchecked") List<Long> gamesIds = currentEntityManager().createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1")
                                 .setParameter(1, (long) userId1)
                                 .getResultList();
                         if (!gamesIds.contains(gameListRequest.getGameId())) {
@@ -66,17 +65,17 @@ public class GameListHandler extends AbstractHandler{
                             userGame.setScore(gameListRequest.getScore());
                             userGame.setGameId(gameListRequest.getGameId());
                             try {
-                                em.getTransaction().begin();
-                                em.merge(userGame);
-                                em.getTransaction().commit();
+                                currentEntityManager().getTransaction().begin();
+                                currentEntityManager().merge(userGame);
+                                currentEntityManager().getTransaction().commit();
                                 res.status(200);
                                 return "{\"message\":\"Game added to game list.\"}";
                             }catch (Throwable e) {
-                                em.getTransaction().rollback();
+                                currentEntityManager().getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
                             }finally {
-                                em.close();
+                                close();
                             }
                         } else{
                             res.status(409);
@@ -103,25 +102,25 @@ public class GameListHandler extends AbstractHandler{
                     GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
-                        EntityManager em = emf.createEntityManager();
-                        @SuppressWarnings("unchecked") List<UserGame> game = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
+                        
+                        @SuppressWarnings("unchecked") List<UserGame> game = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
                                 .setParameter(1, gameListRequest.getGameId())
                                 .setParameter(2, (long) userId1)
                                 .getResultList();
                         if (!game.isEmpty()) {
                             UserGame userGame = game.get(0);
                             try {
-                                em.getTransaction().begin();
-                                em.remove(userGame);
-                                em.getTransaction().commit();
+                                currentEntityManager().getTransaction().begin();
+                                currentEntityManager().remove(userGame);
+                                currentEntityManager().getTransaction().commit();
                                 res.status(200);
                                 return "{\"message\":\"Game removed to game list.\"}";
                             }catch (Throwable e){
-                                em.getTransaction().rollback();
+                                currentEntityManager().getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
                             }finally {
-                                em.close();
+                                close();
                             }
                         } else{
                             res.status(409);
@@ -148,8 +147,8 @@ public class GameListHandler extends AbstractHandler{
                     GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
                     long userId =  Integer.parseInt(req.params("userId"));
                     if (userId == userId1){
-                        EntityManager em = emf.createEntityManager();
-                        @SuppressWarnings("unchecked") List<UserGame> game = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
+                        
+                        @SuppressWarnings("unchecked") List<UserGame> game = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
                                 .setParameter(1, gameListRequest.getGameId())
                                 .setParameter(2, (long) userId1)
                                 .getResultList();
@@ -158,17 +157,17 @@ public class GameListHandler extends AbstractHandler{
                             userGame.setStatus(gameListRequest.getStatus());
                             userGame.setScore(gameListRequest.getScore());
                             try {
-                                em.getTransaction().begin();
-                                em.merge(userGame);
-                                em.getTransaction().commit();
+                                currentEntityManager().getTransaction().begin();
+                                currentEntityManager().merge(userGame);
+                                currentEntityManager().getTransaction().commit();
                                 res.status(200);
                                 return "{\"message\":\"Game edited.\"}";
                             }catch (Throwable e) {
-                                em.getTransaction().rollback();
+                                currentEntityManager().getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
                             }finally {
-                                em.close();
+                                close();
                             }
                         } else{
                             res.status(409);

@@ -19,12 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spark.Spark.get;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class HomeHandler extends AbstractHandler{
-    public HomeHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
 
     public void handle(){
@@ -36,36 +35,36 @@ public class HomeHandler extends AbstractHandler{
                         .setSigningKey(key)
                         .parseClaimsJws(token).getBody();
                 Long userId = Long.valueOf((Integer) claims.get("id"));
-                EntityManager em = emf.createEntityManager();
-                User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                
+                User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                         .setParameter(1, userId)
                         .getSingleResult();
                 UserResponse userResponse = new UserResponse(user);            // User ready
-                @SuppressWarnings("unchecked") List<Tag> tags = (List<Tag>) em.createQuery("SELECT likedTags FROM User u WHERE u.id = ?1")
+                @SuppressWarnings("unchecked") List<Tag> tags = (List<Tag>) currentEntityManager().createQuery("SELECT likedTags FROM User u WHERE u.id = ?1")
                         .setParameter(1, userId)
                         .getResultList();
-                fillTags(em, tags);                                                    // Tags ready
-                @SuppressWarnings("unchecked")List<Game> gamesTag1 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                fillTags(tags);                                                    // Tags ready
+                @SuppressWarnings("unchecked")List<Game> gamesTag1 = (List<Game>) currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(0).getName())
                         .getResultList();
                 List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1);
-                @SuppressWarnings("unchecked")List<Game> gamesTag2 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                @SuppressWarnings("unchecked")List<Game> gamesTag2 = (List<Game>) currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(1).getName())
                         .getResultList();
                 List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2);
-                @SuppressWarnings("unchecked")List<Game> gamesTag3 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                @SuppressWarnings("unchecked")List<Game> gamesTag3 = (List<Game>) currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(2).getName())
                         .getResultList();
                 List<GameResponse> gamesForResponse3 = gameForResponseList(gamesTag3);
-                @SuppressWarnings("unchecked")List<Game> gamesTag4 = (List<Game>) em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                @SuppressWarnings("unchecked")List<Game> gamesTag4 = (List<Game>) currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(3).getName())
                         .getResultList();
                 List<GameResponse> gamesForResponse4 = gameForResponseList(gamesTag4);
-                @SuppressWarnings("unchecked")List<Game> gamesTag5 = (List<Game>)em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                @SuppressWarnings("unchecked")List<Game> gamesTag5 = (List<Game>)currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                         .setMaxResults(5)
                         .setParameter(1, tags.get(4).getName())
                         .getResultList();
@@ -73,7 +72,7 @@ public class HomeHandler extends AbstractHandler{
                 List<TagResponse> tagResponseList = tagForResponseList(tags);
                 HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
                 Gson gson = new Gson();
-                em.close();
+                close();
                 res.status(200);
                 return gson.toJson(homeResponse);
             }else{
@@ -98,9 +97,9 @@ public class HomeHandler extends AbstractHandler{
         });
     }
 
-    private void fillTags(EntityManager em, List<Tag> tags) {
+    private void fillTags(List<Tag> tags) {
         if (tags.size() < 5){
-            @SuppressWarnings("unchecked") List<String> availableTags = (List<String>) em.createQuery("SELECT availableTag FROM AvailableTag a")
+            @SuppressWarnings("unchecked") List<String> availableTags = (List<String>) currentEntityManager().createQuery("SELECT availableTag FROM AvailableTag a")
                     .getResultList();
             for (String availableTag : availableTags) {
                 boolean isContained = false;

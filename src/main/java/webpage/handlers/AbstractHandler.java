@@ -18,11 +18,8 @@ import static spark.Spark.options;
 import static webpage.util.SecretKey.key;
 
 public abstract class AbstractHandler implements Handler {
-        EntityManagerFactory emf;
 
-        public AbstractHandler(EntityManagerFactory emf) {
-                this.emf = emf;
-        }
+
         public void enableCORS() {
                 options("/*", (request, response) -> {
 

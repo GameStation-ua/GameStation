@@ -16,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class ForumHandler extends AbstractHandler{
-
-    public ForumHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     @Override
     public void handle() {
@@ -30,12 +28,12 @@ public class ForumHandler extends AbstractHandler{
             get("/thread/:threadId", (req, res) -> {
                     String token = req.headers("token");
                     if (verifyJWT(token)) {
-                        EntityManager em = emf.createEntityManager();
+                        
                         try {
-                            Thread thread = (Thread) em.createQuery("FROM Thread t WHERE t.id = ?1")
+                            Thread thread = (Thread) currentEntityManager().createQuery("FROM Thread t WHERE t.id = ?1")
                                     .setParameter(1, Long.valueOf(req.params(":threadId")))
                                     .getSingleResult();
-                            User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                            User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                     .setParameter(1, thread.getCreatorId())
                                     .getSingleResult();
                             return new Gson().toJson(new ThreadResponse(thread, user));
@@ -43,7 +41,7 @@ public class ForumHandler extends AbstractHandler{
                             res.status(400);
                             return "{\"message\":\"Invalid Thread.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     }else {
                         res.status(401);
@@ -60,20 +58,20 @@ public class ForumHandler extends AbstractHandler{
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Gson gson = new Gson();
                     ThreadRequest threadRequest = gson.fromJson(req.body(), ThreadRequest.class);
-                    EntityManager em = emf.createEntityManager();
+                    
                     try {
                     Thread thread = new Thread(userId, threadRequest.getGameId(), threadRequest.getDescription(), threadRequest.getTitle());
-                        em.getTransaction().begin();
-                        em.persist(thread);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().persist(thread);
+                        currentEntityManager().getTransaction().commit();
                         res.status(200);
                         return  "{\"message\":\"OK.\"}";
                     }catch (Throwable e){
-                        em.getTransaction().rollback();
+                        currentEntityManager().getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -87,9 +85,9 @@ public class ForumHandler extends AbstractHandler{
                     String[] request = req.splat();
                     Long gameId = Long.valueOf(request[0]);
                     int pageNumber = Integer.parseInt(request[1]);
-                    EntityManager em = emf.createEntityManager();
+                    
                     try{
-                        @SuppressWarnings("unchecked") List<Thread> threads = em.createQuery("FROM Thread t WHERE t.gameId = ?1")
+                        @SuppressWarnings("unchecked") List<Thread> threads = currentEntityManager().createQuery("FROM Thread t WHERE t.gameId = ?1")
                                 .setParameter(1, gameId)
                                 .setFirstResult(pageNumber * 10 - 10)
                                 .setMaxResults(10)
@@ -97,7 +95,7 @@ public class ForumHandler extends AbstractHandler{
 
                         List<ThreadResponse> softThreadsResponse = new ArrayList<>();
                         for (Thread thread : threads) {
-                            User user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                            User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                             .setParameter(1, thread.getCreatorId())
                                             .getSingleResult();
                             softThreadsResponse.add(new ThreadResponse(thread, user));
@@ -107,7 +105,7 @@ public class ForumHandler extends AbstractHandler{
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);

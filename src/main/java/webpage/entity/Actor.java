@@ -3,6 +3,8 @@ package webpage.entity;
 import javax.persistence.*;
 import java.util.Set;
 
+import static webpage.util.EntityManagers.currentEntityManager;
+
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Actor {
@@ -25,6 +27,10 @@ public class Actor {
         this.followers = followers;
     }
 
+    public boolean isUser() {
+        return false;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -43,11 +49,11 @@ public class Actor {
 
     public boolean sendNotification(Notification notification, EntityManager em) {
         try {
-            em.getTransaction().begin();
+            currentEntityManager().getTransaction().begin();
             for (User follower : followers) {
                 follower.addNotification(notification);
             }
-            em.getTransaction().commit();
+            currentEntityManager().getTransaction().commit();
             return true;
         }catch (Throwable e){
             return false;

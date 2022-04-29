@@ -19,7 +19,7 @@ public class Game extends Actor{
     private int imgsInCarousel = 0;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
-    @OrderBy(value = "date DESC")
+    @OrderBy(value = "date ASC")
     private Set<Thread> threads;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")

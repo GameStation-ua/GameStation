@@ -3,7 +3,6 @@ package webpage.handlers;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import spark.Response;
 import webpage.entity.Actor;
 import webpage.entity.Notification;
 import webpage.entity.NotificationType;
@@ -11,19 +10,17 @@ import webpage.entity.User;
 import webpage.requestFormats.FollowRequest;
 import webpage.util.HandlerType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import java.util.Objects;
 
 import static spark.Spark.patch;
 import static spark.Spark.path;
+import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class FollowHandler extends AbstractHandler{
-    public FollowHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     @Override
     public void handle() {
@@ -37,14 +34,13 @@ public class FollowHandler extends AbstractHandler{
                    Gson gson = new Gson();
                    FollowRequest followRequest = gson.fromJson(req.body(), FollowRequest.class);
                    Long userId = Long.valueOf((Integer) claims.get("id"));
-                   EntityManager em = emf.createEntityManager();
-                   User actor;
+                   Actor actor;
                    User user;
                    try {
-                       actor = (User) em.createQuery("FROM ACTOR a WHERE a.id = ?1")
+                       actor = (Actor) currentEntityManager().createQuery("FROM ACTOR a WHERE a.id = ?1")
                                .setParameter(1, Long.valueOf(req.params(":actorId")))
                                .getSingleResult();
-                       user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                       user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                .setParameter(1, userId)
                                .getSingleResult();
                    } catch (NoResultException e) {
@@ -60,8 +56,30 @@ public class FollowHandler extends AbstractHandler{
                    }
                    if (!alreadyFollows) {
                        user.addFollowedActor(actor);
-                       actor.addNotification(new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath()));
-                       return persist(res, em, user);
+                       try {
+                           User user1 = (User) actor;
+                           Notification notification = new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath());
+                           user1.addNotification(notification);
+                           currentEntityManager().getTransaction().begin();
+                           currentEntityManager().merge(user1);
+                           currentEntityManager().getTransaction().commit();
+                           sendNotification(userId, notification);
+                       } catch (Throwable e) {
+                           currentEntityManager().getTransaction().rollback();
+                       }
+                       try{
+                           currentEntityManager().getTransaction().begin();
+                           currentEntityManager().merge(user);
+                           currentEntityManager().getTransaction().commit();
+                           res.status(200);
+                           return "{\"message\":\"OK.\"}";
+                       } catch(Throwable e){
+                           currentEntityManager().getTransaction().rollback();
+                           res.status(500);
+                           return "{\"message\":\"Something went wrong.\"}";
+                       }finally{
+                           close();
+                       }
                    }else {
                        res.status(400);
                        return "{\"message\":\"Already follows.\"}";
@@ -78,14 +96,13 @@ public class FollowHandler extends AbstractHandler{
                                .setSigningKey(key)
                                .parseClaimsJws(token).getBody();
                        Long userId = Long.valueOf((Integer) claims.get("id"));
-                       EntityManager em = emf.createEntityManager();
                        Actor actor;
                        User user;
                        try {
-                           actor = (Actor) em.createQuery("FROM ACTOR a WHERE a.id = ?1")
+                           actor = (Actor) currentEntityManager().createQuery("FROM ACTOR a WHERE a.id = ?1")
                                    .setParameter(1, Long.valueOf(req.params(":actorId")))
                                    .getSingleResult();
-                           user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                           user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                    .setParameter(1, userId)
                                    .getSingleResult();
                        } catch (NoResultException e) {
@@ -101,7 +118,19 @@ public class FollowHandler extends AbstractHandler{
                        }
                        if (Follows) {
                            user.removeFollowedActor(actor);
-                           return persist(res, em, user);
+                           try {
+                               currentEntityManager().getTransaction().begin();
+                               currentEntityManager().merge(user);
+                               currentEntityManager().getTransaction().commit();
+                               res.status(200);
+                               return "{\"message\":\"OK.\"}";
+                           } catch (Throwable e) {
+                               currentEntityManager().getTransaction().rollback();
+                               res.status(500);
+                               return "{\"message\":\"Something went wrong.\"}";
+                           }finally {
+                               close();
+                           }
                        }else {
                            res.status(400);
                            return "{\"message\":\"Doesn't follow.\"}";
@@ -113,22 +142,6 @@ public class FollowHandler extends AbstractHandler{
            });
         });
 
-    }
-
-    private String persist(Response res, EntityManager em, User user) {
-        try {
-            em.getTransaction().begin();
-            em.merge(user);
-            em.getTransaction().commit();
-            res.status(200);
-            return "{\"message\":\"OK.\"}";
-        } catch (Throwable e) {
-            em.getTransaction().rollback();
-            res.status(500);
-            return "{\"message\":\"Something went wrong.\"}";
-        }finally {
-            em.close();
-        }
     }
 
     @Override

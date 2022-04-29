@@ -2,8 +2,6 @@ package webpage.handlers;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import spark.Session;
 import webpage.entity.Game;
 import webpage.util.HandlerType;
 import webpage.util.ImageRescaler;
@@ -20,15 +18,13 @@ import java.util.List;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class UploadHandler extends AbstractHandler{
 
     public static final int DEFAULT_BUFFER_SIZE = 8192;
-
-    public UploadHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     public void handle(){
         path("/upload", () -> {
@@ -74,8 +70,8 @@ public class UploadHandler extends AbstractHandler{
                     Integer userId = (Integer) claims.get("id");
                     String gameid = req.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<Game> gameList = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                    
+                    @SuppressWarnings("unchecked") List<Game> gameList = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
                             .setParameter("id", userId)
                             .getResultList();
                     for (Game game : gameList) {
@@ -112,11 +108,11 @@ public class UploadHandler extends AbstractHandler{
                     Integer userId1 = (Integer) claims.get("id");
                     String gameid = req.headers("gameId");
                     int gameid1 = Integer.parseInt(gameid);
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<Game> gameList = em.createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
+                    
+                    @SuppressWarnings("unchecked") List<Game> gameList = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
                             .setParameter("id", userId1)
                             .getResultList();
-                    em.close();
+                    close();
                     for (Game game : gameList) {
                         if (game.getId() == gameid1) {
                             int imgsInCarousel = game.getImgsInCarousel();
@@ -134,7 +130,7 @@ public class UploadHandler extends AbstractHandler{
                                 return  "{\"message\":\"Error in rescaling.\"}";
                             }
                             game.setImgsInCarousel(imgsInCarousel + 1);
-                            EntityManager em2 = emf.createEntityManager();
+                            EntityManager em2 = currentEntityManager();
                             try{
                             em2.getTransaction().begin();
                             em2.merge(game);

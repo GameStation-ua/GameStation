@@ -13,13 +13,11 @@ import java.nio.charset.StandardCharsets;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 
 public class RegisterHandler extends AbstractHandler {
-
-    public RegisterHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     public void handle() {
         path("/register", () -> {
@@ -29,9 +27,9 @@ public class RegisterHandler extends AbstractHandler {
                     res.status(406);
                     return "{\"message\":\"You need to fill all the fields\"}";
                 }
-                EntityManager em = emf.createEntityManager();
+                
                 try {
-                    em.createQuery("FROM User user WHERE user.username like :username")
+                    currentEntityManager().createQuery("FROM User user WHERE user.username like :username")
                             .setParameter("username", registerRequest.getUsername())
                             .getSingleResult();
                     res.type("application/json");
@@ -49,17 +47,17 @@ public class RegisterHandler extends AbstractHandler {
                                 registerRequest.getUsername(),
                                 registerRequest.getPassword());
                         try{
-                            em.getTransaction().begin();
-                            em.persist(user1);
-                            em.getTransaction().commit();
+                            currentEntityManager().getTransaction().begin();
+                            currentEntityManager().persist(user1);
+                            currentEntityManager().getTransaction().commit();
                             res.status(201);
                             return "{\"message\":\"User created!\"}";
                         }catch (Throwable r) {
-                            em.getTransaction().rollback();
+                            currentEntityManager().getTransaction().rollback();
                             res.status(500);
                             return "{\"message\":\"Something went wrong, try again.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     }
                 }

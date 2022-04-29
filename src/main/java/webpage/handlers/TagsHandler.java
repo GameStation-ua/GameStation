@@ -21,15 +21,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class TagsHandler extends AbstractHandler {
-    public TagsHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     public void handle() {
         path("/tags", () -> {
@@ -37,8 +35,8 @@ public class TagsHandler extends AbstractHandler {
                 get("", (req, res) -> {
                     String token = req.headers("token");
                     if (verifyJWT(token)) {
-                        EntityManager em = emf.createEntityManager();
-                        Query availableTagsQuery = em.createQuery("FROM AvailableTag");
+                        
+                        Query availableTagsQuery = currentEntityManager().createQuery("FROM AvailableTag");
                         try {
                             @SuppressWarnings("unchecked") List<AvailableTag> availableTags = availableTagsQuery.getResultList();
                             AvailableTagsResponse response = new AvailableTagsResponse(availableTags);
@@ -49,7 +47,7 @@ public class TagsHandler extends AbstractHandler {
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     } else {
                         res.status(401);
@@ -67,20 +65,20 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         boolean isAdmin = (boolean) claims.get("isAdmin");
                         if (isAdmin) {
-                            EntityManager em = emf.createEntityManager();
+                            
                             try {
-                                @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")
+                                @SuppressWarnings("unchecked") List<AvailableTag> availableTags = currentEntityManager().createQuery("FROM AvailableTag")
                                         .getResultList();
                                     try {
-                                        em.getTransaction().begin();
+                                        currentEntityManager().getTransaction().begin();
                                         for (AvailableTag tagsRequestTag : tagsRequest.getTags()) {
                                             if (!availableTags.contains(tagsRequestTag)) {
-                                                em.merge(tagsRequestTag);
+                                                currentEntityManager().merge(tagsRequestTag);
                                             }
                                         }
-                                        em.getTransaction().commit();
+                                        currentEntityManager().getTransaction().commit();
                                     } catch (Throwable r) {
-                                        em.getTransaction().rollback();
+                                        currentEntityManager().getTransaction().rollback();
                                         res.status(500);
                                         return "{\"message\":\"Something went wrong, try again.\"}";
                                     }
@@ -90,7 +88,7 @@ public class TagsHandler extends AbstractHandler {
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
                             } finally {
-                                em.close();
+                                close();
                             }
                         }
                         res.status(401);
@@ -110,20 +108,20 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         boolean isAdmin = (boolean) claims.get("isAdmin");
                         if (isAdmin) {
-                            EntityManager em = emf.createEntityManager();
+                            
                             try {
-                                @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")
+                                @SuppressWarnings("unchecked") List<AvailableTag> availableTags = currentEntityManager().createQuery("FROM AvailableTag")
                                         .getResultList();
                                 try {
-                                    em.getTransaction().begin();
+                                    currentEntityManager().getTransaction().begin();
                                     for (AvailableTag availableTag : availableTags) {
                                         for (AvailableTag tag : tagsRequest.getTags()) {
-                                            if (tag.equals(availableTag)) em.remove(availableTag);
+                                            if (tag.equals(availableTag)) currentEntityManager().remove(availableTag);
                                         }
                                     }
-                                    em.getTransaction().commit();
+                                    currentEntityManager().getTransaction().commit();
                                 } catch (Throwable r) {
-                                    em.getTransaction().rollback();
+                                    currentEntityManager().getTransaction().rollback();
                                     res.status(500);
                                     return "{\"message\":\"Something went wrong, try again.\"}";
                                 }
@@ -133,7 +131,7 @@ public class TagsHandler extends AbstractHandler {
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong, try again.\"}";
                             } finally {
-                                em.close();
+                                close();
                             }
                         }
                         res.status(401);
@@ -152,9 +150,9 @@ public class TagsHandler extends AbstractHandler {
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
                         Long userId = Long.valueOf((Integer)claims.get("id"));
-                        EntityManager em = emf.createEntityManager();
+                        
                         try {
-                            User user = (User) em.createQuery("FROM User u WHERE u.id = :id")
+                            User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = :id")
                                     .setParameter("id", userId)
                                     .getSingleResult();
                             UserTagsResponse response = new UserTagsResponse(user.getLikedTags());
@@ -165,7 +163,7 @@ public class TagsHandler extends AbstractHandler {
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     } else {
                         res.status(401);
@@ -182,24 +180,24 @@ public class TagsHandler extends AbstractHandler {
                                 .setSigningKey(key)
                                 .parseClaimsJws(token).getBody();
                         Long userId1 = Long.valueOf((Integer) claims.get("id"));
-                        EntityManager em = emf.createEntityManager();
+                        
                         try {
-                            User user = (User) em.createQuery("FROM User u WHERE u.id = :id")
+                            User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = :id")
                                     .setParameter("id", userId1)
                                     .getSingleResult();
                             tagsRequest.getTags().forEach(user.getLikedTags()::remove);
                             try{
-                            em.getTransaction().begin();
-                            em.merge(user);
-                            em.getTransaction().commit();
+                            currentEntityManager().getTransaction().begin();
+                            currentEntityManager().merge(user);
+                            currentEntityManager().getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags successfully removed\"}";
                             } catch (Throwable e) {
-                                em.getTransaction().rollback();
+                                currentEntityManager().getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong.\"}";
                             }finally {
-                                em.close();
+                                close();
                             }
                         } catch (NoResultException e) {
                             res.status(400);
@@ -213,8 +211,8 @@ public class TagsHandler extends AbstractHandler {
                 patch("/add", "application/json", (req, res) -> {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag")
+                    
+                    @SuppressWarnings("unchecked") List<String> availableTags = currentEntityManager().createQuery("SELECT availableTag FROM AvailableTag")
                             .getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
@@ -226,22 +224,22 @@ public class TagsHandler extends AbstractHandler {
                                 .parseClaimsJws(token).getBody();
                         Long userId1 = Long.valueOf((Integer)claims.get("id"));
                         try {
-                            User user = (User) em.createQuery("FROM User u WHERE u.id = :id")
+                            User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = :id")
                                     .setParameter("id", userId1)
                                     .getSingleResult();
                             user.getLikedTags().addAll(tagsRequest.getTags());
                             try{
-                            em.getTransaction().begin();
-                            em.merge(user);
-                            em.getTransaction().commit();
+                            currentEntityManager().getTransaction().begin();
+                            currentEntityManager().merge(user);
+                            currentEntityManager().getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags successfully added.\"}";
                             } catch (Throwable e) {
-                                em.getTransaction().rollback();
+                                currentEntityManager().getTransaction().rollback();
                                 res.status(500);
                                 return "{\"message\":\"Something went wrong.\"}";
                             }finally {
-                                em.close();
+                                close();
                             }
                         } catch (NoResultException e) {
                             res.status(400);
@@ -257,8 +255,8 @@ public class TagsHandler extends AbstractHandler {
                 patch("/add/:gameId", (req, res) -> {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag")
+                    
+                    @SuppressWarnings("unchecked") List<String> availableTags = currentEntityManager().createQuery("SELECT availableTag FROM AvailableTag")
                             .getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
@@ -271,7 +269,7 @@ public class TagsHandler extends AbstractHandler {
                         long userId =  Long.valueOf((Integer) claims.get("id"));
                         Game game;
                         try {
-                            game = (Game) em.createQuery("FROM Game g WHERE g.id = ?1")
+                            game = (Game) currentEntityManager().createQuery("FROM Game g WHERE g.id = ?1")
                                     .setParameter(1, Long.valueOf(req.params(":gameId")))
                                     .getSingleResult();
                             if (game.getCreatorId() != userId){
@@ -286,17 +284,17 @@ public class TagsHandler extends AbstractHandler {
                             return "{\"message\":\"Something went wrong.\"}";
                         }
                         try{
-                            em.getTransaction().begin();
-                            em.merge(game);
-                            em.getTransaction().commit();
+                            currentEntityManager().getTransaction().begin();
+                            currentEntityManager().merge(game);
+                            currentEntityManager().getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags added.\"}";
                         }catch (Throwable e) {
-                            em.getTransaction().rollback();
+                            currentEntityManager().getTransaction().rollback();
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     } else {
                         res.status(401);
@@ -307,8 +305,8 @@ public class TagsHandler extends AbstractHandler {
                 delete("/delete/:gameId", (req, res) -> {
                     Gson gson = new Gson();
                     UserTagsRequest tagsRequest = gson.fromJson(req.body(), UserTagsRequest.class);
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT availableTag FROM AvailableTag").getResultList();
+                    
+                    @SuppressWarnings("unchecked") List<String> availableTags = currentEntityManager().createQuery("SELECT availableTag FROM AvailableTag").getResultList();
                     for (Tag tag : tagsRequest.getTags()) {
                         if (!availableTags.contains(tag.getName())) return "{\"message\":\"Tag not available.\"}";
                     }
@@ -320,7 +318,7 @@ public class TagsHandler extends AbstractHandler {
                         long userId =  Long.valueOf((Integer) claims.get("id"));
                         Game game;
                         try {
-                            game = (Game) em.createQuery("FROM Game g WHERE g.id = ?1")
+                            game = (Game) currentEntityManager().createQuery("FROM Game g WHERE g.id = ?1")
                                     .setParameter(1, Long.valueOf(req.params(":gameId")))
                                     .getSingleResult();
                             if (game.getCreatorId() != userId){
@@ -335,17 +333,17 @@ public class TagsHandler extends AbstractHandler {
                             return "{\"message\":\"Something went wrong.\"}";
                         }
                         try{
-                            em.getTransaction().begin();
-                            em.merge(game);
-                            em.getTransaction().commit();
+                            currentEntityManager().getTransaction().begin();
+                            currentEntityManager().merge(game);
+                            currentEntityManager().getTransaction().commit();
                             res.status(200);
                             return "{\"message\":\"Tags deleted.\"}";
                             }catch (Throwable e) {
-                            em.getTransaction().rollback();
+                            currentEntityManager().getTransaction().rollback();
                             res.status(500);
                             return "{\"message\":\"Something went wrong.\"}";
                         }finally {
-                            em.close();
+                            close();
                         }
                     } else {
                         res.status(401);
@@ -358,9 +356,9 @@ public class TagsHandler extends AbstractHandler {
                 String searchTag = req.params(":searchTag");
                 String token = req.headers("token");
                 if (verifyJWT(token)) {
-                    EntityManager em = emf.createEntityManager();
+                    
                     try {
-                        @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
+                        @SuppressWarnings("unchecked") List<Game> games = currentEntityManager().createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                                 .setParameter("search", searchTag)
                                 .getResultList();
                         List<GameResponse> gamesForResponse = new ArrayList<>();
@@ -373,7 +371,7 @@ public class TagsHandler extends AbstractHandler {
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);

@@ -10,12 +10,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class LogInHandler extends AbstractHandler{
-
-    public LogInHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
 
     public void handle() {
@@ -34,9 +32,9 @@ public class LogInHandler extends AbstractHandler{
             post("", "application/json", (request, response) -> {
                 LogInRequest logInRequest = new Gson().fromJson(request.body(), LogInRequest.class);
                 if (logInRequest.getUsername() != null && logInRequest.getPassword() != null) {
-                    EntityManager em = emf.createEntityManager();
+                    
                     try {
-                        User user = (User) em.createQuery("FROM User u WHERE u.username = :username")
+                        User user = (User) currentEntityManager().createQuery("FROM User u WHERE u.username = :username")
                                 .setParameter("username", logInRequest.getUsername())
                                 .getSingleResult();
                         if (user.getPassword().equals(logInRequest.getPassword())) {
@@ -51,7 +49,7 @@ public class LogInHandler extends AbstractHandler{
                         response.status(406);
                         return "{\"message\":\"Incorrect username or password\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 } else {
                     response.status(406);

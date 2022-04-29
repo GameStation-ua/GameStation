@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class CommentHandler extends AbstractHandler{
-    public CommentHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     @Override
     public void handle() {
@@ -37,21 +36,21 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long gameId = Long.valueOf(req.params(":gameId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     Actor game;
                     Actor user;
                     try {
-                        game = (Actor) em.createQuery("FROM Game g WHERE g.id = ?1")
+                        game = (Actor) currentEntityManager().createQuery("FROM Game g WHERE g.id = ?1")
                                 .setParameter(1, gameId)
                                 .getSingleResult();
-                        user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                 .setParameter(1, userId)
                                 .getSingleResult();
                     } catch (NoResultException e) {
                         res.status(400);
                         return "{\"message\":\"Game not found.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                     Comment comment = new Comment(userId, gameId, commentRequest.getContent());
                     game.addComment(comment);
@@ -60,17 +59,17 @@ public class CommentHandler extends AbstractHandler{
                         follower.addNotification(notification);
                     }
                     try{
-                        em.getTransaction().begin();
-                        em.merge(user);
-                        em.merge(game);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(user);
+                        currentEntityManager().merge(game);
+                        currentEntityManager().getTransaction().commit();
                         res.status(200);
                         return "{\"message\":\"OK.\"}";
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -88,18 +87,18 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long threadId = Long.valueOf(req.params(":threadId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     Thread thread;
                     User user;
                     User creator;
                     try {
-                        thread = (Thread) em.createQuery("FROM Thread t WHERE t.id = ?1")
+                        thread = (Thread) currentEntityManager().createQuery("FROM Thread t WHERE t.id = ?1")
                                 .setParameter(1, threadId)
                                 .getSingleResult();
-                        creator = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        creator = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                 .setParameter(1, thread.getCreatorId())
                                 .getSingleResult();
-                        user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                 .setParameter(1, userId)
                                 .getSingleResult();
                     } catch (NoResultException e) {
@@ -118,18 +117,18 @@ public class CommentHandler extends AbstractHandler{
                         follower.addNotification(notification1);
                     }
                     try{
-                        em.getTransaction().begin();
-                        em.merge(creator);
-                        em.merge(user);
-                        em.merge(thread);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(creator);
+                        currentEntityManager().merge(user);
+                        currentEntityManager().merge(thread);
+                        currentEntityManager().getTransaction().commit();
                         res.status(200);
                         return "{\"message\":\"OK.\"}";
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -147,14 +146,14 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long targetUserId = Long.valueOf(req.params(":targetUserId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     User targetUser;
                     User user;
                     try {
-                        targetUser = (User) em.createQuery("FROM User g WHERE g.id = ?1")
+                        targetUser = (User) currentEntityManager().createQuery("FROM User g WHERE g.id = ?1")
                                 .setParameter(1, targetUserId)
                                 .getSingleResult();
-                        user = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        user = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                 .setParameter(1, userId)
                                 .getSingleResult();
                     } catch (NoResultException e) {
@@ -169,17 +168,17 @@ public class CommentHandler extends AbstractHandler{
                     }
                     targetUser.addNotification(new Notification(NotificationType.USER_COMMENTED_ON_PROFILE, user, targetUser, commentRequest.getPath()));
                     try{
-                        em.getTransaction().begin();
-                        em.merge(user);
-                        em.merge(targetUser);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(user);
+                        currentEntityManager().merge(targetUser);
+                        currentEntityManager().getTransaction().commit();
                         res.status(200);
                         return "{\"message\":\"OK.\"}";
                     }catch (Throwable e){
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -197,9 +196,9 @@ public class CommentHandler extends AbstractHandler{
                     String[] request = req.splat();
                     Long actorId = Long.valueOf(request[0]);
                     int pageNumber = Integer.parseInt(request[1]);
-                    EntityManager em = emf.createEntityManager();
+                    
                     try {
-                        @SuppressWarnings("unchecked") List<Comment> comments = em.createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
+                        @SuppressWarnings("unchecked") List<Comment> comments = currentEntityManager().createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
                                 .setParameter(1, actorId)
                                 .setFirstResult(pageNumber * 10 - 10)
                                 .setMaxResults(10)
@@ -209,14 +208,14 @@ public class CommentHandler extends AbstractHandler{
                             for (Comment comment : comments) {
                                 Integer vote;
                                 try{
-                                    vote = (Integer) em.createQuery("SELECT vote FROM UserComment uc WHERE uc.userId = ?1 AND uc.commentId = ?2")
+                                    vote = (Integer) currentEntityManager().createQuery("SELECT vote FROM UserComment uc WHERE uc.userId = ?1 AND uc.commentId = ?2")
                                             .setParameter(1, userId)
                                             .setParameter(2, comment.getId())
                                             .getSingleResult();
                                 }catch (NoResultException e){
                                     vote = 0;
                                 }
-                                String nickname = (String) em.createQuery("SELECT name FROM User u WHERE u.id = ?1")
+                                String nickname = (String) currentEntityManager().createQuery("SELECT name FROM User u WHERE u.id = ?1")
                                         .setParameter(1, comment.getUserId())
                                         .getSingleResult();
                                 commentResponseList.add(new CommentResponse(comment, nickname, vote));
@@ -231,7 +230,7 @@ public class CommentHandler extends AbstractHandler{
                         res.status(400);
                         return "{\"message\":\"Wrong id.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else{
                     res.status(401);
@@ -247,17 +246,17 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long commentId =  Long.valueOf(req.params(":commentId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     UserComment userComment = null;
                     Comment comment;
                     try{
-                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                        userComment = (UserComment) currentEntityManager().createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
                                 .setParameter(2, userId)
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
-                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                        comment = (Comment) currentEntityManager().createQuery("FROM Comment c WHERE c.id = ?1")
                                 .setParameter(1, commentId)
                                 .getSingleResult();
                         if (comment == null){
@@ -275,17 +274,17 @@ public class CommentHandler extends AbstractHandler{
                                 case -1: userComment.setVote(1); comment.setVotes(comment.getVotes() + 2); break;
                             }
                         }
-                        em.getTransaction().begin();
-                        em.merge(comment);
-                        em.merge(userComment);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(comment);
+                        currentEntityManager().merge(userComment);
+                        currentEntityManager().getTransaction().commit();
                         return "{\"message\":\"OK.\"}";
                     }catch(Throwable e){
-                        em.getTransaction().rollback();
+                        currentEntityManager().getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -301,17 +300,17 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long commentId =  Long.valueOf(req.params(":commentId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     UserComment userComment = null;
                     Comment comment;
                     try{
-                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                        userComment = (UserComment) currentEntityManager().createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
                                 .setParameter(2, userId)
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
-                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                        comment = (Comment) currentEntityManager().createQuery("FROM Comment c WHERE c.id = ?1")
                                 .setParameter(1, commentId)
                                 .getSingleResult();
                         if (comment == null){
@@ -329,17 +328,17 @@ public class CommentHandler extends AbstractHandler{
                                 case -1: break;
                             }
                         }
-                        em.getTransaction().begin();
-                        em.merge(comment);
-                        em.merge(userComment);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(comment);
+                        currentEntityManager().merge(userComment);
+                        currentEntityManager().getTransaction().commit();
                         return "{\"message\":\"OK.\"}";
                     }catch(Throwable e){
-                        em.getTransaction().rollback();
+                        currentEntityManager().getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);
@@ -355,17 +354,17 @@ public class CommentHandler extends AbstractHandler{
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
                     Long commentId =  Long.valueOf(req.params(":commentId"));
-                    EntityManager em = emf.createEntityManager();
+                    
                     UserComment userComment = null;
                     Comment comment;
                     try{
-                        userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
+                        userComment = (UserComment) currentEntityManager().createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                                 .setParameter(1, commentId)
                                 .setParameter(2, userId)
                                 .getSingleResult();
                     }catch (Throwable ignored){}
                     try {
-                        comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
+                        comment = (Comment) currentEntityManager().createQuery("FROM Comment c WHERE c.id = ?1")
                                 .setParameter(1, commentId)
                                 .getSingleResult();
                         if (comment == null){
@@ -382,17 +381,17 @@ public class CommentHandler extends AbstractHandler{
                                 case -1: userComment.setVote(0); comment.setVotes(comment.getVotes() + 1); break;
                             }
                         }
-                        em.getTransaction().begin();
-                        em.merge(comment);
-                        em.merge(userComment);
-                        em.getTransaction().commit();
+                        currentEntityManager().getTransaction().begin();
+                        currentEntityManager().merge(comment);
+                        currentEntityManager().merge(userComment);
+                        currentEntityManager().getTransaction().commit();
                         return "{\"message\":\"OK.\"}";
                     }catch(Throwable e){
-                        em.getTransaction().rollback();
+                        currentEntityManager().getTransaction().rollback();
                         res.status(500);
                         return "{\"message\":\"Something went wrong.\"}";
                     }finally {
-                        em.close();
+                        close();
                     }
                 }else {
                     res.status(401);

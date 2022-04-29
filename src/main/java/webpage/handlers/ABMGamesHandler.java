@@ -19,12 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spark.Spark.*;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class ABMGamesHandler extends AbstractHandler{
-    public ABMGamesHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     @Override
     public void handle() {
@@ -37,14 +36,15 @@ public class ABMGamesHandler extends AbstractHandler{
                             .setSigningKey(key)
                             .parseClaimsJws(token).getBody();
                     Long userId = Long.valueOf((Integer) claims.get("id"));
-                    EntityManager em = emf.createEntityManager();
-                    @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT createdGames FROM User u WHERE u.id = ?1")
+                    
+                    @SuppressWarnings("unchecked") List<Game> games = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = ?1")
                             .setParameter(1, userId)
                             .getResultList();
                     List<SoftGameResponse> softGameResponseList = new ArrayList<>();
                     for (Game game : games) {
                         softGameResponseList.add(new SoftGameResponse(game));
                     }
+                    close();
                     return new Gson().toJson(softGameResponseList);
                 }else{
                     res.status(401);
@@ -56,11 +56,11 @@ public class ABMGamesHandler extends AbstractHandler{
                 String token = req.headers("token");
                 if (verifyJWT(token)){
                     Long gameId = Long.valueOf(req.params(":gameId"));
-                    EntityManager em = emf.createEntityManager();
-                    Game game = (Game) em.createQuery("FROM Game g WHERE g.id = ?1")
+                    
+                    Game game = (Game) currentEntityManager().createQuery("FROM Game g WHERE g.id = ?1")
                             .setParameter(1, gameId)
                             .getSingleResult();
-                    @SuppressWarnings("unchecked") List<UserGame> userGames = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1")
+                    @SuppressWarnings("unchecked") List<UserGame> userGames = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1")
                             .setParameter(1, gameId)
                             .getResultList();
                     float meanScore = 0;
@@ -72,7 +72,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }else {
                         meanScore = -1;
                     }
-                        User creator = (User) em.createQuery("FROM User u WHERE u.id = ?1")
+                        User creator = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
                                 .setParameter(1, game.getCreatorId())
                                 .getSingleResult();
                     UserResponse userResponse = new UserResponse(creator);
@@ -80,6 +80,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     for (Tag tag : game.getTags()) {
                         tagsForResponse.add(new TagResponse(tag));
                     }
+                    close();
                     Gson gson = new Gson();
                     HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.getFollowers().size(), game.getTitle(), game.getDescription(), game.getImgsInCarousel(), game.getWiki(), userResponse, tagsForResponse, game.getGameUpdates());
                     res.status(200);

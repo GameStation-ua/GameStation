@@ -15,24 +15,23 @@ import java.util.List;
 
 import static spark.Spark.get;
 import static spark.Spark.path;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class SearchHandler extends AbstractHandler{
-    public SearchHandler(EntityManagerFactory emf) {
-        super(emf);
-    }
 
     public void handle(){
         path("/search", () -> {
            get("/:searchString", (req, res) -> {
                String searchTag = req.params(":searchString");
                String token = req.headers("token");
-               EntityManager em = emf.createEntityManager();
+               
                if (verifyJWT(token)) {
                    try{
-                       @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
+                       @SuppressWarnings("unchecked") List<Game> games = currentEntityManager().createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                                .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                                .getResultList();
-                       @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
+                       @SuppressWarnings("unchecked") List<User> users = currentEntityManager().createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
                                .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                                .getResultList();
                        List<GameResponse> gamesForResponse = new ArrayList<>();
@@ -49,7 +48,7 @@ public class SearchHandler extends AbstractHandler{
                        res.status(500);
                        return "{\"message\":\"Something went wrong.\"}";
                    }finally {
-                       em.close();
+                       close();
                    }
                }else {
                    res.status(401);
