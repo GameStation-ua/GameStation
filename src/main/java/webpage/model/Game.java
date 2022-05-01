@@ -1,4 +1,4 @@
-package webpage.entity;
+package webpage.model;
 
 import javax.persistence.*;
 import java.util.Set;

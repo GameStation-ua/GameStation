@@ -1,4 +1,4 @@
-package webpage.entity;
+package webpage.model;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -23,6 +23,7 @@ public class User extends Actor{
     private Set<UserComment> votedComments;
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @OrderBy(value = "date DESC")
     private Set<Notification> notifications;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

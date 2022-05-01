@@ -1,4 +1,4 @@
-package webpage.entity;
+package webpage.model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -25,6 +25,17 @@ public class UserGame {
      @Enumerated(EnumType.STRING)
      @SerializedName("STATUS")
      private Status status;
+
+     public UserGame(Long userId, Status status, int score, long gameId) {
+          this.userId = userId;
+          this.status = status;
+          this.score = score;
+          this.gameId = gameId;
+     }
+
+     public UserGame() {
+
+     }
 
      public Long getGameId() {
           return gameId;

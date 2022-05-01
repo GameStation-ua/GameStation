@@ -1,4 +1,4 @@
-package webpage.entity;
+package webpage.model;
 
 import com.google.gson.annotations.SerializedName;
 

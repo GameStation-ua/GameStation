@@ -1,6 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.entity.Game;
+import webpage.model.Game;
 
 public class GameResponse {
     private final long id;

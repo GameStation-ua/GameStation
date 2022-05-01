@@ -1,7 +1,7 @@
 package webpage.responseFormats;
 
-import webpage.entity.Thread;
-import webpage.entity.User;
+import webpage.model.Thread;
+import webpage.model.User;
 
 import java.util.Date;
 

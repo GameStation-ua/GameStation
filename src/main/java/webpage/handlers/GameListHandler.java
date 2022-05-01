@@ -1,20 +1,19 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import webpage.entity.UserGame;
+import webpage.model.UserGame;
 import webpage.requestFormats.GameListRequest;
 import webpage.util.HandlerType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.List;
+import java.util.Optional;
 
 import static spark.Spark.*;
-import static webpage.util.EntityManagers.close;
-import static webpage.util.EntityManagers.currentEntityManager;
-import static webpage.util.SecretKey.key;
+import static webpage.entity.Persister.merge;
+import static webpage.entity.Persister.remove;
+import static webpage.entity.UserGames.findUserGameByUserId;
+import static webpage.entity.UserGames.findUserGameByUserIdAndGameId;
+import static webpage.entity.Users.getIdByToken;
 
 public class GameListHandler extends AbstractHandler{
 
@@ -23,163 +22,96 @@ public class GameListHandler extends AbstractHandler{
         path("/gamelist", () -> {
             get("/:userId", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    
-                    try {
-                        Long userId = (long) Integer.parseInt(req.params("userId"));
-                        @SuppressWarnings("unchecked") List<UserGame> gameList = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.userId = ?1")
-                                .setParameter(1, userId)
-                                .getResultList();
-                        Gson gson = new Gson();
-                        res.status(200);
-                        return gson.toJson(gameList);
-                    }finally {
-                        close();
-                    }
-
-                }else{
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
+
+                Long userId = (long) Integer.parseInt(req.params("userId"));
+                Optional<List<UserGame>> gameList = findUserGameByUserId(userId);
+                if (gameList.isEmpty()){
+                    res.status(500);
+                    return "{\"message\":\"Something went wrong.\"}";
+                }
+
+                res.status(200);
+                return new Gson().toJson(gameList);
             });
 
-            patch("/:userId/add", (req, res) -> {
+            patch("/add", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    int userId1 = (Integer) claims.get("id");
-                    Gson gson = new Gson();
-                    GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
-                    long userId =  Integer.parseInt(req.params("userId"));
-                    if (userId == userId1){
-                        
-                        @SuppressWarnings("unchecked") List<Long> gamesIds = currentEntityManager().createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1")
-                                .setParameter(1, (long) userId1)
-                                .getResultList();
-                        if (!gamesIds.contains(gameListRequest.getGameId())) {
-                            UserGame userGame = new UserGame();
-                            userGame.setUserId((long) userId1);
-                            userGame.setStatus(gameListRequest.getStatus());
-                            userGame.setScore(gameListRequest.getScore());
-                            userGame.setGameId(gameListRequest.getGameId());
-                            try {
-                                currentEntityManager().getTransaction().begin();
-                                currentEntityManager().merge(userGame);
-                                currentEntityManager().getTransaction().commit();
-                                res.status(200);
-                                return "{\"message\":\"Game added to game list.\"}";
-                            }catch (Throwable e) {
-                                currentEntityManager().getTransaction().rollback();
-                                res.status(500);
-                                return "{\"message\":\"Something went wrong, try again.\"}";
-                            }finally {
-                                close();
-                            }
-                        } else{
-                            res.status(409);
-                            return "{\"message\":\"Game already in game list.\"}";
-                        }
-                    }else {
-                        res.status(401);
-                        return "{\"message\":\"Unauthorized.\"}";
-                    }
-                }else {
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
-            });
+                Long userId = getIdByToken(token);
+                GameListRequest gameListRequest = new Gson().fromJson(req.body(), GameListRequest.class);
 
-            patch("/:userId/delete", (req, res) -> {
-                String token = req.headers("token");
-                if (verifyJWT(token)){
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    int userId1 = (Integer) claims.get("id");
-                    Gson gson = new Gson();
-                    GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
-                    long userId =  Integer.parseInt(req.params("userId"));
-                    if (userId == userId1){
-                        
-                        @SuppressWarnings("unchecked") List<UserGame> game = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
-                                .setParameter(1, gameListRequest.getGameId())
-                                .setParameter(2, (long) userId1)
-                                .getResultList();
-                        if (!game.isEmpty()) {
-                            UserGame userGame = game.get(0);
-                            try {
-                                currentEntityManager().getTransaction().begin();
-                                currentEntityManager().remove(userGame);
-                                currentEntityManager().getTransaction().commit();
-                                res.status(200);
-                                return "{\"message\":\"Game removed to game list.\"}";
-                            }catch (Throwable e){
-                                currentEntityManager().getTransaction().rollback();
-                                res.status(500);
-                                return "{\"message\":\"Something went wrong, try again.\"}";
-                            }finally {
-                                close();
-                            }
-                        } else{
-                            res.status(409);
-                            return "{\"message\":\"Game not in game list.\"}";
-                        }
-                    }else {
-                        res.status(401);
-                        return "{\"message\":\"Unauthorized.\"}";
-                    }
-                }else {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
+                if (userGame.isPresent()){
+                    res.status(409);
+                    return "{\"message\":\"Game already in game list.\"}";
+                }
+                UserGame userGame1 = new UserGame(userId, gameListRequest.getStatus(), gameListRequest.getScore(), gameListRequest.getGameId());
+                try {
+                    merge(userGame1 );
+                    res.status(200);
+                    return "{\"message\":\"Game added to game list.\"}";
+                }catch (Throwable e) {
+                    res.status(500);
+                    return "{\"message\":\"Something went wrong, try again.\"}";
                 }
             });
 
-            patch("/:userId/edit", (req, res) -> {
+            patch("/delete", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    int userId1 = (Integer) claims.get("id");
-                    Gson gson = new Gson();
-                    GameListRequest gameListRequest = gson.fromJson(req.body(), GameListRequest.class);
-                    long userId =  Integer.parseInt(req.params("userId"));
-                    if (userId == userId1){
-                        
-                        @SuppressWarnings("unchecked") List<UserGame> game = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
-                                .setParameter(1, gameListRequest.getGameId())
-                                .setParameter(2, (long) userId1)
-                                .getResultList();
-                        if (!game.isEmpty()) {
-                            UserGame userGame = game.get(0);
-                            userGame.setStatus(gameListRequest.getStatus());
-                            userGame.setScore(gameListRequest.getScore());
-                            try {
-                                currentEntityManager().getTransaction().begin();
-                                currentEntityManager().merge(userGame);
-                                currentEntityManager().getTransaction().commit();
-                                res.status(200);
-                                return "{\"message\":\"Game edited.\"}";
-                            }catch (Throwable e) {
-                                currentEntityManager().getTransaction().rollback();
-                                res.status(500);
-                                return "{\"message\":\"Something went wrong, try again.\"}";
-                            }finally {
-                                close();
-                            }
-                        } else{
-                            res.status(409);
-                            return "{\"message\":\"Game not in game list.\"}";
-                        }
-                    }else {
-                        res.status(401);
-                        return "{\"message\":\"Unauthorized.\"}";
-                    }
-                }else {
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
+                }
+                Long userId = getIdByToken(token);
+                GameListRequest gameListRequest = new Gson().fromJson(req.body(), GameListRequest.class);
+
+                Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
+                if (userGame.isEmpty()){
+                    res.status(400);
+                    return  "{\"message\":\"Bad request.\"}";
+                }
+
+                try {
+                    remove(userGame);
+                    res.status(200);
+                    return "{\"message\":\"Game removed to game list.\"}";
+                }catch (Throwable e) {
+                    res.status(500);
+                    return "{\"message\":\"Something went wrong, try again.\"}";
+                }
+            });
+
+            patch("/edit", (req, res) -> {
+                String token = req.headers("token");
+                if (!verifyJWT(token)) {
+                    res.status(401);
+                    return "{\"message\":\"Not logged in.\"}";
+                }
+                Long userId = getIdByToken(token);
+                GameListRequest gameListRequest = new Gson().fromJson(req.body(), GameListRequest.class);
+
+                Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
+
+                if (userGame.isEmpty()){
+                    res.status(400);
+                    return  "{\"message\":\"Bad request.\"}";
+                }
+                userGame.get().setScore(gameListRequest.getScore());
+                userGame.get().setStatus(gameListRequest.getStatus());
+                try {
+                    merge(userGame.get());
+                    res.status(200);
+                    return "{\"message\":\"Game edited.\"}";
+                }catch (Throwable e) {
+                    res.status(500);
+                    return "{\"message\":\"Something went wrong, try again.\"}";
                 }
             });
         });

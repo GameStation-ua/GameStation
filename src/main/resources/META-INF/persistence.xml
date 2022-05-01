@@ -8,17 +8,17 @@
             GameStation database.
         </description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>webpage.entity.User</class>
-        <class>webpage.entity.Game</class>
-        <class>webpage.entity.Notification</class>
-        <class>webpage.entity.UserGame</class>
-        <class>webpage.entity.Tag</class>
-        <class>webpage.entity.AvailableTag</class>
-        <class>webpage.entity.Thread</class>
-        <class>webpage.entity.Comment</class>
-        <class>webpage.entity.GameUpdate</class>
-        <class>webpage.entity.GameRequest</class>
-        <class>webpage.entity.UserComment</class>
+        <class>webpage.model.User</class>
+        <class>webpage.model.Game</class>
+        <class>webpage.model.Notification</class>
+        <class>webpage.model.UserGame</class>
+        <class>webpage.model.Tag</class>
+        <class>webpage.model.AvailableTag</class>
+        <class>webpage.model.Thread</class>
+        <class>webpage.model.Comment</class>
+        <class>webpage.model.GameUpdate</class>
+        <class>webpage.model.GameRequest</class>
+        <class>webpage.model.UserComment</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />

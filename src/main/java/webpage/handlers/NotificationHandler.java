@@ -8,17 +8,19 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import webpage.entity.Notification;
-import webpage.entity.User;
+import webpage.model.Notification;
+import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static webpage.util.EntityManagers.currentEntityManager;
+import static webpage.entity.Notifications.prepareNotificationResponse;
+import static webpage.entity.Users.findUserById;
+import static webpage.entity.Users.getIdByToken;
 import static webpage.util.SecretKey.key;
 
 
@@ -52,22 +54,20 @@ public class NotificationHandler {
 
     private void sendNotifications(Session user) {
         try{
-            String token = user.getUpgradeRequest().getHeader("token");
-            Claims claims = Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(token).getBody();
-            User user1 = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
-                    .setParameter(1, Long.valueOf((Integer) claims.get("id")))
-                    .getSingleResult();
-            List<NotificationResponse> notificationResponse = new ArrayList<>();
-            for (Notification notification : user1.getNotifications()) {
-                if (!notification.isSeen()) {
-                    notificationResponse.add(new NotificationResponse(notification));
-                }
-            }
-        Gson gson = new Gson();
-        String s = gson.toJson(notificationResponse);
-            user.getRemote().sendString(s);
+        String token = user.getUpgradeRequest().getHeader("token");
+        Long userId = getIdByToken(token);
+        Optional<User> userOptional = findUserById(userId);
+
+        if (userOptional.isEmpty()){
+            onError(user, new Exception("User not found"));
+        }
+
+        List<NotificationResponse> notificationResponse = new ArrayList<>();
+        prepareNotificationResponse(notificationResponse, userOptional.get());
+
+
+        String s = new Gson().toJson(notificationResponse);
+        user.getRemote().sendString(s);
         }catch (Throwable e){
             onError(user, e);
         }

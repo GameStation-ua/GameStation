@@ -13,21 +13,7 @@ public class EntityManagers {
     EntityManagers.emf = emf;
   }
 
-  public static EntityManager currentEntityManager() {
-    final EntityManager em = emRef.get();
-    if (em == null) {
-      emRef.set(emf.createEntityManager());
-    }
-    return emRef.get();
+  public static EntityManager createEntityManager() {
+    return emf.createEntityManager();
   }
-
-
-  public static void close() {
-    final EntityManager em = emRef.get();
-    if (em != null && currentEntityManager().isOpen()) {
-      currentEntityManager().close();
-    }
-    emRef.remove();
-  }
-
 }

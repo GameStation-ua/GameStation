@@ -1,27 +1,25 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import webpage.entity.Game;
-import webpage.entity.Tag;
-import webpage.entity.User;
-import webpage.entity.UserGame;
+import webpage.model.Game;
+import webpage.model.User;
+import webpage.model.UserGame;
 import webpage.responseFormats.HardGameForResponse;
 import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.TagResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static spark.Spark.*;
-import static webpage.util.EntityManagers.close;
-import static webpage.util.EntityManagers.currentEntityManager;
-import static webpage.util.SecretKey.key;
+import static webpage.entity.Games.findGameById;
+import static webpage.entity.Games.findUserGamesbyGameId;
+import static webpage.entity.Users.*;
+import static webpage.responseFormats.SoftGameResponse.createSoftGameResponseList;
+import static webpage.responseFormats.TagResponse.createTagResponseList;
 
 public class ABMGamesHandler extends AbstractHandler{
 
@@ -31,76 +29,75 @@ public class ABMGamesHandler extends AbstractHandler{
         path("/game", () -> {
             get("/createdgames", (req, res) ->{
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    Long userId = Long.valueOf((Integer) claims.get("id"));
-                    
-                    @SuppressWarnings("unchecked") List<Game> games = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = ?1")
-                            .setParameter(1, userId)
-                            .getResultList();
-                    List<SoftGameResponse> softGameResponseList = new ArrayList<>();
-                    for (Game game : games) {
-                        softGameResponseList.add(new SoftGameResponse(game));
-                    }
-                    close();
-                    return new Gson().toJson(softGameResponseList);
-                }else{
+
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
+                    Long userId = getIdByToken(token);
+
+                    Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
+                    if (games.isEmpty()){
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong.\"}";
+                    }
+                    List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get());
+
+
+                    return new Gson().toJson(softGameResponseList);
             });
 
             get("/:gameId", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    Long gameId = Long.valueOf(req.params(":gameId"));
-                    
-                    Game game = (Game) currentEntityManager().createQuery("FROM Game g WHERE g.id = ?1")
-                            .setParameter(1, gameId)
-                            .getSingleResult();
-                    @SuppressWarnings("unchecked") List<UserGame> userGames = currentEntityManager().createQuery("FROM UserGame ug WHERE ug.gameId = ?1")
-                            .setParameter(1, gameId)
-                            .getResultList();
-                    float meanScore = 0;
-                    if (!userGames.isEmpty()) {
-                        for (UserGame userGame : userGames) {
-                            meanScore += userGame.getScore();
-                        }
-                        meanScore = meanScore / userGames.size();
-                    }else {
-                        meanScore = -1;
-                    }
-                        User creator = (User) currentEntityManager().createQuery("FROM User u WHERE u.id = ?1")
-                                .setParameter(1, game.getCreatorId())
-                                .getSingleResult();
-                    UserResponse userResponse = new UserResponse(creator);
-                    List<TagResponse> tagsForResponse = new ArrayList<>();
-                    for (Tag tag : game.getTags()) {
-                        tagsForResponse.add(new TagResponse(tag));
-                    }
-                    close();
-                    Gson gson = new Gson();
-                    HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.getFollowers().size(), game.getTitle(), game.getDescription(), game.getImgsInCarousel(), game.getWiki(), userResponse, tagsForResponse, game.getGameUpdates());
-                    res.status(200);
-                    return gson.toJson(gameForResponse);
-                }else {
+                if (!verifyJWT(token)) {
                     res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return "{\"message\":\"Not logged in.\"}";
                 }
+                    Long gameId = Long.valueOf(req.params(":gameId"));
+
+                    Optional<Game> game = findGameById(gameId);
+                    Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
+                if (game.isEmpty() || userGames.isEmpty()){
+                    res.status(400);
+                    return "{\"message\":\"Something went wrong.\"}";
+                }
+                float meanScore = getMeanScore(userGames.get());
+                Optional<User> creator = findUserById(game.get().getCreatorId());
+                if (creator.isEmpty()){
+                    res.status(400);
+                    return "{\"message\":\"Something went wrong.\"}";
+                }
+                UserResponse userResponse = new UserResponse(creator.get());
+                List<TagResponse> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
+
+                HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
+                res.status(200);
+                return new Gson().toJson(gameForResponse);
             });
 
             post("/create", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)){
-                    return ""; // todo end method
-                }else {
-                    res.status(400);
+                if (!verifyJWT(token)) {
+                    res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
+                // todo
+                return "";
             });
         });
+    }
+
+    private float getMeanScore(List<UserGame> userGames) {
+        float meanScore = 0;
+        if (!userGames.isEmpty()) {
+            for (UserGame userGame : userGames) {
+                meanScore += userGame.getScore();
+            }
+            meanScore = meanScore / userGames.size();
+        }else {
+            meanScore = -1;
+        }
+        return meanScore;
     }
 
     @Override

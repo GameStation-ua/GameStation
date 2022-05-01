@@ -1,7 +1,7 @@
 package webpage.responseFormats;
 
-import webpage.entity.Tag;
-import webpage.entity.User;
+import webpage.model.Tag;
+import webpage.model.User;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,9 +1,10 @@
-package webpage.entity;
+package webpage.model;
 
 import javax.persistence.*;
 import java.util.Set;
 
-import static webpage.util.EntityManagers.currentEntityManager;
+import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.util.EntityManagers.createEntityManager;
 
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -16,7 +17,7 @@ public class Actor {
     @ManyToMany(mappedBy = "followedActors")
     private Set<User> followers;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "actorId")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "actorId")
     @OrderBy(value = "date ASC")
     private Set<Comment> comments;
 
@@ -47,13 +48,13 @@ public class Actor {
         comments.add(comment);
     }
 
-    public boolean sendNotification(Notification notification, EntityManager em) {
+    public boolean persistNotificationToFollowers(Notification notification) {
         try {
-            currentEntityManager().getTransaction().begin();
+            createEntityManager().getTransaction().begin();
             for (User follower : followers) {
                 follower.addNotification(notification);
             }
-            currentEntityManager().getTransaction().commit();
+            createEntityManager().getTransaction().commit();
             return true;
         }catch (Throwable e){
             return false;
@@ -66,5 +67,9 @@ public class Actor {
 
     public String getName(){
         return name;
+    }
+
+    public void sendNotificationToFollowers(Notification notification) {
+        sendNotification(this.getId(), notification);
     }
 }

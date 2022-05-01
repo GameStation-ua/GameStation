@@ -1,6 +1,6 @@
 package webpage.requestFormats;
 
-import webpage.entity.NotificationType;
+import webpage.model.NotificationType;
 
 public class CommentRequest {
     private final String content;

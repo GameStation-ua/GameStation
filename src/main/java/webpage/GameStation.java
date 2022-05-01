@@ -1,6 +1,5 @@
 package webpage;
 
-import webpage.handlers.FollowHandler;
 import webpage.handlers.MyHandler;
 import webpage.handlers.NotificationHandler;
 import webpage.util.EntityManagers;

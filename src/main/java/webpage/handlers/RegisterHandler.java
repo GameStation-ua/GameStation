@@ -2,19 +2,17 @@ package webpage.handlers;
 
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
-import webpage.entity.User;
+import webpage.model.User;
 import webpage.requestFormats.RegisterRequest;
 import webpage.util.HandlerType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
-import static webpage.util.EntityManagers.close;
-import static webpage.util.EntityManagers.currentEntityManager;
+import static webpage.entity.Persister.persist;
+import static webpage.entity.Users.findUserByUsername;
 
 
 public class RegisterHandler extends AbstractHandler {
@@ -27,38 +25,29 @@ public class RegisterHandler extends AbstractHandler {
                     res.status(406);
                     return "{\"message\":\"You need to fill all the fields\"}";
                 }
-                
-                try {
-                    currentEntityManager().createQuery("FROM User user WHERE user.username like :username")
-                            .setParameter("username", registerRequest.getUsername())
-                            .getSingleResult();
-                    res.type("application/json");
+
+                Optional<User> user = findUserByUsername(registerRequest.getUsername());
+                if (user.isPresent()) {
                     res.status(200);
                     return "{\"message\":\"Username already taken.\"}";
-                } catch (NoResultException e) {
-                    if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
-                        res.type("application/json");
-                        res.status(200);
-                        return "{\"message\":\"You need to meet password requirements.\"}";
-                    } else {
-                        res.type("application/json");
-                        registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
-                        User user1 = new User(registerRequest.getNickname(),
-                                registerRequest.getUsername(),
-                                registerRequest.getPassword());
-                        try{
-                            currentEntityManager().getTransaction().begin();
-                            currentEntityManager().persist(user1);
-                            currentEntityManager().getTransaction().commit();
-                            res.status(201);
-                            return "{\"message\":\"User created!\"}";
-                        }catch (Throwable r) {
-                            currentEntityManager().getTransaction().rollback();
-                            res.status(500);
-                            return "{\"message\":\"Something went wrong, try again.\"}";
-                        }finally {
-                            close();
-                        }
+                }
+                if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
+                    res.type("application/json");
+                    res.status(200);
+                    return "{\"message\":\"You need to meet password requirements.\"}";
+                } else {
+                    res.type("application/json");
+                    registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
+                    User user1 = new User(registerRequest.getNickname(),
+                            registerRequest.getUsername(),
+                            registerRequest.getPassword());
+                    try{
+                        persist(Optional.of(user1));
+                        res.status(201);
+                        return "{\"message\":\"User created!\"}";
+                    }catch (Throwable r) {
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong, try again.\"}";
                     }
                 }
             });

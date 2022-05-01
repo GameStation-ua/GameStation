@@ -4,11 +4,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
-import webpage.entity.User;
+import webpage.model.User;
 import webpage.util.Handler;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.EntityManagerFactory;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -71,4 +70,6 @@ public abstract class AbstractHandler implements Handler {
                 .signWith(HS256, TextCodec.BASE64.decode(key)
                 ).compact();
     }
+
+
 }

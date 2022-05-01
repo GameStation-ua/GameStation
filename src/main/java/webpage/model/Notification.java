@@ -1,4 +1,4 @@
-package webpage.entity;
+package webpage.model;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,9 +23,6 @@ public class Notification {
 
     @Column(name = "PATH", nullable = false)
     private String path;
-
-    @Column(name = "SEEN", nullable = false)
-    private boolean seen = false;
 
 
     public Notification() {
@@ -67,13 +64,6 @@ public class Notification {
         this.path = path;
     }
 
-    public boolean isSeen() {
-        return seen;
-    }
-
-    public void setSeen(boolean seen) {
-        this.seen = seen;
-    }
 
     public Notification(NotificationType notType, Actor actor, Actor additional, String path){
         this.path = path;

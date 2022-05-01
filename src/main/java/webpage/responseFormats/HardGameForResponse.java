@@ -1,6 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.entity.GameUpdate;
+import webpage.model.GameUpdate;
 
 import java.util.List;
 import java.util.Set;

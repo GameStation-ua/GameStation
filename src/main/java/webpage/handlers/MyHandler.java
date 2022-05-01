@@ -1,13 +1,9 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
-import webpage.entity.Status;
-import webpage.entity.Tag;
-import webpage.entity.UserGame;
+import webpage.model.Tag;
 import webpage.requestFormats.UserTagsRequest;
 import webpage.util.HandlerType;
 
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PrimaryKeyJoinColumn;
 import java.util.ArrayList;
 
@@ -53,10 +49,7 @@ public class MyHandler extends AbstractHandler {
             tags.add(tag2);
             tags.add(tag3);
             tagsRequest.setTags(tags);
-            UserGame userGame = new UserGame();
-            userGame.setStatus(Status.ON_HOLD);
-            Gson gson = new Gson();
-            return gson.toJson(userGame);
+            return "";
         });
     }
 

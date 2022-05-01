@@ -1,8 +1,8 @@
 package webpage.util;
+
 import com.sun.istack.NotNull;
 import webpage.handlers.*;
 
-import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;

@@ -1,6 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.entity.AvailableTag;
+import webpage.model.AvailableTag;
 
 import java.util.List;
 

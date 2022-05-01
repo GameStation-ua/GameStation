@@ -1,6 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.entity.Notification;
+import webpage.model.Notification;
 
 import java.util.Date;
 

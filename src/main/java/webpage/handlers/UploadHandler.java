@@ -2,24 +2,28 @@ package webpage.handlers;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import webpage.entity.Game;
+import spark.Request;
+import spark.Response;
+import webpage.model.Game;
 import webpage.util.HandlerType;
 import webpage.util.ImageRescaler;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
-import static webpage.util.EntityManagers.close;
-import static webpage.util.EntityManagers.currentEntityManager;
+import static webpage.entity.Persister.merge;
+import static webpage.entity.Users.findCreatedGamesbyUserId;
+import static webpage.entity.Users.getIdByToken;
+import static webpage.util.EntityManagers.createEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class UploadHandler extends AbstractHandler{
@@ -30,126 +34,108 @@ public class UploadHandler extends AbstractHandler{
         path("/upload", () -> {
             post("/profilepic", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)) {
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    Integer userId = (Integer) claims.get("id");
-                    req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                    try {
-                        try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
-                            File file = new File("src/main/resources/public/profile_pictures/" + userId + ".png");
-                            copyInputStreamToFile(is, file);
-                        }
-                        ImageRescaler imageRescaler = new ImageRescaler();
-                        String[] args = {"src/main/resources/public/profile_pictures/" + userId + ".png", "src/main/resources/public/profile_pictures/" + userId + ".png", "256", "256"};
-                        try {
-                            imageRescaler.rescale(args);
-                        }catch (IOException e){
-                            res.status(500);
-                            return  "{\"message\":\"Error in rescaling.\"}";
-                        }
-                        res.status(200);
-                        return "{\"message\":\"File uploaded.\"}";
-                    } catch (NoResultException e) {
-                        res.status(404);
-                        return "{\"message\":\"Something went wrong.\"}";
-                    }
-                } else {
+                if (!verifyJWT(token)) {
                     res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return "{\"message\":\"Not logged in.\"}";
                 }
+                Long userId = getIdByToken(token);
+                String directory = "src/main/resources/public/profile_pictures/" + userId + ".png";
+
+                return uploadAndRescale(req, res, userId, directory);
             });
 
             post("/gameMain", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)) {
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    Integer userId = (Integer) claims.get("id");
-                    String gameid = req.headers("gameId");
-                    int gameid1 = Integer.parseInt(gameid);
-                    
-                    @SuppressWarnings("unchecked") List<Game> gameList = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
-                            .setParameter("id", userId)
-                            .getResultList();
-                    for (Game game : gameList) {
-                        if (game.getId() == gameid1) {
-                            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                            try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png");
-                                copyInputStreamToFile(is, file);
-                            }
-                            ImageRescaler imageRescaler = new ImageRescaler();
-                            String[] args = {"src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png","src/main/resources/public/gameImages/" + gameid1 + "/gameMain.png", "256", "256"};
-                            try {
-                                imageRescaler.rescale(args);
-                            }catch (IOException e){
-                                res.status(500);
-                                return  "{\"message\":\"Error in rescaling.\"}";
-                            }
-                            return "{\"message\":\"File uploaded.\"}";
-                        }
-                    }
-                    return "{\"message\":\"Unauthorized.\"}";
-                } else {
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
+                    Long userId = getIdByToken(token);
+                    Long gameid = Long.valueOf(req.headers("gameId"));
+                    String directory = "src/main/resources/public/gameImages/" + gameid + "/gameMain.png";
+
+                    
+                    Optional<List<Game>> gameList = findCreatedGamesbyUserId(userId);
+                    if (gameList.isEmpty()){
+                        res.status(500);
+                        return "{\"message\":\"Something went wrong.\"}";
+                    }
+                    for (Game game : gameList.get()) {
+                        if (game.getId().equals(gameid)) {
+                            return uploadAndRescale(req, res, userId, directory);
+                        }
+                    }
+                    return "{\"message\":\"Unauthorized.\"}";
             });
 
             post("/gameCarousel", (req, res) -> {
                 String token = req.headers("token");
-                if (verifyJWT(token)) {
-                    Claims claims = Jwts.parser()
-                            .setSigningKey(key)
-                            .parseClaimsJws(token).getBody();
-                    Integer userId1 = (Integer) claims.get("id");
-                    String gameid = req.headers("gameId");
-                    int gameid1 = Integer.parseInt(gameid);
-                    
-                    @SuppressWarnings("unchecked") List<Game> gameList = currentEntityManager().createQuery("SELECT createdGames FROM User u WHERE u.id = :id")
-                            .setParameter("id", userId1)
-                            .getResultList();
-                    close();
-                    for (Game game : gameList) {
-                        if (game.getId() == gameid1) {
-                            int imgsInCarousel = game.getImgsInCarousel();
-                            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
-                            try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
-                                File file = new File("src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png");
-                                copyInputStreamToFile(is, file);
-                            }
-                            ImageRescaler imageRescaler = new ImageRescaler();
-                            String[] args ={"src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "src/main/resources/public/gameImages/" + gameid1 + "/Carousel="  + (imgsInCarousel + 1) + ".png", "256", "256"};
-                            try {
-                                imageRescaler.rescale(args);
-                            }catch (IOException e){
-                                res.status(500);
-                                return  "{\"message\":\"Error in rescaling.\"}";
-                            }
-                            game.setImgsInCarousel(imgsInCarousel + 1);
-                            EntityManager em2 = currentEntityManager();
-                            try{
-                            em2.getTransaction().begin();
-                            em2.merge(game);
-                            em2.getTransaction().commit();
-                            return "{\"message\":\"File uploaded.\"}";
-                            }catch (Throwable r) {
-                                em2.getTransaction().rollback();
-                                res.status(500);
-                                return "{\"message\":\"Something went wrong, try again.\"}";
-                            }
-                        }
-                    }
-                    return "{\"message\":\"Unauthorized.\"}";
-                } else {
+                if (!verifyJWT(token)) {
                     res.status(401);
                     return "{\"message\":\"Not logged in.\"}";
                 }
+                Long userId = getIdByToken(token);
+                Long gameid = Long.valueOf(req.headers("gameId"));
+
+                Optional<List<Game>> gameList = findCreatedGamesbyUserId(userId);
+                if (gameList.isEmpty()){
+                    res.status(500);
+                    return "{\"message\":\"Something went wrong.\"}";
+                }
+                for (Game game : gameList.get()) {
+                    if (game.getId().equals(gameid)) {
+                        int imgsInCarousel = game.getImgsInCarousel();
+                        String directory = "src/main/resources/public/gameImages/" + gameid + "/Carousel=" + (imgsInCarousel + 1) + ".png";
+                        uploadAndRescale(req, res, userId, directory);
+                        game.setImgsInCarousel(imgsInCarousel + 1);
+                        try{
+                        merge(game);
+                        return "{\"message\":\"File uploaded.\"}";
+                        }catch (Throwable r) {
+                            res.status(500);
+                            return "{\"message\":\"Something went wrong, try again.\"}";
+                        }
+                    }
+                }
+                res.status(401);
+                return "{\"message\":\"Unauthorized.\"}";
             });
         });
+    }
+
+    private String uploadAndRescale(Request req, Response res, Long userId, String directory) throws IOException {
+        try {
+            saveImg(directory, req, userId);
+        }catch (ServletException e){
+            res.status(400);
+            return "{\"message\":\"Wrong format.\"}";
+        }
+
+        if (rescale(directory, directory,"256", "256", userId)) {
+            res.status(200);
+            return "{\"message\":\"File uploaded.\"}";
+        }
+        res.status(500);
+        return "{\"message\":\"Something went wrong.\"}";
+    }
+
+    private void saveImg(String directory, Request req, Long userId) throws IOException, ServletException {
+        req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+        try (InputStream is = req.raw().getPart("uploaded_file").getInputStream()) {
+            File file = new File(directory);
+            copyInputStreamToFile(is, file);
+        }
+    }
+
+    private boolean rescale(String fromFile, String toFile, String width, String height, Long userId) {
+        ImageRescaler imageRescaler = new ImageRescaler();
+        String[] args = {fromFile, toFile, width, height};
+        try {
+            imageRescaler.rescale(args);
+        }catch (IOException e){
+            return false;
+        }
+        return true;
     }
 
     @Override

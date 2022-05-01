@@ -1,6 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.entity.Comment;
+import webpage.model.Comment;
 
 import java.util.Date;
 
