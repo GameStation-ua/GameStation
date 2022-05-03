@@ -5,7 +5,6 @@ import javax.persistence.EntityManagerFactory;
 
 public class EntityManagers {
 
-  final static private ThreadLocal<EntityManager> emRef = new ThreadLocal<>();
 
   private static EntityManagerFactory emf;
 

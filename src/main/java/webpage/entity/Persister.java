@@ -12,38 +12,41 @@ public class Persister {
 
 
 
-    public static <T> void merge(T entity){
+    public static <T> T merge(T entity){
         EntityManager em = createEntityManager();
         final EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
 
-            em.merge(entity);
+            T t = em.merge(entity);
 
             tx.commit();
+            return t;
         } catch (Exception e) {
             tx.rollback();
             throw e;
+        }finally {
+            em.close();
         }
-        em.close();
     }
 
-    public static <T> void persist(Optional<T> entity){
+    public static <T> void persist(T entity){
         EntityManager em = createEntityManager();
         final EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
 
-            em.persist(entity.get());
+            em.persist(entity);
 
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
             throw e;
+        }finally {
+            em.close();
         }
-        em.close();
     }
 
     public static <T> void remove(T entity){
@@ -53,13 +56,14 @@ public class Persister {
         try {
             tx.begin();
 
-            em.remove(entity);
+            em.remove(em.contains(entity) ? entity : em.merge(entity));
 
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
             throw e;
+        }finally {
+            em.close();
         }
-        em.close();
     }
 }

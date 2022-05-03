@@ -1,9 +1,11 @@
 package webpage.entity;
 
 import webpage.model.AvailableTag;
+import webpage.model.GameRequest;
 import webpage.model.Tag;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,30 @@ public class Tags {
             if (!availableTags.contains(tagsRequestTag)) {
                 merge(Optional.of(tagsRequestTag));
             }
+        }
+    }
+    public static Optional<List<Tag>> findTagsIfAvailable(List<Tag> tags){
+        if (!tagsExist(tags)) return Optional.empty();
+        List<Tag> tags1 = new ArrayList<>();
+        for (Tag tag : tags) {
+            Optional<Tag> tag1 = findTagByName(tag.getName());
+            if (tag1.isEmpty()) return Optional.empty();
+            tags1.add(tag1.get());
+        }
+        return Optional.of(tags1);
+    }
+
+    public static Optional<Tag> findTagByName(String name){
+        EntityManager em = createEntityManager();
+        try {
+            Tag tag = (Tag) em.createQuery("FROM Tag t WHERE t.name = ?1")
+                    .setParameter(1, name)
+                    .getSingleResult();
+            return Optional.of(tag);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
         }
     }
 }

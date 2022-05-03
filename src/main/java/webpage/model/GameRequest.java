@@ -2,6 +2,7 @@ package webpage.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,16 +22,83 @@ public class GameRequest {
     private String wiki;
 
     @Column(name = "IMGS_IN_CAROUSEL", nullable = false)
-    private Integer imgsInCarousel;
+    private Integer imgsInCarousel = 0;
 
     @Column(name = "DATE", nullable = false)
-    private Date date = new Date();
+    private final Date date = new Date();
 
-    @ManyToMany(mappedBy = "gameRequests")
-    private Set<User> gameCreators;
+    @Column(name = "CREATOR_ID")
+    private Long creatorId;
 
-    @ManyToMany(mappedBy = "gameRequestsWithTag")
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Tag> tags;
+
+    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags) {
+        this.title = title;
+        this.description = description;
+        this.wiki = wiki;
+        this.creatorId = creatorId;
+        this.tags = tags;
+    }
+
+    public GameRequest() {
+    }
+
+    public void addTag(Tag tag){
+        tags.add(tag);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getWiki() {
+        return wiki;
+    }
+
+    public void setWiki(String wiki) {
+        this.wiki = wiki;
+    }
+
+    public Integer getImgsInCarousel() {
+        return imgsInCarousel;
+    }
+
+    public void setImgsInCarousel(Integer imgsInCarousel) {
+        this.imgsInCarousel = imgsInCarousel;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public Long getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
 
     public Long getId() {
         return id;

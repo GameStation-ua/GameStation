@@ -1,6 +1,7 @@
 package webpage.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ public class Tag {
     @ManyToMany(mappedBy = "likedTags")
     private Set<User> users;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tags")
     private Set<GameRequest> gameRequestsWithTag;
 
     public Tag() {
@@ -38,6 +39,34 @@ public class Tag {
         int hash = 3;
         hash = 89 * hash + (name == null ? 0 : name.hashCode());
         return hash;
+    }
+
+    public void addGameRequest(GameRequest gameRequest){
+        gameRequestsWithTag.add(gameRequest);
+    }
+
+    public Set<Game> getGames() {
+        return games;
+    }
+
+    public void setGames(Set<Game> games) {
+        this.games = games;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<GameRequest> getGameRequestsWithTag() {
+        return gameRequestsWithTag;
+    }
+
+    public void setGameRequestsWithTag(Set<GameRequest> gameRequestsWithTag) {
+        this.gameRequestsWithTag = gameRequestsWithTag;
     }
 
     public String getName() {

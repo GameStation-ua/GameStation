@@ -1,15 +1,19 @@
 package webpage.entity;
 
-import webpage.model.Game;
-import webpage.model.Tag;
-import webpage.model.UserGame;
+import webpage.model.*;
+import webpage.requestFormats.CreateGameRequest;
+import webpage.requestFormats.GameUpdateRequest;
+import webpage.responseFormats.GameRequestResponse;
 import webpage.responseFormats.GameResponse;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static webpage.entity.Persister.*;
+import static webpage.entity.Tags.tagsExist;
+import static webpage.entity.Uploads.attachMainImgToGame;
+import static webpage.entity.Uploads.upload;
+import static webpage.entity.Users.findCreatedGamesbyUserId;
 import static webpage.util.EntityManagers.createEntityManager;
 
 public class Games {
@@ -19,6 +23,32 @@ public class Games {
         EntityManager em = createEntityManager();
         try {
             return Optional.of(em.find(Game.class, id));
+        }catch (NullPointerException e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<Game> findGameByIdJFFollowers(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.followers WHERE g.id = ?1 ")
+                    .setParameter(1, id)
+                    .getSingleResult());
+        }catch (NullPointerException e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<Game> findGameByIdJFTags(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.tags WHERE g.id = ?1 ")
+                    .setParameter(1, id)
+                    .getSingleResult());
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
@@ -102,5 +132,88 @@ public class Games {
             gamesForResponse.add(new GameResponse(game));
         }
         return gamesForResponse;
+    }
+
+    public static Optional<GameRequest> createGameRequest(CreateGameRequest createGameRequest, Long creatorId){
+        if (!tagsExist(createGameRequest.getTags())) return Optional.empty();
+        Set<Tag> tags = new HashSet<>(createGameRequest.getTags());
+        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags));
+    }
+
+    public static boolean isOwner(Long userId, Long gameId){
+        Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
+        if (games.isEmpty()) return false;
+        for (Game game : games.get()) {
+            if (game.getId().equals(gameId)) return true;
+        }
+        return false;
+    }
+
+    public static Optional<Tag> findTagByName(String name){
+        EntityManager em = createEntityManager();
+        try {
+             Tag tags = (Tag) em.createQuery("FROM Tag t WHERE t.name = ?1")
+                    .setParameter(1, name)
+                    .getResultList();
+            return Optional.of(tags);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<GameRequest> findGameRequestById(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            GameRequest gameRequest = em.find(GameRequest.class, id);
+            return Optional.of(gameRequest);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<GameRequest> findGameRequestByIdJFTags(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            GameRequest gameRequest = (GameRequest) em.createQuery("SELECT distinct g FROM GameRequest g join fetch g.tags WHERE g.id = ?1 ")
+                    .setParameter(1, id)
+                    .getSingleResult();
+            return Optional.of(gameRequest);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static void createGameFromRequest(GameRequest gameRequest){
+        Game game = new Game(gameRequest.getCreatorId(), gameRequest.getTitle(), gameRequest.getDescription(), gameRequest.getWiki(), gameRequest.getImgsInCarousel(), gameRequest.getTags());
+            Game game1 = merge(game);  // todo attach imgs to game
+            remove(gameRequest);
+    }
+
+    public static void createGameUpdate(GameUpdateRequest gur){
+        GameUpdate gameUpdate = new GameUpdate(gur.getGameId(), gur.getTitle(), gur.getContent());
+        merge(gameUpdate);
+    }
+
+    public static Optional<List<GameRequestResponse>> getGameRequestsAsResponses(){
+        EntityManager em = createEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT distinct g FROM GameRequest g join fetch g.tags")
+                    .getResultList();
+            List<GameRequestResponse> gameRequestResponses = new ArrayList<>();
+            for (GameRequest gameRequest : gameRequests) {
+                gameRequestResponses.add(new GameRequestResponse(gameRequest));
+            }
+            return Optional.of(gameRequestResponses);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
     }
 }

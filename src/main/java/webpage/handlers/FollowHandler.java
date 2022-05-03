@@ -74,7 +74,7 @@ public class FollowHandler extends AbstractHandler{
                }
 
 
-               if (checkIfFollows(userId, actor.get())) {
+               if (!checkIfFollows(userId, actor.get())) {
                    res.status(400);
                    return "{\"message\":\"Doesn't follow.\"}";
                }

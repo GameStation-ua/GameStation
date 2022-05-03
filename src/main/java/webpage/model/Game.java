@@ -25,13 +25,22 @@ public class Game extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<UserGame> userGames;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Tag> tags;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<GameUpdate> gameUpdates;
 
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private Set<Tag> tags;
+
     public Game() {
+    }
+
+    public Game(Long creatorId,String title, String description, String wiki, int imgsInCarousel, Set<Tag> tags) {
+        setName(title);
+        this.creatorId = creatorId;
+        this.description = description;
+        this.wiki = wiki;
+        this.imgsInCarousel = imgsInCarousel;
+        this.tags = tags;
     }
 
     public Long getCreatorId() {

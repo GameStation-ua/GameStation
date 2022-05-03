@@ -21,10 +21,16 @@ public class GameUpdate {
     private String content;
 
     @Column(name = "DATE", nullable = false)
-    private Date date;
+    private final Date date = new Date();
 
-    @Column(name = "HAS_ATTACHED_IMG", nullable = false)
-    private boolean hasAttachedImg;
+    public GameUpdate(Long gameId, String tile, String content) {
+        this.gameId = gameId;
+        this.tile = tile;
+        this.content = content;
+    }
+
+    public GameUpdate() {
+    }
 
     public Long getId() {
         return id;

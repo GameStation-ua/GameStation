@@ -51,7 +51,7 @@ public class ForumHandler extends AbstractHandler{
                     
                     try {
                     Thread thread = new Thread(userId, threadRequest.getGameId(), threadRequest.getDescription(), threadRequest.getTitle());
-                        persist(Optional.of(thread));
+                        persist(thread);
                         res.status(200);
                         return  "{\"message\":\"OK.\"}";
                     }catch (Throwable e){

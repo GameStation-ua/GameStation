@@ -189,7 +189,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                     UserTagsRequest tagsRequest = new Gson().fromJson(req.body(), UserTagsRequest.class);
 
-                    Optional<Game> game = findGameById(Long.valueOf(req.params(":gameId")));
+                    Optional<Game> game = findGameByIdJFTags(Long.valueOf(req.params(":gameId")));
 
                     if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) {
                         res.status(400);
@@ -206,7 +206,7 @@ public class TagsHandler extends AbstractHandler {
                     addTagsToGame(tagsRequest.getTags(), game.get());
 
                     try {
-                        merge(game);
+                        merge(game.get());
                         res.status(200);
                         return "{\"message\":\"Tags added.\"}";
                     } catch (Throwable e) {
@@ -223,7 +223,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                     UserTagsRequest tagsRequest = new Gson().fromJson(req.body(), UserTagsRequest.class);
 
-                    Optional<Game> game = findGameById(Long.valueOf(req.params(":gameId")));
+                    Optional<Game> game = findGameByIdJFTags(Long.valueOf(req.params(":gameId")));
 
                     if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) {
                         res.status(400);
@@ -240,7 +240,7 @@ public class TagsHandler extends AbstractHandler {
                     removeTagsFromGame(tagsRequest.getTags(), game.get());
 
                     try {
-                        merge(game);
+                        merge(game.get());
                         res.status(200);
                         return "{\"message\":\"Tags removed.\"}";
                     } catch (Throwable e) {

@@ -71,7 +71,7 @@ public class Notification {
             case USER_COMMENTED_ON_PROFILE: this.content = actor.getName() + " posted a comment on your profile."; break;  // done
             case FOLLOWED_USER_COMMENTS: this.content = actor.getName() + " posted a comment on " + additional.getName() + "."; break;  // done
             case USER_STARTED_FOLLOWING: this.content = actor.getName() + " started following you."; break;  // done
-            case GAME_POSTED_UPDATE: this.content = actor.getName() + " posted an update."; break;  // todo gameupdate notification
+            case GAME_POSTED_UPDATE: this.content = actor.getName() + " posted an update."; break; 
             case USER_COMMENTED_ON_USER_THREAD:
             case USER_COMMENTED_ON_FOLLOWED_THREAD:
                 this.content = actor.getName() + " commented on " + additional.getName() + "."; break;  //done

@@ -1,6 +1,7 @@
 package webpage.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -22,26 +23,26 @@ public class User extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<UserComment> votedComments;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @OrderBy(value = "date DESC")
     private Set<Notification> notifications;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<GameRequest> gameRequests;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<Game> createdGames;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Actor> followedActors;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Tag> likedTags;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     private Set<Comment> commentsMade;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorId")
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "creatorId")
     private Set<Thread> createdThreads;
 
     public User(String nickname, String username, String password) {
@@ -184,6 +185,6 @@ public class User extends Actor{
     }
 
     public void removeFollowedActor(Actor actor) {
-        followedActors.remove(actor);
+        followedActors.removeIf(followedActor -> Objects.equals(actor.getId(), followedActor.getId()));
     }
 }

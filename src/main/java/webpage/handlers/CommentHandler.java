@@ -52,8 +52,8 @@ public class CommentHandler extends AbstractHandler{
                 Comment comment = new Comment(userId, gameId, commentRequest.getContent());
                 game.get().addComment(comment);
                 Notification notification = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), game.get(), commentRequest.getPath());
-                user.get().persistNotificationToFollowers(notification);
                 try{
+                    user.get().persistNotificationToFollowers(notification);
                     merge(user.get());
                     merge(game.get());
                     user.get().sendNotificationToFollowers(notification);

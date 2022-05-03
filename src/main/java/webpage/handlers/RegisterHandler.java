@@ -42,7 +42,7 @@ public class RegisterHandler extends AbstractHandler {
                             registerRequest.getUsername(),
                             registerRequest.getPassword());
                     try{
-                        persist(Optional.of(user1));
+                        persist(user1);
                         res.status(201);
                         return "{\"message\":\"User created!\"}";
                     }catch (Throwable r) {
