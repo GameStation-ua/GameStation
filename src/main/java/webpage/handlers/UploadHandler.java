@@ -2,19 +2,12 @@ package webpage.handlers;
 
 import spark.Request;
 import spark.Response;
-import webpage.model.Game;
 import webpage.util.HandlerType;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
-import static webpage.entity.Games.isOwner;
 import static webpage.entity.Uploads.uploadAndRescale;
 import static webpage.entity.Uploads.uploadGameImg;
-import static webpage.entity.Users.findCreatedGamesbyUserId;
 import static webpage.entity.Users.getIdByToken;
 
 public class UploadHandler extends AbstractHandler{

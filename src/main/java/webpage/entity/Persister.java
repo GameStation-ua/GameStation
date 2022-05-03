@@ -2,7 +2,6 @@ package webpage.entity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import java.util.Optional;
 
 import static webpage.util.EntityManagers.createEntityManager;
 

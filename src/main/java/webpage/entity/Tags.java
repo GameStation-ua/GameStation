@@ -1,7 +1,6 @@
 package webpage.entity;
 
 import webpage.model.AvailableTag;
-import webpage.model.GameRequest;
 import webpage.model.Tag;
 
 import javax.persistence.EntityManager;

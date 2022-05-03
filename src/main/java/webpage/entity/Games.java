@@ -9,10 +9,9 @@ import webpage.responseFormats.GameResponse;
 import javax.persistence.EntityManager;
 import java.util.*;
 
-import static webpage.entity.Persister.*;
+import static webpage.entity.Persister.merge;
+import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.tagsExist;
-import static webpage.entity.Uploads.attachMainImgToGame;
-import static webpage.entity.Uploads.upload;
 import static webpage.entity.Users.findCreatedGamesbyUserId;
 import static webpage.util.EntityManagers.createEntityManager;
 

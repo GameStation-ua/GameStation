@@ -3,7 +3,6 @@ package webpage.model;
 import javax.persistence.*;
 import java.util.Set;
 
-import static webpage.entity.Persister.merge;
 import static webpage.handlers.NotificationHandler.sendNotification;
 import static webpage.util.EntityManagers.createEntityManager;
 
@@ -49,19 +48,14 @@ public class Actor {
         comments.add(comment);
     }
 
-    public boolean persistNotificationToFollowers(Notification notification) {
+    public void persistNotificationToFollowers(Notification notification) {
         EntityManager em = createEntityManager();
-        try {
             em.getTransaction().begin();
             for (User follower : followers) {
                 follower.addNotification(notification);
                 em.merge(follower);
             }
             em.getTransaction().commit();
-            return true;
-        }catch (Throwable e){
-            return false;
-        }
     }
 
     public Set<User> getFollowers(){

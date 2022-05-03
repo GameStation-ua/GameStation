@@ -8,11 +8,14 @@ import webpage.requestFormats.GameUpdateRequest;
 import webpage.responseFormats.*;
 import webpage.util.HandlerType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static spark.Spark.*;
 import static webpage.entity.Games.*;
-import static webpage.entity.Persister.*;
+import static webpage.entity.Persister.merge;
+import static webpage.entity.Persister.remove;
 import static webpage.entity.Users.*;
 import static webpage.responseFormats.SoftGameResponse.createSoftGameResponseList;
 import static webpage.responseFormats.TagResponse.createTagResponseList;
