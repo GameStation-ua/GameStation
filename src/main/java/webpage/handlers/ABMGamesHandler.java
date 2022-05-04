@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.GameAprovalRequest;
@@ -19,6 +18,8 @@ import static webpage.entity.Persister.remove;
 import static webpage.entity.Users.*;
 import static webpage.responseFormats.SoftGameResponse.createSoftGameResponseList;
 import static webpage.responseFormats.TagResponse.createTagResponseList;
+import static webpage.util.Parser.fromJson;
+import static webpage.util.Parser.toJson;
 
 public class ABMGamesHandler extends AbstractHandler{
 
@@ -30,19 +31,17 @@ public class ABMGamesHandler extends AbstractHandler{
                 String token = req.headers("token");
 
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
 
                 Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
                 if (games.isEmpty()){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
                 List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get());
 
-                return new Gson().toJson(softGameResponseList);
+                return toJson(softGameResponseList);
             });
 
 
@@ -50,171 +49,144 @@ public class ABMGamesHandler extends AbstractHandler{
             post("/create", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
-                CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
+                CreateGameRequest createGameRequest = fromJson(req.body(), CreateGameRequest.class);
 
                 Optional<GameRequest> gameRequest = createGameRequest(createGameRequest, userId);
                 if (gameRequest.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 400, "Something went wrong");
                 }
 
                 try{
                     merge(gameRequest.get());
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Exception e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             post("/edit/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
 
                 Long gameId = Long.valueOf(req.params(":gameId"));
                 Long userId = getIdByToken(token);
 
                 if (!isOwner(userId, gameId)){
-                    res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return returnMessage(res, 401, "Unauthorized");
                 }
-                CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
+                CreateGameRequest createGameRequest = fromJson(req.body(), CreateGameRequest.class);
 
                 Optional<GameRequest> gameRequest = createGameRequest(createGameRequest, userId);
                 if (gameRequest.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 400, "Something went wrong");
                 }
 
                 try{
                     merge(gameRequest.get());
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Exception e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             post("/approval", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
 
                 boolean isAdmin = getIsAdminByToken(token);
                 if (!isAdmin){
-                    res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return returnMessage(res, 401, "Unauthorized");
                 }
-                GameAprovalRequest gameAprovalRequest = new Gson().fromJson(req.body(), GameAprovalRequest.class);
+                GameAprovalRequest gameAprovalRequest = fromJson(req.body(), GameAprovalRequest.class);
                 Optional<GameRequest> gameRequest = findGameRequestByIdJFTags(gameAprovalRequest.getGameRequestId());
                 if (gameRequest.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Request not found.\"}";
+                    return returnMessage(res, 400, "Request not found");
                 }
                 if (!gameAprovalRequest.isApproved()){
                     remove(gameRequest.get());
-                    res.status(200);
-                    return "{\"message\":\"Request rejected.\"}";
+                    return returnMessage(res, 200, "Request rejected");
                 }
                 try {
                     createGameFromRequest(gameRequest.get());
                 }catch (Exception e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
-                res.status(200);
-                return "{\"message\":\"Request accepted.\"}";
+                return returnMessage(res, 200, "Request accepted");
             });
 
             post("/gameupdate/add", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
-                GameUpdateRequest gameUpdateRequest = new Gson().fromJson(req.body(), GameUpdateRequest.class);
+                GameUpdateRequest gameUpdateRequest = fromJson(req.body(), GameUpdateRequest.class);
                 if (!isOwner(userId, gameUpdateRequest.getGameId())){
-                    res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return returnMessage(res, 401, "Unauthorized");
                 }
                 Optional<Game> game = findGameByIdJFFollowers(gameUpdateRequest.getGameId());
                 if (game.isEmpty()){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
                 Notification notification = new Notification(NotificationType.GAME_POSTED_UPDATE, game.get(), null, gameUpdateRequest.getPath());
                 try {
                     createGameUpdate(gameUpdateRequest);
                     game.get().persistNotificationToFollowers(notification);
                     game.get().sendNotificationToFollowers(notification);
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Exception e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             get("/gamerequests", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
 
                 boolean isAdmin = getIsAdminByToken(token);
                 if (!isAdmin){
-                    res.status(401);
-                    return "{\"message\":\"Unauthorized.\"}";
+                    return returnMessage(res, 401, "Unauthorized");
                 }
 
                 Optional<List<GameRequestResponse>> gameResponses = getGameRequestsAsResponses();
                 if (gameResponses.isEmpty()){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
                 List<GameRequestResponse> gameRequestResponse = gameResponses.get();
-                return new Gson().toJson(gameRequestResponse);
+                return toJson(gameRequestResponse);
             });
 
             get("/info/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
                 Optional<Game> game = findGameByIdJFTags(gameId);
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
                 if (game.isEmpty() || userGames.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 400, "Something went wrong");
                 }
                 float meanScore = getMeanScore(userGames.get());
                 Optional<User> creator = findUserById(game.get().getCreatorId());
                 if (creator.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 400, "Something went wrong");
                 }
                 UserResponse userResponse = new UserResponse(creator.get());
                 List<TagResponse> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
 
                 HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
-                res.status(200);
-                return new Gson().toJson(gameForResponse);
+                return returnMessage(res, 200, toJson(gameForResponse));
             });
         });
     }

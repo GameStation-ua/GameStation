@@ -17,8 +17,7 @@ public class UploadHandler extends AbstractHandler{
             post("/profilepic", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
                 String directory = "src/main/resources/public/profile_pictures/" + userId + ".png";
@@ -27,11 +26,9 @@ public class UploadHandler extends AbstractHandler{
                 String height = "256";
 
                 if(uploadAndRescale(req, res, directory, width, height)){
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }
-                res.status(500);
-                return "{\"message\":\"Something went wrong.\"}";
+                return returnMessage(res, 500, "Something went wrong");
             });
 
             post("/gameMain", (req, res) -> {
@@ -62,8 +59,7 @@ public class UploadHandler extends AbstractHandler{
     private String verifyAndUploadGameImg(Request req, Response res, String width, String height){
         String token = req.headers("token");
         if (!verifyJWT(token)) {
-            res.status(401);
-            return "{\"message\":\"Not logged in.\"}";
+            return returnMessage(res, 401, "Not logged in");
         }
         return uploadGameImg(req, res, width, height, token);
     }

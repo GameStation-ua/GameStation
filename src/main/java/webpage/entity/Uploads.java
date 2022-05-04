@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +23,7 @@ import static java.nio.file.Files.move;
 import static webpage.entity.Games.isOwner;
 import static webpage.entity.Users.findCreatedGamesbyUserId;
 import static webpage.entity.Users.getIdByToken;
+import static webpage.handlers.AbstractHandler.returnMessage;
 
 public class Uploads {
 
@@ -62,14 +61,11 @@ public class Uploads {
         try {
             saveImg(directory, req);
         if (rescale(directory, directory,width, height)) {
-            res.status(200);
             return true;
         }
         }catch (ServletException e){
-            res.status(400);
             return false;
         }
-        res.status(500);
         return false;
     }
 
@@ -79,15 +75,15 @@ public class Uploads {
 
         try {
             if (uploadAndRescale(req, res, directory, width, height)) {
-                res.status(200);
-                return uuid.toString();
+                res.status(500);
+                return returnMessage(res, 200, uuid.toString());
             }else {
                 res.status(500);
-                return "{\"message\":\"Something went wrong.\"}";
+                return returnMessage(res, 500, "Something went wrong");
             }
         }catch (Exception e){
             res.status(500);
-            return "{\"message\":\"Something went wrong.\"}";
+            return returnMessage(res, 500, "Something went wrong");
         }
     }
 
@@ -98,13 +94,13 @@ public class Uploads {
         Optional<List<Game>> gameList = findCreatedGamesbyUserId(userId);
         if (gameList.isEmpty()){
             res.status(500);
-            return "{\"message\":\"Something went wrong.\"}";
+return returnMessage(res, 500, "Something went wrong");
         }
         if (isOwner(userId,gameid)) {
             return upload(req, res, width, height);
         }
-        res.status(401);
-        return "{\"message\":\"Unauthorized.\"}";
+        res.status(500);
+return returnMessage(res, 401, "Unauthorized");
     }
 
     public static void rescale(String[] args) throws IOException {

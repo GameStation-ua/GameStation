@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
+import spark.Response;
 import webpage.model.User;
 import webpage.util.Handler;
 
@@ -71,5 +72,9 @@ public abstract class AbstractHandler implements Handler {
                 ).compact();
     }
 
+    public static String returnMessage(Response res, Integer status, String message){
+            res.status(status);
+            return "{\"message\":\"" + message + ".\"}";
+    }
 
 }

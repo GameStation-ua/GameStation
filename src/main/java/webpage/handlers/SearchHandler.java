@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
 import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.UserResponse;
@@ -13,6 +12,7 @@ import static spark.Spark.get;
 import static spark.Spark.path;
 import static webpage.entity.Games.searchStringInGames;
 import static webpage.entity.Users.searchStringInUsers;
+import static webpage.util.Parser.toJson;
 
 public class SearchHandler extends AbstractHandler{
 
@@ -22,18 +22,16 @@ public class SearchHandler extends AbstractHandler{
                String searchString = req.params(":searchString");
                String token = req.headers("token");
                if (!verifyJWT(token)) {
-                   res.status(401);
-                   return "{\"message\":\"Not logged in.\"}";
+                   return returnMessage(res, 401, "Not logged in");
                }
 
                Optional<List<GameResponse>> games = searchStringInGames(searchString.toUpperCase());
                Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase());
                if (games.isEmpty() || users.isEmpty()){
-                   res.status(500);
-                   return "{\"message\":\"Something went wrong.\"}";
+                   return returnMessage(res, 500, "Something went wrong");
                }
 
-               return new Gson().toJson(new SearchResponse(games.get(),users.get()));
+               return toJson(new SearchResponse(games.get(),users.get()));
            });
         });
     }

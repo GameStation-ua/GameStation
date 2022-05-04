@@ -15,6 +15,8 @@ import static webpage.entity.Persister.persist;
 import static webpage.entity.Threads.*;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
+import static webpage.util.Parser.fromJson;
+import static webpage.util.Parser.toJson;
 
 public class ForumHandler extends AbstractHandler{
 
@@ -24,47 +26,40 @@ public class ForumHandler extends AbstractHandler{
             get("/thread/:threadId", (req, res) -> {
                     String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
 
                 Optional<Thread> thread = findThreadById(Long.valueOf(req.params(":threadId")));
                 if (thread.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Invalid Thread.\"}";
+                    return returnMessage(res, 400, "Invalid Thread");
                 }
 
                 Optional<User> user = findUserById(thread.get().getCreatorId());
-                return new Gson().toJson(new ThreadResponse(thread.get(), user.get()));
+                return toJson(new ThreadResponse(thread.get(), user.get()));
 
             });
 
             post("/thread/create", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                     Long userId = getIdByToken(token);
-                    Gson gson = new Gson();
-                    ThreadRequest threadRequest = gson.fromJson(req.body(), ThreadRequest.class);
+                    ThreadRequest threadRequest = fromJson(req.body(), ThreadRequest.class);
                     
                     try {
                     Thread thread = new Thread(userId, threadRequest.getGameId(), threadRequest.getDescription(), threadRequest.getTitle());
                         persist(thread);
-                        res.status(200);
-                        return  "{\"message\":\"OK.\"}";
+                        return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
-                        res.status(500);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 500, "Something went wrong");
                     }
             });
 
             get("/*/*", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 String[] request = req.splat();
                 Long gameId = Long.valueOf(request[0]);
@@ -74,12 +69,11 @@ public class ForumHandler extends AbstractHandler{
                 Optional<List<Thread>> threads = findThreadsByForumPage(gameId, pageNumber);
 
                 if (threads.isEmpty()){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
 
                 List<ThreadResponse> softThreadsResponse = prepareSoftThreadResponse(threads.get());
-                return new Gson().toJson(softThreadsResponse);
+                return toJson(softThreadsResponse);
             });
         });
     }

@@ -1,7 +1,6 @@
 package webpage.handlers;
 
 import com.google.common.hash.Hashing;
-import com.google.gson.Gson;
 import webpage.model.User;
 import webpage.requestFormats.RegisterRequest;
 import webpage.util.HandlerType;
@@ -13,6 +12,7 @@ import static spark.Spark.path;
 import static spark.Spark.post;
 import static webpage.entity.Persister.persist;
 import static webpage.entity.Users.findUserByUsername;
+import static webpage.util.Parser.fromJson;
 
 
 public class RegisterHandler extends AbstractHandler {
@@ -20,21 +20,19 @@ public class RegisterHandler extends AbstractHandler {
     public void handle() {
         path("/register", () -> {
             post("", "application/json", (req, res) -> {
-                RegisterRequest registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+                RegisterRequest registerRequest = fromJson(req.body(), RegisterRequest.class);
                 if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) {
-                    res.status(406);
-                    return "{\"message\":\"You need to fill all the fields\"}";
+                    return returnMessage(res, 406, "You need to fill all the fields");
                 }
 
                 Optional<User> user = findUserByUsername(registerRequest.getUsername());
                 if (user.isPresent()) {
-                    res.status(200);
-                    return "{\"message\":\"Username already taken.\"}";
+                    return returnMessage(res, 200, "Username already taken");
                 }
                 if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
                     res.type("application/json");
-                    res.status(200);
-                    return "{\"message\":\"You need to meet password requirements.\"}";
+                    res.status(500);
+return returnMessage(res, 200, "You need to meet password requirements");
                 } else {
                     res.type("application/json");
                     registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
@@ -43,11 +41,9 @@ public class RegisterHandler extends AbstractHandler {
                             registerRequest.getPassword());
                     try{
                         persist(user1);
-                        res.status(201);
-                        return "{\"message\":\"User created!\"}";
+                        return returnMessage(res, 201, "User created!");
                     }catch (Throwable r) {
-                        res.status(500);
-                        return "{\"message\":\"Something went wrong, try again.\"}";
+                        return returnMessage(res, 500, "Something went wrong, try again");
                     }
                 }
             });

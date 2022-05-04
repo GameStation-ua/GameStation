@@ -18,7 +18,7 @@ public class MyHandler extends AbstractHandler {
 //            long id = req.attribute("Id");
 //            File outputfile = new File( id + ".png");
 ////            ImageIO.write(bufferedImage, "png", outputfile);
-//            return "{\"message\":\"Password needs to be at least 8 characters Long.\"}";
+//            return "Password needs to be at least 8 characters Long";
 //        });
 //    }
 //}

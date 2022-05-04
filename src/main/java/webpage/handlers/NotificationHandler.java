@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.eclipse.jetty.websocket.api.Session;
@@ -21,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static webpage.entity.Notifications.prepareNotificationResponse;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
+import static webpage.util.Parser.toJson;
 import static webpage.util.SecretKey.key;
 
 
@@ -46,7 +46,7 @@ public class NotificationHandler {
     static public void sendNotification(Long userId, Notification notification){
         Session session = sessionMap.get(userId);
         try {
-            session.getRemote().sendString(new Gson().toJson(new NotificationResponse(notification)));
+            session.getRemote().sendString(toJson(new NotificationResponse(notification)));
         }catch (Throwable e){
             e.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class NotificationHandler {
         prepareNotificationResponse(notificationResponse, userOptional.get());
 
 
-        String s = new Gson().toJson(notificationResponse);
+        String s = toJson(notificationResponse);
         user.getRemote().sendString(s);
         }catch (Throwable e){
             onError(user, e);

@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
 import webpage.model.Thread;
 import webpage.model.*;
 import webpage.requestFormats.CommentRequest;
@@ -22,6 +21,8 @@ import static webpage.entity.UserComments.findUserCommentByCommentIdAndUserId;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
 import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.util.Parser.fromJson;
+import static webpage.util.Parser.toJson;
 
 
 public class CommentHandler extends AbstractHandler{
@@ -32,10 +33,9 @@ public class CommentHandler extends AbstractHandler{
             post("/game/:gameId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
-                CommentRequest commentRequest = new Gson().fromJson(req.body(), CommentRequest.class);
+                CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
                 Long userId = getIdByToken(token);
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
@@ -44,8 +44,7 @@ public class CommentHandler extends AbstractHandler{
                 Optional<User> user = findUserById(userId);
 
                 if (game.isEmpty() || user.isEmpty()){
-                        res.status(401);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 401, "Something went wrong");
                 }
 
 
@@ -57,37 +56,32 @@ public class CommentHandler extends AbstractHandler{
                     merge(user.get());
                     merge(game.get());
                     user.get().sendNotificationToFollowers(notification);
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             post("/thread/:threadId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
-                    CommentRequest commentRequest = new Gson().fromJson(req.body(), CommentRequest.class);
+                    CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
                     Long userId = getIdByToken(token);
                     Long threadId = Long.valueOf(req.params(":threadId"));
 
                     Optional<Thread> thread = findThreadById(threadId);
 
                     if (thread.isEmpty()){
-                        res.status(401);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 401, "Something went wrong");
                     }
 
                     Optional<User> creator = findUserById(thread.get().getCreatorId());
                     Optional<User> user = findUserById(userId);
 
                     if (creator.isEmpty() || user.isEmpty()){
-                        res.status(401);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 401, "Something went wrong");
                     }
                     Comment comment = new Comment(userId, threadId, commentRequest.getContent());
                     thread.get().addComment(comment);
@@ -104,22 +98,19 @@ public class CommentHandler extends AbstractHandler{
                         user.get().sendNotificationToFollowers(notification1);
                         sendNotification(creator.get().getId(), notification2);
                         thread.get().sendNotificationToFollowers(notification3);
-                        res.status(200);
-                        return "{\"message\":\"OK.\"}";
+                        return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
-                        res.status(500);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 500, "Something went wrong");
                     }
             });
 
             post("/user/:targetUserId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
 
-                    CommentRequest commentRequest = new Gson().fromJson(req.body(), CommentRequest.class);
+                    CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
 
                     Long userId = getIdByToken(token);
                     Long targetUserId = Long.valueOf(req.params(":targetUserId"));
@@ -127,8 +118,7 @@ public class CommentHandler extends AbstractHandler{
                     Optional<User> targetUser = findUserById(targetUserId);
                     Optional<User> user = findUserById(userId);
                     if (user.isEmpty() || targetUser.isEmpty()){
-                        res.status(400);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 400, "Something went wrong");
                     }
                     Comment comment = new Comment(userId, targetUserId, commentRequest.getContent());
                     targetUser.get().addComment(comment);
@@ -141,38 +131,33 @@ public class CommentHandler extends AbstractHandler{
                         merge(targetUser.get());
                         user.get().sendNotificationToFollowers(notification);
                         sendNotification(targetUserId, notification1);
-                        res.status(200);
-                        return "{\"message\":\"OK.\"}";
+                        return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
-                        res.status(500);
-                        return "{\"message\":\"Something went wrong.\"}";
+                        return returnMessage(res, 500, "Something went wrong");
                     }
             });
 
             get("/*/*", (req, res) ->{
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                     Long userId = getIdByToken(token);
                     String[] request = req.splat();
 
                 Optional<List<Comment>> comments = findCommentsFromActorById(Long.valueOf(request[0]), Integer.parseInt(request[1]));
                 if (comments.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 400, "Something went wrong");
                 }
                 List<CommentResponse> commentResponseList = createCommentResponseList(comments.get(), userId);
 
-                return new Gson().toJson(new CommentListResponse(commentResponseList));
+                return toJson(new CommentListResponse(commentResponseList));
             });
 
             post("/upvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
@@ -181,26 +166,22 @@ public class CommentHandler extends AbstractHandler{
 
                 Optional<Comment> comment = findCommentById(commentId);
                 if (comment.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Bad request.\"}";
+                    return returnMessage(res, 400, "Bad request");
                 }
                 userComment = updateCommentUpvote(userId, commentId, userComment, comment.get());
                 try {
                     merge(comment.get());
                     merge(userComment.get());
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             post("/downvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
@@ -209,26 +190,22 @@ public class CommentHandler extends AbstractHandler{
 
                 Optional<Comment> comment = findCommentById(commentId);
                 if (comment.isEmpty() || userComment.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Bad request.\"}";
+                    return returnMessage(res, 400, "Bad request");
                 }
                 userComment = updateCommentDowvote(userId, commentId, userComment, comment.get());
                 try {
                     merge(comment.get());
                     merge(userComment.get());
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
 
             post("/neutralvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
-                    res.status(401);
-                    return "{\"message\":\"Not logged in.\"}";
+                    return returnMessage(res, 401, "Not logged in");
                 }
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
@@ -237,18 +214,15 @@ public class CommentHandler extends AbstractHandler{
 
                 Optional<Comment> comment = findCommentById(commentId);
                 if (comment.isEmpty() || userComment.isEmpty()){
-                    res.status(400);
-                    return "{\"message\":\"Bad request.\"}";
+                    return returnMessage(res, 400, "Bad request");
                 }
                 userComment = updateCommentNeutral(userId, commentId, userComment, comment.get());
                 try {
                     merge(comment.get());
                     merge(userComment.get());
-                    res.status(200);
-                    return "{\"message\":\"OK.\"}";
+                    return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
-                    res.status(500);
-                    return "{\"message\":\"Something went wrong.\"}";
+                    return returnMessage(res, 500, "Something went wrong");
                 }
             });
         });
