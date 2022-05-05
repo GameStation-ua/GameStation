@@ -25,8 +25,8 @@ public class Comment {
     @Column(name = "ACTOR_ID", nullable = false)
     private Long actorId;
 
-    @Column(name = "VOTES", nullable = false)
-    private int votes = 0;
+    @Transient
+    private int votes = Integer.MIN_VALUE;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "commentId")
     private Set<UserComment> usersWhoLiked;
@@ -69,7 +69,10 @@ public class Comment {
     }
 
     public int getVotes() {
-        return votes;
+        if (votes == Integer.MIN_VALUE) return votes;
+        else {
+return 0; // todo
+        }
     }
 
     public void setVotes(int votes) {
