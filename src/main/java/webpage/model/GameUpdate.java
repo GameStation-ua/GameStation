@@ -32,6 +32,22 @@ public class GameUpdate {
     public GameUpdate() {
     }
 
+    public Long getGameId() {
+        return gameId;
+    }
+
+    public String getTile() {
+        return tile;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
     public Long getId() {
         return id;
     }

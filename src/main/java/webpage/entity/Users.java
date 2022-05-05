@@ -2,6 +2,7 @@ package webpage.entity;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import webpage.util.NotificationType;
 import webpage.model.*;
 import webpage.requestFormats.FollowRequest;
 import webpage.responseFormats.UserResponse;

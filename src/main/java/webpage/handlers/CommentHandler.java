@@ -1,5 +1,6 @@
 package webpage.handlers;
 
+import webpage.util.NotificationType;
 import webpage.model.Thread;
 import webpage.model.*;
 import webpage.requestFormats.CommentRequest;

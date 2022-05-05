@@ -1,6 +1,7 @@
 package webpage.model;
 
 import com.google.gson.annotations.SerializedName;
+import webpage.util.Status;
 
 import javax.persistence.*;
 

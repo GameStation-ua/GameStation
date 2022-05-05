@@ -1,5 +1,7 @@
 package webpage.model;
 
+import webpage.util.NotificationType;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;

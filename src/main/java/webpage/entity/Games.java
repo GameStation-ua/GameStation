@@ -112,6 +112,17 @@ public class Games {
         }
     }
 
+    public static Optional<GameUpdate> findGameUpdateById(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            return Optional.of(em.find(GameUpdate.class, id));
+        }catch (NullPointerException e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
     public static Optional<List<Game>> searchGameByTag(String searchTag){
         EntityManager em = createEntityManager();
         try {
@@ -188,10 +199,11 @@ public class Games {
         }
     }
 
-    public static void createGameFromRequest(GameRequest gameRequest){
+    public static Game createGameFromRequest(GameRequest gameRequest){
         Game game = new Game(gameRequest.getCreatorId(), gameRequest.getTitle(), gameRequest.getDescription(), gameRequest.getWiki(), gameRequest.getImgsInCarousel(), gameRequest.getTags());
-            Game game1 = merge(game);  // todo attach imgs to game
+            Game game1 = merge(game);
             remove(gameRequest);
+            return game1;
     }
 
     public static void createGameUpdate(GameUpdateRequest gur){

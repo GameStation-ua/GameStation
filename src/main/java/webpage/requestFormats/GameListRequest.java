@@ -1,6 +1,6 @@
 package webpage.requestFormats;
 
-import webpage.model.Status;
+import webpage.util.Status;
 
 public class GameListRequest {
     private final long gameId;
