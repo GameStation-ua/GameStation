@@ -5,6 +5,8 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+import static webpage.entity.Votes.getVotesByCommentId;
+
 @Entity
 public class Comment {
 
@@ -69,10 +71,11 @@ public class Comment {
     }
 
     public int getVotes() {
-        if (votes == Integer.MIN_VALUE) return votes;
+        if (votes != Integer.MIN_VALUE) return votes;
         else {
-return 0; // todo
+            this.setVotes(getVotesByCommentId(this.getId()));
         }
+        return votes;
     }
 
     public void setVotes(int votes) {

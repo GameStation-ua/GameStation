@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.*;
-import static webpage.entity.Actors.findActorById;
-import static webpage.entity.Actors.findCommentsFromActorById;
+import static webpage.entity.Actors.*;
 import static webpage.entity.Comments.createCommentResponseList;
-import static webpage.entity.Comments.findCommentById;
 import static webpage.entity.Persister.merge;
-import static webpage.entity.Threads.findThreadById;
+import static webpage.entity.Threads.findThreadByIdJFComments;
+import static webpage.entity.Threads.findThreadByIdJFFollowers;
 import static webpage.entity.UserComments.findUserCommentByCommentIdAndUserId;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
@@ -53,10 +52,10 @@ public class CommentHandler extends AbstractHandler{
                 game.get().addComment(comment);
                 Notification notification = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), game.get(), commentRequest.getPath());
                 try{
-                    user.get().persistNotificationToFollowers(notification);
+                    persistNotificationToFollowers(notification, user.get());
                     merge(user.get());
                     merge(game.get());
-                    user.get().sendNotificationToFollowers(notification);
+                    sendNotificationToFollowers(notification, user.get());
                     return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
                     return returnMessage(res, 500, "Something went wrong");
@@ -72,7 +71,7 @@ public class CommentHandler extends AbstractHandler{
                     Long userId = getIdByToken(token);
                     Long threadId = Long.valueOf(req.params(":threadId"));
 
-                    Optional<Thread> thread = findThreadById(threadId);
+                    Optional<Thread> thread = findThreadByIdJFComments(threadId);
 
                     if (thread.isEmpty()){
                         return returnMessage(res, 401, "Something went wrong");
@@ -87,18 +86,20 @@ public class CommentHandler extends AbstractHandler{
                     Comment comment = new Comment(userId, threadId, commentRequest.getContent());
                     thread.get().addComment(comment);
                     Notification notification1 = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), thread.get(), commentRequest.getPath());
-                    user.get().persistNotificationToFollowers(notification1);
+                    persistNotificationToFollowers(notification1, user.get());
                     Notification notification2 = new Notification(NotificationType.USER_COMMENTED_ON_USER_THREAD, user.get(), thread.get(), commentRequest.getPath());
                     creator.get().addNotification(notification2);
                     Notification notification3 = new Notification(NotificationType.USER_COMMENTED_ON_FOLLOWED_THREAD, user.get(), thread.get(), commentRequest.getPath());
-                    thread.get().persistNotificationToFollowers(notification3);
+                    persistNotificationToFollowers(notification3, thread.get());
                     try{
+                        thread = findThreadByIdJFFollowers(thread.get().getId());
+                        if (thread.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                         merge(creator.get());
                         merge(user.get());
                         merge(thread.get());
-                        user.get().sendNotificationToFollowers(notification1);
+                        sendNotificationToFollowers(notification1, user.get());
                         sendNotification(creator.get().getId(), notification2);
-                        thread.get().sendNotificationToFollowers(notification3);
+                        sendNotificationToFollowers(notification3, thread.get());
                         return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
                         return returnMessage(res, 500, "Something went wrong");
@@ -124,13 +125,13 @@ public class CommentHandler extends AbstractHandler{
                     Comment comment = new Comment(userId, targetUserId, commentRequest.getContent());
                     targetUser.get().addComment(comment);
                     Notification notification = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), targetUser.get(), commentRequest.getPath());
-                    user.get().persistNotificationToFollowers(notification);
+                    persistNotificationToFollowers(notification, user.get());
                     Notification notification1 = new Notification(NotificationType.USER_COMMENTED_ON_PROFILE, user.get(), targetUser.get(), commentRequest.getPath());
                     targetUser.get().addNotification(notification1);
                     try{
                         merge(user.get());
                         merge(targetUser.get());
-                        user.get().sendNotificationToFollowers(notification);
+                        sendNotificationToFollowers(notification, user.get());
                         sendNotification(targetUserId, notification1);
                         return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
@@ -138,7 +139,7 @@ public class CommentHandler extends AbstractHandler{
                     }
             });
 
-            get("/*/*", (req, res) ->{
+            get("/commentPage/*/*", (req, res) ->{
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
                     return returnMessage(res, 401, "Not logged in");
@@ -164,14 +165,9 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-
-                Optional<Comment> comment = findCommentById(commentId);
-                if (comment.isEmpty()){
-                    return returnMessage(res, 400, "Bad request");
-                }
-                userComment = updateCommentUpvote(userId, commentId, userComment, comment.get());
+                if (userComment.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                userComment.get().setVote(1);
                 try {
-                    merge(comment.get());
                     merge(userComment.get());
                     return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
@@ -188,14 +184,9 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-
-                Optional<Comment> comment = findCommentById(commentId);
-                if (comment.isEmpty() || userComment.isEmpty()){
-                    return returnMessage(res, 400, "Bad request");
-                }
-                userComment = updateCommentDowvote(userId, commentId, userComment, comment.get());
+                if (userComment.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                userComment.get().setVote(-1);
                 try {
-                    merge(comment.get());
                     merge(userComment.get());
                     return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
@@ -212,14 +203,9 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-
-                Optional<Comment> comment = findCommentById(commentId);
-                if (comment.isEmpty() || userComment.isEmpty()){
-                    return returnMessage(res, 400, "Bad request");
-                }
-                userComment = updateCommentNeutral(userId, commentId, userComment, comment.get());
+                if (userComment.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                userComment.get().setVote(0);
                 try {
-                    merge(comment.get());
                     merge(userComment.get());
                     return returnMessage(res, 200, "OK");
                 }catch (Throwable e){
@@ -227,51 +213,6 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
         });
-    }
-
-    private Optional<UserComment> updateCommentUpvote(Long userId, Long commentId, Optional<UserComment> userComment, Comment comment) {
-        if (userComment.isEmpty()) {
-            userComment = Optional.of(new UserComment(userId, commentId, 1));
-            comment.setVotes(comment.getVotes() + 1);
-        }else{
-            Integer votes = userComment.get().getVote();
-            switch (votes){
-                case 1: break;
-                case 0: userComment.get().setVote(1); comment.setVotes(comment.getVotes() + 1); break;
-                case -1: userComment.get().setVote(1); comment.setVotes(comment.getVotes() + 2); break;
-            }
-        }
-        return userComment;
-    }
-
-    private Optional<UserComment> updateCommentDowvote(Long userId, Long commentId, Optional<UserComment> userComment, Comment comment) {
-        if (userComment.isEmpty()) {
-            userComment = Optional.of(new UserComment(userId, commentId, 1));
-            comment.setVotes(comment.getVotes() + 1);
-        }else{
-            Integer votes = userComment.get().getVote();
-            switch (votes){
-                case 1: userComment.get().setVote(-1); comment.setVotes(comment.getVotes() - 2);break;
-                case 0: userComment.get().setVote(-1); comment.setVotes(comment.getVotes() - 1); break;
-                case -1: break;
-            }
-        }
-        return userComment;
-    }
-
-    private Optional<UserComment> updateCommentNeutral(Long userId, Long commentId, Optional<UserComment> userComment, Comment comment) {
-        if (userComment.isEmpty()) {
-            userComment = Optional.of(new UserComment(userId, commentId, 1));
-            comment.setVotes(comment.getVotes() + 1);
-        }else{
-            Integer votes = userComment.get().getVote();
-            switch (votes){
-                case 1: userComment.get().setVote(0); comment.setVotes(comment.getVotes() - 1); break;
-                case 0: break;
-                case -1: userComment.get().setVote(0); comment.setVotes(comment.getVotes() + 1); break;
-            }
-        }
-        return userComment;
     }
 
     @Override

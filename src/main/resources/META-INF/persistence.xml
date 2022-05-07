@@ -4,9 +4,11 @@
              version="2.0">
 
     <persistence-unit name="GameStation">
+
         <description>
             GameStation database.
         </description>
+
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>webpage.model.User</class>
         <class>webpage.model.Game</class>
@@ -25,7 +27,6 @@
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:hsql://localhost/xdb;shutdown=true" />
             <property name="javax.persistence.jdbc.user" value="sa" />
             <property name="javax.persistence.jdbc.password" value="" />
-            <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
         </properties>
 

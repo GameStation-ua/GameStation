@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.*;
+import static webpage.entity.Actors.persistNotificationToFollowers;
+import static webpage.entity.Actors.sendNotificationToFollowers;
 import static webpage.entity.Games.*;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
@@ -128,8 +130,6 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                 });
 
-
-
                 post("/approval", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) {
@@ -194,8 +194,8 @@ public class ABMGamesHandler extends AbstractHandler{
                 Notification notification = new Notification(NotificationType.GAME_POSTED_UPDATE, game.get(), null, gameUpdateRequest.getPath());
                 try {
                     createGameUpdate(gameUpdateRequest);
-                    game.get().persistNotificationToFollowers(notification);
-                    game.get().sendNotificationToFollowers(notification);
+                    persistNotificationToFollowers(notification, game.get());
+                    sendNotificationToFollowers(notification, game.get());
                     return returnMessage(res, 200, "OK");
                 }catch (Exception e){
                     return returnMessage(res, 500, "Something went wrong");

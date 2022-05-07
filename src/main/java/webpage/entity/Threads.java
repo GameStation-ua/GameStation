@@ -25,6 +25,34 @@ public class Threads {
             em.close();
         }
     }
+
+    public static Optional<Thread> findThreadByIdJFComments(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            Thread thread = (Thread) em.createQuery("SELECT distinct t FROM Thread t join fetch t.comments WHERE t.id = ?1")
+                    .setParameter(1, id)
+                    .getSingleResult();
+            return Optional.of(thread);
+        }catch (NullPointerException e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<Thread> findThreadByIdJFFollowers(Long id){
+        EntityManager em = createEntityManager();
+        try {
+            Thread thread = (Thread) em.createQuery("SELECT distinct t FROM Thread t join fetch t.followers WHERE t.id = ?1")
+                    .setParameter(1, id)
+                    .getSingleResult();
+            return Optional.of(thread);
+        }catch (NullPointerException e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
     public static Optional<List<Thread>> findThreadsByForumPage(Long gameId, Integer pageNumber){
         EntityManager em = createEntityManager();
         try {
@@ -41,13 +69,14 @@ public class Threads {
         }
     }
 
-    public static List<ThreadResponse> prepareSoftThreadResponse(List<Thread> threads) {
+    public static Optional<List<ThreadResponse>> prepareSoftThreadResponse(List<Thread> threads) {
         List<ThreadResponse> softThreadsResponse = new ArrayList<>();
         for (Thread thread : threads) {
             Optional<User> user = findUserById(thread.getCreatorId());
+            if (user.isEmpty()) return Optional.empty();
 
             softThreadsResponse.add(new ThreadResponse(thread, user.get()));
         }
-        return softThreadsResponse;
+        return Optional.of(softThreadsResponse);
     }
 }

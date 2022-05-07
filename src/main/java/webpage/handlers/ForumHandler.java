@@ -1,6 +1,7 @@
 package webpage.handlers;
 
 import com.google.gson.Gson;
+import webpage.model.Comment;
 import webpage.model.Thread;
 import webpage.model.User;
 import webpage.requestFormats.ThreadRequest;
@@ -35,6 +36,10 @@ public class ForumHandler extends AbstractHandler{
                 }
 
                 Optional<User> user = findUserById(thread.get().getCreatorId());
+                if (user.isEmpty()){
+                    return returnMessage(res, 500, "Something went wrong");
+                }
+
                 return toJson(new ThreadResponse(thread.get(), user.get()));
 
             });
@@ -56,7 +61,7 @@ public class ForumHandler extends AbstractHandler{
                     }
             });
 
-            get("/*/*", (req, res) -> {
+            get("/threadPage/*/*", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) {
                     return returnMessage(res, 401, "Not logged in");
@@ -68,11 +73,11 @@ public class ForumHandler extends AbstractHandler{
 
                 Optional<List<Thread>> threads = findThreadsByForumPage(gameId, pageNumber);
 
-                if (threads.isEmpty()){
-                    return returnMessage(res, 500, "Something went wrong");
-                }
+                if (threads.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
-                List<ThreadResponse> softThreadsResponse = prepareSoftThreadResponse(threads.get());
+                Optional<List<ThreadResponse>> softThreadsResponse = prepareSoftThreadResponse(threads.get());
+                if (softThreadsResponse.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+
                 return toJson(softThreadsResponse);
             });
         });

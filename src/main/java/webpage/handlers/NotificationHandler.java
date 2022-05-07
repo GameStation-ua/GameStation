@@ -1,20 +1,17 @@
 package webpage.handlers;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import webpage.model.Notification;
 import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static webpage.entity.Notifications.prepareNotificationResponse;
@@ -27,7 +24,7 @@ import static webpage.util.SecretKey.key;
 @WebSocket
 public class NotificationHandler {
 
-    private static final Map<Long, Session> sessionMap = new ConcurrentHashMap<>();
+    private static final BiMap<Long, Session> sessionMap =  Maps.synchronizedBiMap(HashBiMap.create());
 
     @OnWebSocketConnect
     public void onConnect(Session user){
@@ -47,9 +44,13 @@ public class NotificationHandler {
         Session session = sessionMap.get(userId);
         try {
             session.getRemote().sendString(toJson(new NotificationResponse(notification)));
-        }catch (Throwable e){
-            e.printStackTrace();
+        }catch (Exception ignored){
         }
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session user, int statuCode, String reason){
+        sessionMap.inverse().remove(user);
     }
 
     private void sendNotifications(Session user) {

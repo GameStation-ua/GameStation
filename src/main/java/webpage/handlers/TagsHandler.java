@@ -33,7 +33,7 @@ public class TagsHandler extends AbstractHandler {
                     if (!verifyJWT(token)) {
                         return returnMessage(res, 401, "Not logged in");
                     }
-                    Optional<List<AvailableTag>> availableTags = getAvailableTags();
+                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
                     if (availableTags.isEmpty()) {
                         return returnMessage(res, 500, "Something went wrong");
                     }
@@ -54,7 +54,7 @@ public class TagsHandler extends AbstractHandler {
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
 
-                    Optional<List<AvailableTag>> availableTags = getAvailableTags();
+                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
                     if (availableTags.isEmpty()) {
                         return returnMessage(res, 500, "Something went wrong");
                     }
@@ -79,7 +79,7 @@ public class TagsHandler extends AbstractHandler {
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
 
-                    Optional<List<AvailableTag>> availableTags = getAvailableTags();
+                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
                     if (availableTags.isEmpty()) {
                         return returnMessage(res, 500, "Something went wrong");
                     }

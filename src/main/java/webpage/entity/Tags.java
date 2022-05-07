@@ -28,7 +28,7 @@ public class Tags {
         }
     }
 
-    public static Optional<List<AvailableTag>> getAvailableTags(){
+    public static Optional<List<AvailableTag>> findAvailableTags(){
         EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<AvailableTag> availableTags = em.createQuery("FROM AvailableTag")

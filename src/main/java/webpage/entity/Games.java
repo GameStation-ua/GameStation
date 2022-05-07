@@ -89,6 +89,7 @@ public class Games {
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                     .setParameter(1, "%" + searchTag.toUpperCase() + "%")
+                    .setMaxResults(10)
                     .getResultList();
             List<GameResponse> gamesForResponse = new ArrayList<>();
             for (Game game : games) {
@@ -128,6 +129,7 @@ public class Games {
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                     .setParameter("search", searchTag)
+                    .setMaxResults(50)
                     .getResultList();
             return Optional.of(games);
         }catch (Exception e){
@@ -136,6 +138,7 @@ public class Games {
             em.close();
         }
     }
+
     public static List<GameResponse> getGameResponses(List<Game> games) {
         List<GameResponse> gamesForResponse = new ArrayList<>();
         for (Game game : games) {

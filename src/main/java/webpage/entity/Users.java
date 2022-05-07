@@ -73,6 +73,7 @@ public class Users {
         try {
             @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
                     .setParameter(1, "%" + searchString.toUpperCase() + "%")
+                    .setMaxResults(10)
                     .getResultList();
             List<UserResponse> usersForResponse = new ArrayList<>();
             for (User user : users) {
