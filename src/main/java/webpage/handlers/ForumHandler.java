@@ -1,7 +1,5 @@
 package webpage.handlers;
 
-import com.google.gson.Gson;
-import webpage.model.Comment;
 import webpage.model.Thread;
 import webpage.model.User;
 import webpage.requestFormats.ThreadRequest;

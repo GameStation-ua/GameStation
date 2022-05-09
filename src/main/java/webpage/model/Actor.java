@@ -1,11 +1,9 @@
 package webpage.model;
 
+import org.hibernate.Hibernate;
+
 import javax.persistence.*;
 import java.util.Set;
-
-import static webpage.entity.Persister.merge;
-import static webpage.handlers.NotificationHandler.sendNotification;
-import static webpage.util.EntityManagers.createEntityManager;
 
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

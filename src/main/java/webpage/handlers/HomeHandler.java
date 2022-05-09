@@ -22,7 +22,6 @@ import static webpage.entity.Games.findGameByTagName;
 import static webpage.entity.Tags.findAvailableTags;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
-import static webpage.util.EntityManagers.createEntityManager;
 import static webpage.util.Parser.toJson;
 import static webpage.util.SecretKey.key;
 

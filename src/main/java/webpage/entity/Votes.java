@@ -2,7 +2,6 @@ package webpage.entity;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 
 import static webpage.util.EntityManagers.createEntityManager;
 

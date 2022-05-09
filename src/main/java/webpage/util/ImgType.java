@@ -11,5 +11,8 @@ public enum ImgType {
     CAROUSEL,
 
     @SerializedName(value = "gameUpdate")
-    GAME_UPDATE
+    GAME_UPDATE,
+
+    @SerializedName(value = "profile")
+    PROFILE
 }

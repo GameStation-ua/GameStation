@@ -11,8 +11,9 @@ import webpage.model.Notification;
 import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static webpage.entity.Notifications.prepareNotificationResponse;
 import static webpage.entity.Users.findUserById;
@@ -64,6 +65,10 @@ public class NotificationHandler {
         }
 
         List<NotificationResponse> notificationResponse = new ArrayList<>();
+        if (userOptional.isEmpty()) {
+            onError(user, new Error("Server error"));
+            return;
+        }
         prepareNotificationResponse(notificationResponse, userOptional.get());
 
 

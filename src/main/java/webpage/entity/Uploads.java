@@ -3,7 +3,6 @@ package webpage.entity;
 import com.mortennobel.imagescaling.ResampleOp;
 import spark.Request;
 import spark.Response;
-import webpage.model.Game;
 
 import javax.imageio.ImageIO;
 import javax.servlet.MultipartConfigElement;
@@ -14,15 +13,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.mortennobel.imagescaling.ResampleFilters.getBiCubicHighFreqResponse;
 import static java.nio.file.Files.move;
-import static webpage.entity.Games.isOwner;
-import static webpage.entity.Users.findCreatedGamesbyUserId;
-import static webpage.entity.Users.getIdByToken;
 import static webpage.handlers.AbstractHandler.returnMessage;
 
 public class Uploads {
@@ -102,15 +95,6 @@ public class Uploads {
             ImageIO.write(resizedImage, "png", new File(destfile));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public static boolean attachMainImgToGame(Long gameId, String uuid){
-        try {
-            move(Paths.get("src/main/resources/public/temp/" + uuid + ".png"), Paths.get("src/main/resources/public/gameImages/" + gameId + "/gameMain.png"));
-            return true;
-        }catch (Exception e){
-            return false;
         }
     }
 }

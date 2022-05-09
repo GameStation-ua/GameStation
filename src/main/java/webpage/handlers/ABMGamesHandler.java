@@ -1,16 +1,14 @@
 package webpage.handlers;
 
 import org.apache.commons.io.FileUtils;
-import org.hsqldb.lib.FileUtil;
-import webpage.requestFormats.AttachImgRequest;
-import webpage.util.ImgType;
-import webpage.util.NotificationType;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.GameAprovalRequest;
 import webpage.requestFormats.GameUpdateRequest;
 import webpage.responseFormats.*;
 import webpage.util.HandlerType;
+import webpage.util.ImgType;
+import webpage.util.NotificationType;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -41,45 +39,6 @@ public class ABMGamesHandler extends AbstractHandler{
 
             path("/solicitude", () -> {
 
-                post("/attachImg", (req, res) -> {
-                    String token = req.headers("token");
-                    if (!verifyJWT(token)) {
-                        return returnMessage(res, 401, "Not logged in");
-                    }
-                    ImgType imgType = fromJson(req.headers("imgType"), ImgType.class);
-
-                    switch (imgType) {
-                        case MAIN:
-                            Optional<GameRequest> gameRequest = findGameRequestById(Long.valueOf(req.headers("id")));
-                            if (gameRequest.isEmpty() || !(gameRequest.get().getCreatorId().equals(getIdByToken(token)))) {
-                                return returnMessage(res, 401, "Unauthorized");
-                            }
-                            return upload(req, res, "256", "256", "src/main/resources/public/gameRequests/" + req.headers("id") + "/main.png");
-                        case CAROUSEL:
-                            Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
-                            if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token)))) {
-                                return returnMessage(res, 401, "Unauthorized");
-                            }
-                            String r = upload(req, res, "256", "256", "src/main/resources/public/gameRequests/" + req.headers("id") + "/carousel=" + (gameRequest1.get().getImgsInCarousel() + 1) + ".png");
-                            gameRequest1.get().setImgsInCarousel(gameRequest1.get().getImgsInCarousel() + 1);
-                            merge(gameRequest1.get());
-                            return r;
-                        case GAME_UPDATE:
-                            Optional<GameUpdate> gameUpdate = findGameUpdateById(Long.valueOf(req.headers("id")));
-                            if (gameUpdate.isEmpty()){
-                                return returnMessage(res, 500, "Something went wrong");
-                            }
-                            Optional<Game> game = findGameById(gameUpdate.get().getGameId());
-                            if (game.isEmpty()){
-                                return returnMessage(res, 500, "Something went wrong");
-                            }
-                            if (!(game.get().getCreatorId().equals(getIdByToken(token)))) return returnMessage(res, 401, "Unauthorized");
-
-                            return upload(req, res, "256", "256", "src/main/resources/public/gameUpdates/" + gameUpdate.get().getId() + ".png");
-                    }
-                    return "";
-                });
-
                 post("/create", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) {
@@ -95,8 +54,9 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try{
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get("src/main/resources/public/gameRequests/" + gameRequest1.getId()));
-                        return returnMessage(res, 200, "OK");
+                        Files.createDirectories(Paths.get("src/main/resources/public/game_requests/" + gameRequest1.getId()));
+                        res.status(200);
+                        return  "" + gameRequest1.getId();
                     }catch (Exception e){
                         return returnMessage(res, 500, "Something went wrong");
                     }
@@ -123,8 +83,9 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try{
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get("src/main/resources/public/gameRequests/" + gameRequest1.getId()));
-                        return returnMessage(res, 200, "OK");
+                        Files.createDirectories(Paths.get("src/main/resources/public/game_requests/" + gameRequest1.getId()));
+                        res.status(200);
+                        return  "" + gameRequest1.getId();
                     }catch (Exception e){
                         return returnMessage(res, 500, "Something went wrong");
                     }
@@ -151,7 +112,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                     try {
                         Game game = createGameFromRequest(gameRequest.get());
-                        FileUtils.moveDirectory( new File("src/main/resources/public/gameRequests/" + gameRequest.get().getId()).getAbsoluteFile(), new File("src/main/resources/public/games/" + game.getId()).getAbsoluteFile());
+                        FileUtils.moveDirectory( new File("src/main/resources/public/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File("src/main/resources/public/games/" + game.getId()).getAbsoluteFile());
                     }catch (Exception e){
                         return returnMessage(res, 500, "Something went wrong");
                     }

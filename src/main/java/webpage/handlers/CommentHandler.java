@@ -1,12 +1,12 @@
 package webpage.handlers;
 
-import webpage.util.NotificationType;
 import webpage.model.Thread;
 import webpage.model.*;
 import webpage.requestFormats.CommentRequest;
 import webpage.responseFormats.CommentListResponse;
 import webpage.responseFormats.CommentResponse;
 import webpage.util.HandlerType;
+import webpage.util.NotificationType;
 
 import java.util.List;
 import java.util.Optional;
@@ -92,14 +92,14 @@ public class CommentHandler extends AbstractHandler{
                     Notification notification3 = new Notification(NotificationType.USER_COMMENTED_ON_FOLLOWED_THREAD, user.get(), thread.get(), commentRequest.getPath());
                     persistNotificationToFollowers(notification3, thread.get());
                     try{
-                        thread = findThreadByIdJFFollowers(thread.get().getId());
-                        if (thread.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                        Optional<Thread> thread1 = findThreadByIdJFFollowers(thread.get().getId());
+                        if (thread1.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                         merge(creator.get());
                         merge(user.get());
                         merge(thread.get());
                         sendNotificationToFollowers(notification1, user.get());
                         sendNotification(creator.get().getId(), notification2);
-                        sendNotificationToFollowers(notification3, thread.get());
+                        sendNotificationToFollowers(notification3, thread1.get());
                         return returnMessage(res, 200, "OK");
                     }catch (Throwable e){
                         return returnMessage(res, 500, "Something went wrong");
