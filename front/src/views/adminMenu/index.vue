@@ -1,15 +1,12 @@
 <script>
 export default {
   name: "index",
-
   data(){
     return {
       popupActivo1:false,
       popupActivo2:false,
       tag:'',
-      tags:{
-        tags:[]
-      }
+      tags:[]
     }
   },
   methods:{
@@ -19,8 +16,8 @@ export default {
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
-      this.tags = JSON.parse(res.response)
-
+      this.tags = JSON.parse(res.response).availableTags
+      console.log(this.tags)
     },
 
     sendTags(){
@@ -35,15 +32,19 @@ export default {
     },
 
     addTag(){
-      this.tags.tags.push({"name": this.tag})
+      this.tags.push({availableTag: this.tag})
       this.sendTags()
     }
   },
+  beforeMount() {
+    this.getTags()
+  }
 }
 </script>
 
 <template>
   <div>
+    {{tags}}
     <h1>Admin Menu</h1>
     <div class="">
       <vs-tabs color="success">
@@ -52,15 +53,16 @@ export default {
             <vs-button @click="popupActivo1=true" color="success" type="filled">Add Tag</vs-button>
             <vs-button @click="popupActivo2=true" color="danger" type="filled">Delate Tag</vs-button>
             <div class="box">
-
+                <vs-list v-for="(show, index) in tags" :key=index>
+                  <vs-list-item  title=''>
+                    <vs-checkbox color="danger"/>
+                  </vs-list-item>
+                </vs-list>
             </div>
           </div>
         </vs-tab>
         <div class="centerx">
           <vs-popup class="tagpopup"  title="Add Tag" :active.sync="popupActivo1" button-close-hidden="true">
-            <p>
-              Add tag here
-            </p>
             <vs-input placeholder="Tag" color="success" v-model="this.tag"/>
             <vs-button @click="addTag" color="success" type="filled">Add Tag</vs-button>
             <vs-button @click="popupActivo1=false" color="dark" type="flat">Cancel</vs-button>
@@ -106,7 +108,7 @@ h1{
 .box{
   position: fixed;
   left: 120px;
-  top: 20%;
+  top: 210px;
   right: 0;
 }
 
