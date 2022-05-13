@@ -55,7 +55,7 @@ public class UploadHandler extends AbstractHandler{
                         }
                         if (!(game.get().getCreatorId().equals(getIdByToken(token)))) return returnMessage(res, 401, "Unauthorized");
 
-                        return upload(req, res, "256", "256", "src/main/resources/public/gameUpdates/" + gameUpdate.get().getId() + ".png");
+                        return upload(req, res, "256", "256", "src/main/resources/public/game_updates/" + gameUpdate.get().getId() + ".png");
                     case PROFILE:
                         return upload(req, res, "256", "256", "src/main/resources/public/profile_pictures/" + getIdByToken(token) + ".png");
                 }
