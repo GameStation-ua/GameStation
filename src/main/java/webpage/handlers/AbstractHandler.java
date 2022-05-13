@@ -74,7 +74,7 @@ public abstract class AbstractHandler implements Handler {
 
     public static String returnMessage(Response res, Integer status, String message){
             res.status(status);
-            return "{\"message\":\"" + message + ".\"}";
+            return "{\"message\":\"" + message + "\"}";
     }
 
 }
