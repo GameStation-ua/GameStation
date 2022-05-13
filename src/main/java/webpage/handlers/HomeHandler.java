@@ -32,19 +32,17 @@ public class HomeHandler extends AbstractHandler{
 
         get("/home", (req, res) -> {
             String token = req.headers("token");
-            if (!verifyJWT(token)) {
-                return returnMessage(res, 401, "Not logged in");
-            }
+            if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
             Long userId = getIdByToken(token);
             Optional<User> user = findUserById(userId);
-            if (user.isEmpty()){
-                return returnMessage(res, 400, "Something went wrong");
-            }
+            if (user.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
             UserResponse userResponse = new UserResponse(user.get());            // User ready
 
             List<Tag> tags = new ArrayList<>(user.get().getLikedTags());
-            if(fillTags(tags)) return returnMessage(res, 500, "Something went wrong");
+            if (!fillTags(tags)) {
+                return returnMessage(res, 500, "Something went wrong");
+            }
 
             Optional<List<Game>> gamesTag1 = findGameByTagName(tags.get(0));
             Optional<List<Game>> gamesTag2 = findGameByTagName(tags.get(1));
@@ -52,9 +50,7 @@ public class HomeHandler extends AbstractHandler{
             Optional<List<Game>> gamesTag4 = findGameByTagName(tags.get(3));
             Optional<List<Game>> gamesTag5 = findGameByTagName(tags.get(4));
 
-            if (gamesTag1.isEmpty() || gamesTag2.isEmpty() || gamesTag3.isEmpty() || gamesTag4.isEmpty() || gamesTag5.isEmpty()){
-                return returnMessage(res, 500, "Something went wrong");
-            }
+            if (gamesTag1.isEmpty() || gamesTag2.isEmpty() || gamesTag3.isEmpty() || gamesTag4.isEmpty() || gamesTag5.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
             List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get());
             List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get());
@@ -68,9 +64,7 @@ public class HomeHandler extends AbstractHandler{
 
         get("/isAdmin", (req, res) -> {
             String token = req.headers("token");
-            if (!verifyJWT(token)) {
-                return returnMessage(res, 401, "Not logged in");
-            }
+            if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Claims claims = Jwts.parser()
                         .setSigningKey(key)
                         .parseClaimsJws(token).getBody();
