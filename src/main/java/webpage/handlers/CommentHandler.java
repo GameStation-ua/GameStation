@@ -153,6 +153,7 @@ public class CommentHandler extends AbstractHandler{
                 }
                 List<CommentResponse> commentResponseList = createCommentResponseList(comments.get(), userId);
 
+                res.status(200);
                 return toJson(new CommentListResponse(commentResponseList));
             });
 

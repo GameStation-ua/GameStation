@@ -38,6 +38,7 @@ public class ForumHandler extends AbstractHandler{
                     return returnMessage(res, 500, "Something went wrong");
                 }
 
+                res.status(200);
                 return toJson(new ThreadResponse(thread.get(), user.get()));
 
             });
@@ -76,6 +77,7 @@ public class ForumHandler extends AbstractHandler{
                 Optional<List<ThreadResponse>> softThreadsResponse = prepareSoftThreadResponse(threads.get());
                 if (softThreadsResponse.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
+                res.status(200);
                 return toJson(softThreadsResponse);
             });
         });

@@ -39,7 +39,8 @@ public class TagsHandler extends AbstractHandler {
                         return returnMessage(res, 500, "Something went wrong");
                     }
                     AvailableTagsResponse response = new AvailableTagsResponse(availableTags.get());
-                    return returnMessage(res, 200, toJson(response));
+                    res.status(200);
+                    return toJson(response);
                 });
 
                 patch("/add", "application/json", (req, res) -> {
@@ -99,7 +100,8 @@ public class TagsHandler extends AbstractHandler {
                     }
 
                     UserTagsResponse response = new UserTagsResponse(user.get().getLikedTags());
-                    return returnMessage(res, 200, toJson(response));
+                    res.status(200);
+                    return toJson(response);
                 });
 
                 delete("/delete", "application/json", (req, res) -> {
@@ -231,6 +233,7 @@ public class TagsHandler extends AbstractHandler {
                 }
                 List<GameResponse> gamesForResponse = getGameResponses(games.get());
 
+                res.status(200);
                 return toJson(new SearchTagResponse(gamesForResponse));
             });
         });

@@ -133,7 +133,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     return returnMessage(res, 500, "Something went wrong");
                 }
                 List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get());
-
+                res.status(200);
                 return toJson(softGameResponseList);
             });
 
@@ -178,6 +178,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     return returnMessage(res, 500, "Something went wrong");
                 }
                 List<GameRequestResponse> gameRequestResponse = gameResponses.get();
+                res.status(200);
                 return toJson(gameRequestResponse);
             });
 
@@ -202,7 +203,8 @@ public class ABMGamesHandler extends AbstractHandler{
                 List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
 
                 HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
-                return returnMessage(res, 200, toJson(gameForResponse));
+                res.status(200);
+                return toJson(gameForResponse);
             });
         });
     }

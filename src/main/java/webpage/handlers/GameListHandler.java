@@ -33,7 +33,7 @@ public class GameListHandler extends AbstractHandler{
                     return returnMessage(res, 500, "Something went wrong");
                 }
 
-                return returnMessage(res, 200, toJson(gameList));
+                return toJson(gameList);
             });
 
             patch("/add", (req, res) -> {

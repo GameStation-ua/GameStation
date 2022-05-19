@@ -30,7 +30,7 @@ public class SearchHandler extends AbstractHandler{
                if (games.isEmpty() || users.isEmpty()){
                    return returnMessage(res, 500, "Something went wrong");
                }
-
+               res.status(200);
                return toJson(new SearchResponse(games.get(),users.get()));
            });
         });

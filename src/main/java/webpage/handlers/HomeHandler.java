@@ -59,6 +59,7 @@ public class HomeHandler extends AbstractHandler{
             List<GameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get());
             List<String> tagResponseList = createTagResponseList(tags);
             HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
+            res.status(200);
             return  toJson(homeResponse);
         });
 
