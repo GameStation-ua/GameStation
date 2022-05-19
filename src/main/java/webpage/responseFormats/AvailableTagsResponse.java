@@ -1,13 +1,18 @@
 package webpage.responseFormats;
 
-import webpage.model.AvailableTag;
+import webpage.model.Tag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AvailableTagsResponse {
-    private final List<AvailableTag> availableTags;
+    private final List<String> availableTags;
 
-    public AvailableTagsResponse(List<AvailableTag> availableTags) {
-        this.availableTags = availableTags;
+    public AvailableTagsResponse(List<Tag> availableTags) {
+        List<String> response = new ArrayList<>();
+        for (Tag availableTag : availableTags) {
+            response.add(availableTag.getName());
+        }
+        this.availableTags = response;
     }
 }

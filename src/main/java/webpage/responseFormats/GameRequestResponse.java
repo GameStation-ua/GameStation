@@ -10,16 +10,16 @@ public class GameRequestResponse {
 
     private final String title;
     private final String description;
-    private final Set<TagResponse> tags;
+    private final Set<String> tags;
     private final String wiki;
     private final Integer imgsInCarousel;
 
     public GameRequestResponse(GameRequest gr) {
         this.title = gr.getTitle();
         this.description = gr.getDescription();
-        Set<TagResponse> tags = new HashSet<>();
+        Set<String> tags = new HashSet<>();
         for (Tag tag : gr.getTags()) {
-            tags.add(new TagResponse(tag));
+            tags.add(tag.getName());
         }
         this.tags = tags;
         this.wiki = gr.getWiki();
@@ -34,7 +34,7 @@ public class GameRequestResponse {
         return description;
     }
 
-    public Set<TagResponse> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 

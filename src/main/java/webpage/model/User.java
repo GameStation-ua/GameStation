@@ -36,7 +36,7 @@ public class User extends Actor{
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Actor> followedActors;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Tag> likedTags;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")

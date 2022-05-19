@@ -28,7 +28,7 @@ public class Game extends Actor{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
     private Set<GameUpdate> gameUpdates;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Tag> tags;
 
     public Game() {

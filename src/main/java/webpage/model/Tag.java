@@ -43,6 +43,10 @@ public class Tag {
         return hash;
     }
 
+    public void removeGame(Game game){
+
+    }
+
     public void addGameRequest(GameRequest gameRequest){
         gameRequestsWithTag.add(gameRequest);
     }

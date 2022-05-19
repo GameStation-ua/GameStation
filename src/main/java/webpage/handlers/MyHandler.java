@@ -48,7 +48,7 @@ public class MyHandler extends AbstractHandler {
             tags.add(tag1);
             tags.add(tag2);
             tags.add(tag3);
-            tagsRequest.setTags(tags);
+//            tagsRequest.setTags(tags);
             return "";
         });
     }

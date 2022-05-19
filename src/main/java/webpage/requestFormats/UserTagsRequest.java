@@ -8,13 +8,13 @@ import java.util.List;
 public class UserTagsRequest {
 
 
-    private ArrayList<Tag> tags;
+    private ArrayList<String> tags;
 
-    public List<Tag> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<Tag> tags) {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 }

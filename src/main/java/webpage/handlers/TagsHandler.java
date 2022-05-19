@@ -1,7 +1,8 @@
 package webpage.handlers;
 
-import webpage.model.AvailableTag;
+import webpage.entity.Games;
 import webpage.model.Game;
+import webpage.model.Tag;
 import webpage.model.User;
 import webpage.requestFormats.AvailableTagsRequest;
 import webpage.requestFormats.UserTagsRequest;
@@ -33,7 +34,7 @@ public class TagsHandler extends AbstractHandler {
                     if (!verifyJWT(token)) {
                         return returnMessage(res, 401, "Not logged in");
                     }
-                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
+                    Optional<List<Tag>> availableTags = findAvailableTags();
                     if (availableTags.isEmpty()) {
                         return returnMessage(res, 500, "Something went wrong");
                     }
@@ -54,16 +55,12 @@ public class TagsHandler extends AbstractHandler {
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
 
-                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
-                    if (availableTags.isEmpty()) {
-                        return returnMessage(res, 500, "Something went wrong");
-                    }
                     try {
-                        addAvailableTags(tagsRequest.getTags(), availableTags.get());
+                        addTags(tagsRequest.getTags());
                     } catch (Throwable r) {
                         return returnMessage(res, 500, "Something went wrong, try again");
                     }
-                    return returnMessage(res, 200, "Tags successfully added");
+                    return returnMessage(res, 200, "Tags are now in the system");
                 });
 
                 delete("/delete", "application/json", (req, res) -> {
@@ -79,12 +76,8 @@ public class TagsHandler extends AbstractHandler {
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
 
-                    Optional<List<AvailableTag>> availableTags = findAvailableTags();
-                    if (availableTags.isEmpty()) {
-                        return returnMessage(res, 500, "Something went wrong");
-                    }
                     try {
-                        removeAvailableTags(tagsRequest.getTags(), availableTags.get());
+                        removeTags(tagsRequest.getTags());
                     } catch (Throwable r) {
                         return returnMessage(res, 500, "Something went wrong, try again");
                     }
@@ -122,8 +115,10 @@ public class TagsHandler extends AbstractHandler {
                     if (user.isEmpty()) {
                         return returnMessage(res, 400, "User not found");
                     }
+                    Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
+                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
 
-                    removeTagsFromUser(tagsRequest.getTags(), user.get());
+                    removeTagsFromUser(requestTags.get(), user.get());
                     try {
                         merge(user.get());
                         return returnMessage(res, 200, "Tags successfully removed");
@@ -145,8 +140,11 @@ public class TagsHandler extends AbstractHandler {
                     if (!tagsExist(tagsRequest.getTags()) || user.isEmpty()) {
                         return returnMessage(res, 400, "Something went wrong");
                     }
+                    Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
+                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
 
-                    addTagsToUser(tagsRequest.getTags(), user.get());
+
+                    addTagsToUser(requestTags.get(), user.get());
 
                     try {
                         merge(user.get());
@@ -165,7 +163,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
-                    Optional<Game> game = findGameByIdJFTags(Long.valueOf(req.params(":gameId")));
+                    Optional<Game> game = Games.findGameById(Long.valueOf(req.params(":gameId")));
 
                     if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) {
                         return returnMessage(res, 400, "Something went wrong");
@@ -176,8 +174,10 @@ public class TagsHandler extends AbstractHandler {
                     if (!Objects.equals(game.get().getCreatorId(), userId)) {
                         return returnMessage(res, 401, "Unauthorized");
                     }
+                    Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
+                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
 
-                    addTagsToGame(tagsRequest.getTags(), game.get());
+                    addTagsToGame(requestTags.get(), game.get());
 
                     try {
                         merge(game.get());
@@ -194,7 +194,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
-                    Optional<Game> game = findGameByIdJFTags(Long.valueOf(req.params(":gameId")));
+                    Optional<Game> game = Games.findGameById(Long.valueOf(req.params(":gameId")));
 
                     if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) {
                         return returnMessage(res, 400, "Something went wrong");
@@ -205,8 +205,10 @@ public class TagsHandler extends AbstractHandler {
                     if (!Objects.equals(game.get().getCreatorId(), userId)) {
                         return returnMessage(res, 401, "Unauthorized");
                     }
+                    Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
+                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
 
-                    removeTagsFromGame(tagsRequest.getTags(), game.get());
+                    removeTagsFromGame(requestTags.get(), game.get());
 
                     try {
                         merge(game.get());
@@ -223,7 +225,7 @@ public class TagsHandler extends AbstractHandler {
                     return returnMessage(res, 401, "Not logged in");
                 }
                 String searchTag = req.params(":searchTag");
-                Optional<List<Game>> games = searchGameByTag(searchTag);
+                Optional<List<Game>> games = search50GamesByTag(searchTag);
                 if (games.isEmpty()) {
                     return returnMessage(res, 500, "Something went wrong");
                 }

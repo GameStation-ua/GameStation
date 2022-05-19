@@ -14,10 +14,10 @@ public class HardGameForResponse {
     private final int imgsInCarousel;
     private final String wiki;
     private final UserResponse creators;
-    private final List<TagResponse> tags;
+    private final List<String> tags;
     private final Set<GameUpdate> gameUpdates;
 
-    public HardGameForResponse(long gameId, float meanScore, int numberOfFollowers, String title, String description, int imgsInCarousel, String wiki, UserResponse creators, List<TagResponse> tags, Set<GameUpdate> gameUpdates) {
+    public HardGameForResponse(long gameId, float meanScore, int numberOfFollowers, String title, String description, int imgsInCarousel, String wiki, UserResponse creators, List<String> tags, Set<GameUpdate> gameUpdates) {
         this.gameId = gameId;
         this.meanScore = meanScore;
         this.numberOfFollowers = numberOfFollowers;

@@ -11,6 +11,7 @@ import java.util.*;
 
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
+import static webpage.entity.Tags.findTagsIfAvailable;
 import static webpage.entity.Tags.tagsExist;
 import static webpage.entity.Users.findCreatedGamesbyUserId;
 import static webpage.util.EntityManagers.createEntityManager;
@@ -42,19 +43,6 @@ public class Games {
         }
     }
 
-    public static Optional<Game> findGameByIdJFTags(Long id){
-        EntityManager em = createEntityManager();
-        try {
-            return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.tags WHERE g.id = ?1 ")
-                    .setParameter(1, id)
-                    .getSingleResult());
-        }catch (NullPointerException e){
-            return Optional.empty();
-        }finally {
-            em.close();
-        }
-    }
-
     public static Optional<List<UserGame>> findUserGamesbyGameId(Long id){
         EntityManager em = createEntityManager();
         try {
@@ -69,7 +57,7 @@ public class Games {
         }
     }
 
-    public static Optional<List<Game>> findGameByTagName(Tag tag){
+    public static Optional<List<Game>> find5GamesByTagName(Tag tag){
         EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> gamesTag1 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
@@ -124,7 +112,7 @@ public class Games {
         }
     }
 
-    public static Optional<List<Game>> searchGameByTag(String searchTag){
+    public static Optional<List<Game>> search50GamesByTag(String searchTag){
         EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
@@ -132,6 +120,34 @@ public class Games {
                     .setMaxResults(50)
                     .getResultList();
             return Optional.of(games);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<List<Game>> findGamesByTag(String tag){
+        EntityManager em = createEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
+                    .setParameter(1, tag)
+                    .getResultList();
+            return Optional.of(games);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static Optional<List<GameRequest>> findGameRequestsByTag(String tag){
+        EntityManager em = createEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT gameRequestsWithTag FROM Tag t WHERE t.name = ?1")
+                    .setParameter(1, tag)
+                    .getResultList();
+            return Optional.of(gameRequests);
         }catch (Exception e){
             return Optional.empty();
         }finally {
@@ -149,8 +165,10 @@ public class Games {
 
     public static Optional<GameRequest> createGameRequest(CreateGameRequest createGameRequest, Long creatorId){
         if (!tagsExist(createGameRequest.getTags())) return Optional.empty();
-        Set<Tag> tags = new HashSet<>(createGameRequest.getTags());
-        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags));
+        Optional<List<Tag>> tags = findTagsIfAvailable(createGameRequest.getTags());
+        if (tags.isEmpty()) return Optional.empty();
+        Set<Tag> tags1 = new HashSet<>(tags.get());
+        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1));
     }
 
     public static boolean isOwner(Long userId, Long gameId){
@@ -180,20 +198,6 @@ public class Games {
         EntityManager em = createEntityManager();
         try {
             GameRequest gameRequest = em.find(GameRequest.class, id);
-            return Optional.of(gameRequest);
-        }catch (Exception e){
-            return Optional.empty();
-        }finally {
-            em.close();
-        }
-    }
-
-    public static Optional<GameRequest> findGameRequestByIdJFTags(Long id){
-        EntityManager em = createEntityManager();
-        try {
-            GameRequest gameRequest = (GameRequest) em.createQuery("SELECT distinct g FROM GameRequest g join fetch g.tags WHERE g.id = ?1 ")
-                    .setParameter(1, id)
-                    .getSingleResult();
             return Optional.of(gameRequest);
         }catch (Exception e){
             return Optional.empty();
