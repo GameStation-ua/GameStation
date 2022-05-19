@@ -28,9 +28,12 @@ function register () {
       xhr.setRequestHeader("Content-Type", "application/json")
   xhr.send(json)
   console.log(json)
-  if (xhr.status === 200){
+  var mesage = JSON.parse(xhr.response)
+  console.log(mesage)
+  if ( mesage.message === 'User created!'){
     notify({
-      title: "Vue 3 notification 🎉",
+      type: "success",
+      title: "Register success",
     });
     emit('changeTab', 'login')
   }

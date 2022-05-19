@@ -4,8 +4,8 @@
 
   let active = ref(false)
   const tab = ref('home')
-  import AdminMenu from './views/menu/adminMenu'
-  import Home from './views/menu/home'
+  import AdminMenu from './views/adminMenu'
+  import Home from './views/home'
   import Store from './store'
 
 
@@ -94,7 +94,7 @@
     </div>
     <home v-if="tab==='home'"></home>
     <AdminMenu v-if="tab==='adminMenu'"></AdminMenu>
-    <router-view/>
+
   </template>
   <notifications />
 </template>
