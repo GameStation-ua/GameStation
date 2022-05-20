@@ -15,7 +15,6 @@
         <class>webpage.model.Notification</class>
         <class>webpage.model.UserGame</class>
         <class>webpage.model.Tag</class>
-        <class>webpage.model.AvailableTag</class>
         <class>webpage.model.Thread</class>
         <class>webpage.model.Comment</class>
         <class>webpage.model.GameUpdate</class>
