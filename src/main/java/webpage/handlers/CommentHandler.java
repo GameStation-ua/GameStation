@@ -32,9 +32,7 @@ public class CommentHandler extends AbstractHandler{
         path("/comment", () -> {
             post("/game/:gameId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
                 Long userId = getIdByToken(token);
                 Long gameId = Long.valueOf(req.params(":gameId"));
@@ -43,9 +41,7 @@ public class CommentHandler extends AbstractHandler{
 
                 Optional<User> user = findUserById(userId);
 
-                if (game.isEmpty() || user.isEmpty()){
-                        return returnMessage(res, 401, "Something went wrong");
-                }
+                if (game.isEmpty() || user.isEmpty()) return returnMessage(res, 401, "Something went wrong");
 
 
                 Comment comment = new Comment(userId, gameId, commentRequest.getContent());
@@ -64,25 +60,19 @@ public class CommentHandler extends AbstractHandler{
 
             post("/thread/:threadId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
                     Long userId = getIdByToken(token);
                     Long threadId = Long.valueOf(req.params(":threadId"));
 
                     Optional<Thread> thread = findThreadByIdJFComments(threadId);
 
-                    if (thread.isEmpty()){
-                        return returnMessage(res, 401, "Something went wrong");
-                    }
+                    if (thread.isEmpty()) return returnMessage(res, 401, "Something went wrong");
 
                     Optional<User> creator = findUserById(thread.get().getCreatorId());
                     Optional<User> user = findUserById(userId);
 
-                    if (creator.isEmpty() || user.isEmpty()){
-                        return returnMessage(res, 401, "Something went wrong");
-                    }
+                    if (creator.isEmpty() || user.isEmpty()) return returnMessage(res, 401, "Something went wrong");
                     Comment comment = new Comment(userId, threadId, commentRequest.getContent());
                     thread.get().addComment(comment);
                     Notification notification1 = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), thread.get(), commentRequest.getPath());
@@ -108,9 +98,7 @@ public class CommentHandler extends AbstractHandler{
 
             post("/user/:targetUserId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
                     CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
 
@@ -119,9 +107,7 @@ public class CommentHandler extends AbstractHandler{
 
                     Optional<User> targetUser = findUserById(targetUserId);
                     Optional<User> user = findUserById(userId);
-                    if (user.isEmpty() || targetUser.isEmpty()){
-                        return returnMessage(res, 400, "Something went wrong");
-                    }
+                    if (user.isEmpty() || targetUser.isEmpty()) return returnMessage(res, 400, "Something went wrong");
                     Comment comment = new Comment(userId, targetUserId, commentRequest.getContent());
                     targetUser.get().addComment(comment);
                     Notification notification = new Notification(NotificationType.FOLLOWED_USER_COMMENTS, user.get(), targetUser.get(), commentRequest.getPath());
@@ -141,16 +127,12 @@ public class CommentHandler extends AbstractHandler{
 
             get("/commentPage/*/*", (req, res) ->{
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
                     String[] request = req.splat();
 
                 Optional<List<Comment>> comments = findCommentsFromActorById(Long.valueOf(request[0]), Integer.parseInt(request[1]));
-                if (comments.isEmpty()){
-                    return returnMessage(res, 400, "Something went wrong");
-                }
+                if (comments.isEmpty()) return returnMessage(res, 400, "Something went wrong");
                 List<CommentResponse> commentResponseList = createCommentResponseList(comments.get(), userId);
 
                 return toJson(new CommentListResponse(commentResponseList));
@@ -158,9 +140,7 @@ public class CommentHandler extends AbstractHandler{
 
             post("/upvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
@@ -177,9 +157,7 @@ public class CommentHandler extends AbstractHandler{
 
             post("/downvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
@@ -196,9 +174,7 @@ public class CommentHandler extends AbstractHandler{
 
             post("/neutralvote/:commentId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 

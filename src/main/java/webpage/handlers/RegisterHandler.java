@@ -21,14 +21,10 @@ public class RegisterHandler extends AbstractHandler {
         path("/register", () -> {
             post("", "application/json", (req, res) -> {
                 RegisterRequest registerRequest = fromJson(req.body(), RegisterRequest.class);
-                if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) {
-                    return returnMessage(res, 406, "You need to fill all the fields");
-                }
+                if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) return returnMessage(res, 406, "You need to fill all the fields");
 
                 Optional<User> user = findUserByUsername(registerRequest.getUsername());
-                if (user.isPresent()) {
-                    return returnMessage(res, 200, "Username already taken");
-                }
+                if (user.isPresent()) return returnMessage(res, 200, "Username already taken");
                 if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
                     res.type("application/json");
                     res.status(500);

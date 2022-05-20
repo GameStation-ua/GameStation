@@ -21,15 +21,11 @@ public class SearchHandler extends AbstractHandler{
            get("/:searchString", (req, res) -> {
                String searchString = req.params(":searchString");
                String token = req.headers("token");
-               if (!verifyJWT(token)) {
-                   return returnMessage(res, 401, "Not logged in");
-               }
+               if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
                Optional<List<GameResponse>> games = searchStringInGames(searchString.toUpperCase());
                Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase());
-               if (games.isEmpty() || users.isEmpty()){
-                   return returnMessage(res, 500, "Something went wrong");
-               }
+               if (games.isEmpty() || users.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                return toJson(new SearchResponse(games.get(),users.get()));
            });

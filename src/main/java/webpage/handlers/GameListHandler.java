@@ -23,31 +23,23 @@ public class GameListHandler extends AbstractHandler{
         path("/gamelist", () -> {
             get("/:userId", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
                 Long userId = (long) Integer.parseInt(req.params("userId"));
                 Optional<List<UserGame>> gameList = findUserGameByUserId(userId);
-                if (gameList.isEmpty()){
-                    return returnMessage(res, 500, "Something went wrong");
-                }
+                if (gameList.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                 return returnMessage(res, 200, toJson(gameList));
             });
 
             patch("/add", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 GameListRequest gameListRequest = fromJson(req.body(), GameListRequest.class);
 
                 Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
-                if (userGame.isPresent()){
-                    return returnMessage(res, 409, "Game already in game list");
-                }
+                if (userGame.isPresent()) return returnMessage(res, 409, "Game already in game list");
                 UserGame userGame1 = new UserGame(userId, gameListRequest.getStatus(), gameListRequest.getScore(), gameListRequest.getGameId());
                 try {
                     merge(userGame1 );
@@ -59,16 +51,12 @@ public class GameListHandler extends AbstractHandler{
 
             patch("/delete", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 GameListRequest gameListRequest = fromJson(req.body(), GameListRequest.class);
 
                 Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
-                if (userGame.isEmpty()){
-                    return returnMessage(res, 400, "Bad request");
-                }
+                if (userGame.isEmpty()) return returnMessage(res, 400, "Bad request");
 
                 try {
                     remove(userGame);
@@ -80,17 +68,13 @@ public class GameListHandler extends AbstractHandler{
 
             patch("/edit", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 GameListRequest gameListRequest = fromJson(req.body(), GameListRequest.class);
 
                 Optional<UserGame> userGame = findUserGameByUserIdAndGameId(gameListRequest.getGameId(), userId);
 
-                if (userGame.isEmpty()){
-                    return returnMessage(res, 400, "Bad request");
-                }
+                if (userGame.isEmpty()) return returnMessage(res, 400, "Bad request");
                 userGame.get().setScore(gameListRequest.getScore());
                 userGame.get().setStatus(gameListRequest.getStatus());
                 try {

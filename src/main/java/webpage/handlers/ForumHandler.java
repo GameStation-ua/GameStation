@@ -24,19 +24,13 @@ public class ForumHandler extends AbstractHandler{
         path("/forum", () -> {
             get("/thread/:threadId", (req, res) -> {
                     String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
                 Optional<Thread> thread = findThreadById(Long.valueOf(req.params(":threadId")));
-                if (thread.isEmpty()){
-                    return returnMessage(res, 400, "Invalid Thread");
-                }
+                if (thread.isEmpty()) return returnMessage(res, 400, "Invalid Thread");
 
                 Optional<User> user = findUserById(thread.get().getCreatorId());
-                if (user.isEmpty()){
-                    return returnMessage(res, 500, "Something went wrong");
-                }
+                if (user.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                 return toJson(new ThreadResponse(thread.get(), user.get()));
 
@@ -44,9 +38,7 @@ public class ForumHandler extends AbstractHandler{
 
             post("/thread/create", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
                     ThreadRequest threadRequest = fromJson(req.body(), ThreadRequest.class);
                     
@@ -61,9 +53,7 @@ public class ForumHandler extends AbstractHandler{
 
             get("/threadPage/*/*", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) {
-                    return returnMessage(res, 401, "Not logged in");
-                }
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 String[] request = req.splat();
                 Long gameId = Long.valueOf(request[0]);
                 int pageNumber = Integer.parseInt(request[1]);

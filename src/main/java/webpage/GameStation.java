@@ -1,6 +1,5 @@
 package webpage;
 
-import webpage.handlers.MyHandler;
 import webpage.handlers.NotificationHandler;
 import webpage.util.EntityManagers;
 import webpage.util.Handler;
@@ -28,7 +27,6 @@ public class GameStation {
         HandlerProvider handlerProvider = new HandlerProviderImpl();
         final Iterable<Handler> handlers = handlerProvider.getAllHandlers();
         for (final Handler handler : handlers) handler.handle();
-        new MyHandler().handle();
     }
 
     private static void enableCORS() {
