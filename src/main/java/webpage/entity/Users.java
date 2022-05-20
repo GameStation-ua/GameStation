@@ -108,4 +108,18 @@ public class Users {
                 .parseClaimsJws(token).getBody();
         return (boolean) claims.get("isAdmin");
     }
+
+    public static Optional<List<User>> findUsersByTag(String tag){
+        EntityManager em = createEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<User> users = em.createQuery("SELECT users FROM Tag t WHERE t.name = ?1")
+                    .setParameter(1, tag)
+                    .getResultList();
+            return Optional.of(users);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
 }

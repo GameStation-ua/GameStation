@@ -135,6 +135,7 @@ public class CommentHandler extends AbstractHandler{
                 if (comments.isEmpty()) return returnMessage(res, 400, "Something went wrong");
                 List<CommentResponse> commentResponseList = createCommentResponseList(comments.get(), userId);
 
+                res.status(200);
                 return toJson(new CommentListResponse(commentResponseList));
             });
 

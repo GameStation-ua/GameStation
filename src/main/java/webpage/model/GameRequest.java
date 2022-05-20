@@ -29,7 +29,7 @@ public class GameRequest {
     @Column(name = "CREATOR_ID")
     private Long creatorId;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Tag> tags;
 
     public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags) {
@@ -45,6 +45,9 @@ public class GameRequest {
 
     public void addTag(Tag tag){
         tags.add(tag);
+    }
+    public void removeTag(Tag tag){
+        tags.remove(tag);
     }
 
     public String getTitle() {

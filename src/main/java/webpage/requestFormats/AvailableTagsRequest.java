@@ -1,18 +1,16 @@
 package webpage.requestFormats;
 
-import webpage.model.AvailableTag;
-
 import java.util.ArrayList;
 
 public class AvailableTagsRequest {
 
-    private ArrayList<AvailableTag> tags;
+    private ArrayList<String> tags;
 
-    public ArrayList<AvailableTag> getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<AvailableTag> tags) {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 }

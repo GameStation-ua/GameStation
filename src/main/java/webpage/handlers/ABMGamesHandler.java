@@ -1,13 +1,13 @@
 package webpage.handlers;
 
 import org.apache.commons.io.FileUtils;
+import webpage.entity.Games;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.GameAprovalRequest;
 import webpage.requestFormats.GameUpdateRequest;
 import webpage.responseFormats.*;
 import webpage.util.HandlerType;
-import webpage.util.ImgType;
 import webpage.util.NotificationType;
 
 import java.io.File;
@@ -23,10 +23,9 @@ import static webpage.entity.Actors.sendNotificationToFollowers;
 import static webpage.entity.Games.*;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
-import static webpage.entity.Uploads.upload;
+import static webpage.entity.Tags.createTagResponseList;
 import static webpage.entity.Users.*;
 import static webpage.responseFormats.SoftGameResponse.createSoftGameResponseList;
-import static webpage.responseFormats.TagResponse.createTagResponseList;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.Parser.toJson;
 
@@ -88,6 +87,9 @@ public class ABMGamesHandler extends AbstractHandler{
                     boolean isAdmin = getIsAdminByToken(token);
                     if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
                     GameAprovalRequest gameAprovalRequest = fromJson(req.body(), GameAprovalRequest.class);
+                    Optional<GameRequest> gameRequest = findGameRequestById(gameAprovalRequest.getGameRequestId());
+                    if (gameRequest.isEmpty())return returnMessage(res, 400, "Request not found");
+
                     Optional<GameRequest> gameRequest = findGameRequestByIdJFTags(gameAprovalRequest.getGameRequestId());
                     if (gameRequest.isEmpty()) return returnMessage(res, 400, "Request not found");
                     if (!gameAprovalRequest.isApproved()){
@@ -114,7 +116,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
                 if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                 List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get());
-
+                res.status(200);
                 return toJson(softGameResponseList);
             });
 
@@ -147,6 +149,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 Optional<List<GameRequestResponse>> gameResponses = getGameRequestsAsResponses();
                 if (gameResponses.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                 List<GameRequestResponse> gameRequestResponse = gameResponses.get();
+                res.status(200);
                 return toJson(gameRequestResponse);
             });
 
@@ -155,17 +158,20 @@ public class ABMGamesHandler extends AbstractHandler{
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
-                Optional<Game> game = findGameByIdJFTags(gameId);
+                Optional<Game> game = Games.findGameById(gameId);
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
                 if (game.isEmpty() || userGames.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+
                 float meanScore = getMeanScore(userGames.get());
                 Optional<User> creator = findUserById(game.get().getCreatorId());
                 if (creator.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+
                 UserResponse userResponse = new UserResponse(creator.get());
-                List<TagResponse> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
+                List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
 
                 HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
-                return returnMessage(res, 200, toJson(gameForResponse));
+                res.status(200);
+                return toJson(gameForResponse);
             });
         });
     }

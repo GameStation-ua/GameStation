@@ -26,7 +26,7 @@ public class SearchHandler extends AbstractHandler{
                Optional<List<GameResponse>> games = searchStringInGames(searchString.toUpperCase());
                Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase());
                if (games.isEmpty() || users.isEmpty()) return returnMessage(res, 500, "Something went wrong");
-
+               res.status(200);
                return toJson(new SearchResponse(games.get(),users.get()));
            });
         });

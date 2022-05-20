@@ -7,13 +7,13 @@ import java.util.List;
 public class CreateGameRequest {
     private final String title;
     private final String description;
-    private final List<Tag> tags;
+    private final List<String> tags;
     private final String wiki;
     private final String mainImguuid;
     private final List<String> carouseluuids;
 
 
-    public CreateGameRequest(String title, String description, List<Tag> tags, String wiki, String mainImguuid, List<String> carouseluuids) {
+    public CreateGameRequest(String title, String description, List<String> tags, String wiki, String mainImguuid, List<String> carouseluuids) {
         this.title = title;
         this.description = description;
         this.tags = tags;
@@ -30,7 +30,7 @@ public class CreateGameRequest {
         return description;
     }
 
-    public List<Tag> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 

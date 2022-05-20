@@ -3,13 +3,11 @@ package webpage.handlers;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import webpage.model.AvailableTag;
 import webpage.model.Game;
 import webpage.model.Tag;
 import webpage.model.User;
 import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.HomeResponse;
-import webpage.responseFormats.TagResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
@@ -18,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.get;
-import static webpage.entity.Games.findGameByTagName;
+import static webpage.entity.Games.find5GamesByTagName;
+import static webpage.entity.Tags.createTagResponseList;
 import static webpage.entity.Tags.findAvailableTags;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
@@ -40,25 +39,27 @@ public class HomeHandler extends AbstractHandler{
             UserResponse userResponse = new UserResponse(user.get());            // User ready
 
             List<Tag> tags = new ArrayList<>(user.get().getLikedTags());
-            if (!fillTags(tags)) {
+
+            if(!fillTags(tags)) return returnMessage(res, 500, "Something went wrong");
+
+            Optional<List<Game>> gamesTag1 = find5GamesByTagName(tags.get(0));
+            Optional<List<Game>> gamesTag2 = find5GamesByTagName(tags.get(1));
+            Optional<List<Game>> gamesTag3 = find5GamesByTagName(tags.get(2));
+            Optional<List<Game>> gamesTag4 = find5GamesByTagName(tags.get(3));
+            Optional<List<Game>> gamesTag5 = find5GamesByTagName(tags.get(4));
+
+            if (gamesTag1.isEmpty() || gamesTag2.isEmpty() || gamesTag3.isEmpty() || gamesTag4.isEmpty() || gamesTag5.isEmpty()){
                 return returnMessage(res, 500, "Something went wrong");
             }
-
-            Optional<List<Game>> gamesTag1 = findGameByTagName(tags.get(0));
-            Optional<List<Game>> gamesTag2 = findGameByTagName(tags.get(1));
-            Optional<List<Game>> gamesTag3 = findGameByTagName(tags.get(2));
-            Optional<List<Game>> gamesTag4 = findGameByTagName(tags.get(3));
-            Optional<List<Game>> gamesTag5 = findGameByTagName(tags.get(4));
-
-            if (gamesTag1.isEmpty() || gamesTag2.isEmpty() || gamesTag3.isEmpty() || gamesTag4.isEmpty() || gamesTag5.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
             List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get());
             List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get());
             List<GameResponse> gamesForResponse3 = gameForResponseList(gamesTag3.get());
             List<GameResponse> gamesForResponse4 = gameForResponseList(gamesTag4.get());
             List<GameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get());
-            List<TagResponse> tagResponseList = tagForResponseList(tags);
+            List<String> tagResponseList = createTagResponseList(tags);
             HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
+            res.status(200);
             return  toJson(homeResponse);
         });
 
@@ -75,17 +76,17 @@ public class HomeHandler extends AbstractHandler{
 
     private boolean fillTags(List<Tag> tags) {
         if (tags.size() < 5){
-            Optional<List<AvailableTag>> availableTags = findAvailableTags();
+            Optional<List<Tag>> availableTags = findAvailableTags();
             if (availableTags.isEmpty()) return false;
-            for (AvailableTag availableTag : availableTags.get()) {
+            for (Tag availableTag : availableTags.get()) {
                 boolean isContained = false;
                 for (Tag tag : tags) {
-                    if (tag.getName().equals(availableTag.getAvailableTag())) {
+                    if (availableTag.equals(tag)) {
                         isContained = true;
                         break;
                     }
                 }
-                if (!isContained) tags.add(new Tag(availableTag.getAvailableTag()));
+                if (!isContained) tags.add(availableTag);
                 if (tags.size() == 5) break;
             }
         }
@@ -103,14 +104,6 @@ public class HomeHandler extends AbstractHandler{
             gamesForResponse.add(new GameResponse(game));
         }
         return gamesForResponse;
-    }
-
-    private  List<TagResponse> tagForResponseList(List<Tag> tags){
-        List<TagResponse> tagResponseList = new ArrayList<>();
-        for (Tag tag : tags) {
-            tagResponseList.add(new TagResponse(tag));
-        }
-        return tagResponseList;
     }
 }
 
