@@ -20,30 +20,6 @@ import static webpage.util.SecretKey.key;
 public abstract class AbstractHandler implements Handler {
 
 
-        public void enableCORS() {
-                options("/*", (request, response) -> {
-
-                        String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
-                        if (accessControlRequestHeaders != null) {
-                                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
-                        }
-
-                        String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
-                        if (accessControlRequestMethod != null) {
-                                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
-                        }
-
-                        return "OK";
-                });
-
-                before((request, response) -> {
-                        response.header("Access-Control-Allow-Origin", "*");
-                        response.header("Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS,HEAD");
-                        response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-                        response.type("application/json");
-                });
-        }
-
         boolean verifyJWT(String token){
             if (token == null) return false;
             String[] chunks = token.split("\\.");

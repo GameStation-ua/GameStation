@@ -11,7 +11,6 @@ plugins {
     id 'java'
     id 'application'
 }
-gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 
 repositories {
@@ -31,6 +30,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.36'
     implementation 'com.mortennobel:java-image-scaling:0.8.5'
     implementation 'commons-io:commons-io:2.11.0'
+
 
 
 

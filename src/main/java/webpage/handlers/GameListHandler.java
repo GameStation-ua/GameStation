@@ -2,12 +2,15 @@ package webpage.handlers;
 
 import webpage.model.UserGame;
 import webpage.requestFormats.GameListRequest;
+import webpage.responseFormats.GameListItem;
 import webpage.util.HandlerType;
 
 import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.*;
+import static webpage.entity.Games.findTitlesByUserGames;
+import static webpage.entity.Games.prepareGameListResponse;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
 import static webpage.entity.UserGames.findUserGameByUserId;
@@ -29,7 +32,12 @@ public class GameListHandler extends AbstractHandler{
                 Optional<List<UserGame>> gameList = findUserGameByUserId(userId);
                 if (gameList.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
-                return toJson(gameList);
+                Optional<List<String>> titles = findTitlesByUserGames(gameList.get());
+                if (titles.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+
+                List<GameListItem> gameListItems = prepareGameListResponse(gameList.get(), titles.get());
+
+                return toJson(gameListItems);
             });
 
             patch("/add", (req, res) -> {
@@ -59,7 +67,7 @@ public class GameListHandler extends AbstractHandler{
                 if (userGame.isEmpty()) return returnMessage(res, 400, "Bad request");
 
                 try {
-                    remove(userGame);
+                    remove(userGame.get());
                     return returnMessage(res, 200, "Game removed to game list");
                 }catch (Throwable e) {
                     return returnMessage(res, 500, "Something went wrong, try again");

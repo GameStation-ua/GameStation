@@ -4,9 +4,13 @@ import org.apache.commons.io.FileUtils;
 import webpage.entity.Games;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
+import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameAprovalRequest;
 import webpage.requestFormats.GameUpdateRequest;
-import webpage.responseFormats.*;
+import webpage.responseFormats.GameRequestResponse;
+import webpage.responseFormats.HardGameForResponse;
+import webpage.responseFormats.SoftGameResponse;
+import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 import webpage.util.NotificationType;
 
@@ -65,9 +69,9 @@ public class ABMGamesHandler extends AbstractHandler{
                     Long userId = getIdByToken(token);
 
                     if (!isOwner(userId, gameId)) return returnMessage(res, 401, "Unauthorized");
-                    CreateGameRequest createGameRequest = fromJson(req.body(), CreateGameRequest.class);
+                    EditGameRequest editGameRequest = fromJson(req.body(), EditGameRequest.class);
 
-                    Optional<GameRequest> gameRequest = createGameRequest(createGameRequest, userId);
+                    Optional<GameRequest> gameRequest = editGameRequest(editGameRequest, userId);
                     if (gameRequest.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
                     try{
@@ -90,8 +94,6 @@ public class ABMGamesHandler extends AbstractHandler{
                     Optional<GameRequest> gameRequest = findGameRequestById(gameAprovalRequest.getGameRequestId());
                     if (gameRequest.isEmpty())return returnMessage(res, 400, "Request not found");
 
-                    Optional<GameRequest> gameRequest = findGameRequestByIdJFTags(gameAprovalRequest.getGameRequestId());
-                    if (gameRequest.isEmpty()) return returnMessage(res, 400, "Request not found");
                     if (!gameAprovalRequest.isApproved()){
                         remove(gameRequest.get());
                         return returnMessage(res, 200, "Request rejected");
@@ -105,7 +107,6 @@ public class ABMGamesHandler extends AbstractHandler{
                     return returnMessage(res, 200, "Request accepted");
                 });
             });
-
 
             get("/createdgames", (req, res) ->{
                 String token = req.headers("token");

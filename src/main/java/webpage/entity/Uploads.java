@@ -12,10 +12,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 
 import static com.mortennobel.imagescaling.ResampleFilters.getBiCubicHighFreqResponse;
-import static java.nio.file.Files.move;
 import static webpage.handlers.AbstractHandler.returnMessage;
 
 public class Uploads {

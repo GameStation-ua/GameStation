@@ -40,8 +40,8 @@ public class ForumHandler extends AbstractHandler{
             post("/thread/create", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
-                    Long userId = getIdByToken(token);
-                    ThreadRequest threadRequest = fromJson(req.body(), ThreadRequest.class);
+                Long userId = getIdByToken(token);
+                ThreadRequest threadRequest = fromJson(req.body(), ThreadRequest.class);
                     
                     try {
                     Thread thread = new Thread(userId, threadRequest.getGameId(), threadRequest.getDescription(), threadRequest.getTitle());
@@ -68,7 +68,7 @@ public class ForumHandler extends AbstractHandler{
                 if (softThreadsResponse.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                 res.status(200);
-                return toJson(softThreadsResponse);
+                return toJson(softThreadsResponse.get());
             });
         });
     }

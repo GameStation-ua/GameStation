@@ -34,7 +34,7 @@ public class FollowHandler extends AbstractHandler{
                if (actor.isEmpty() || user.isEmpty()) return returnMessage(res, 400, "Something went wrong");
                if (checkIfFollows(userId, actor.get())) return returnMessage(res, 400, "Already follows");
                user.get().addFollowedActor(actor.get());
-               notifyIfUser(followRequest, userId, actor.get(), user.get());
+               notifyIfUser(followRequest, actor.get(), user.get());
                try{
                    merge(user.get());
                    return returnMessage(res, 200, "OK");

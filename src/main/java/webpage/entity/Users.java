@@ -43,13 +43,13 @@ public class Users {
     }
 
 
-    public static void notifyIfUser(FollowRequest followRequest, Long userId, Actor actor, User user) {
+    public static void notifyIfUser(FollowRequest followRequest, Actor actor, User user) {
         try {
             User user1 = (User) actor;
             Notification notification = new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath());
             user1.addNotification(notification);
-            merge(Optional.of(user1));
-            sendNotification(userId, notification);
+            merge(user1);
+            sendNotification(user1.getId(), notification);
         } catch (Throwable ignored) {
         }
     }

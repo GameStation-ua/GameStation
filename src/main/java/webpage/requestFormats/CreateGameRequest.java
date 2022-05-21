@@ -1,7 +1,5 @@
 package webpage.requestFormats;
 
-import webpage.model.Tag;
-
 import java.util.List;
 
 public class CreateGameRequest {
@@ -9,17 +7,13 @@ public class CreateGameRequest {
     private final String description;
     private final List<String> tags;
     private final String wiki;
-    private final String mainImguuid;
-    private final List<String> carouseluuids;
 
 
-    public CreateGameRequest(String title, String description, List<String> tags, String wiki, String mainImguuid, List<String> carouseluuids) {
+    public CreateGameRequest(String title, String description, List<String> tags, String wiki) {
         this.title = title;
         this.description = description;
         this.tags = tags;
         this.wiki = wiki;
-        this.mainImguuid = mainImguuid;
-        this.carouseluuids = carouseluuids;
     }
 
     public String getTitle() {
@@ -36,13 +30,5 @@ public class CreateGameRequest {
 
     public String getWiki() {
         return wiki;
-    }
-
-    public String getMainImguuid() {
-        return mainImguuid;
-    }
-
-    public List<String> getCarouseluuids() {
-        return carouseluuids;
     }
 }

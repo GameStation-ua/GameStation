@@ -1,7 +1,5 @@
 package webpage.model;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -25,10 +23,6 @@ public class Actor {
 
     public void setFollowers(Set<User> followers) {
         this.followers = followers;
-    }
-
-    public boolean isUser() {
-        return false;
     }
 
     public void setName(String name) {

@@ -66,11 +66,11 @@ public class HomeHandler extends AbstractHandler{
         get("/isAdmin", (req, res) -> {
             String token = req.headers("token");
             if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
-                Claims claims = Jwts.parser()
-                        .setSigningKey(key)
-                        .parseClaimsJws(token).getBody();
-                Boolean isAdmin = (Boolean) claims.get("isAdmin");
-                return returnMessage(res, 200, "" + isAdmin + "");
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token).getBody();
+            Boolean isAdmin = (Boolean) claims.get("isAdmin");
+            return returnMessage(res, 200, "" + isAdmin + "");
         });
     }
 

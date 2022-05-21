@@ -16,13 +16,6 @@ public class ServerInitializer {
         for (final Handler handler : handlers) handler.handle();
     }
 
-    public static void setStaticFilesDirectory(String directory){
-        //        staticFiles.location("/public");
-        String projectDir = System.getProperty("user.dir");
-        staticFiles.externalLocation(projectDir + directory);
-        // use location on real server
-    }
-
     public static void generateEMF(){
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("GameStation");
         EntityManagers.setFactory(emf);

@@ -1,6 +1,5 @@
 package webpage.entity;
 
-import org.hibernate.Hibernate;
 import webpage.model.Actor;
 import webpage.model.Comment;
 import webpage.model.Notification;

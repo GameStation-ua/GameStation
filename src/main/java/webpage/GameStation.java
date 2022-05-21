@@ -6,13 +6,17 @@ import webpage.util.HandlerProvider;
 import webpage.util.HandlerProviderImpl;
 
 import static spark.Spark.*;
-import static webpage.util.ServerInitializer.*;
+import static webpage.util.ServerInitializer.enableCORS;
+import static webpage.util.ServerInitializer.generateEMF;
 
 public class GameStation {
 
     public static void main(String[] args) {
         generateEMF();
-        setStaticFilesDirectory("/src/main/resources/public");
+        //        staticFiles.location("/public");
+        String projectDir = System.getProperty("user.dir");
+        staticFiles.externalLocation(projectDir + "/src/main/resources/public");
+        // use location on real server
         webSocket("/notifications", NotificationHandler.class);
         port(8443);
         enableCORS();

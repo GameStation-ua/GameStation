@@ -51,7 +51,11 @@ public class Comments {
 
             Optional<User> user = findUserById(userId);
 
-            if (user.isEmpty() || vote.isEmpty()) continue;
+            if (user.isEmpty()) continue;
+            if (vote.isEmpty()) {
+                commentResponseList.add(new CommentResponse(comment, user.get().getNickname(), 0));
+                continue;
+            }
 
             commentResponseList.add(new CommentResponse(comment, user.get().getNickname(), vote.get()));
         }

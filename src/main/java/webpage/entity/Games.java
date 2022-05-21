@@ -2,7 +2,9 @@ package webpage.entity;
 
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
+import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameUpdateRequest;
+import webpage.responseFormats.GameListItem;
 import webpage.responseFormats.GameRequestResponse;
 import webpage.responseFormats.GameResponse;
 
@@ -30,13 +32,36 @@ public class Games {
         }
     }
 
+    public static Optional<List<String>> findTitlesByUserGames(List<UserGame> userGames){
+            List<String> titles = new ArrayList<>();
+            for (UserGame userGame : userGames) {
+                Optional<String> title = findTitleById(userGame.getGameId());
+                if (title.isEmpty()) return Optional.empty();
+                else titles.add(title.get());
+            }
+            return Optional.of(titles);
+    }
+
+    private static Optional<String> findTitleById(Long gameId) {
+        EntityManager em = createEntityManager();
+        try {
+            String title = (String) em.createQuery("SELECT g.name FROM Game g WHERE g.id = ?1").setParameter(1, gameId).getSingleResult();
+            return Optional.of(title);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+
     public static Optional<Game> findGameByIdJFFollowers(Long id){
         EntityManager em = createEntityManager();
         try {
             return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.followers WHERE g.id = ?1 ")
                     .setParameter(1, id)
                     .getSingleResult());
-        }catch (NullPointerException e){
+        }catch (Exception e){
             return Optional.empty();
         }finally {
             em.close();
@@ -165,10 +190,39 @@ public class Games {
 
     public static Optional<GameRequest> createGameRequest(CreateGameRequest createGameRequest, Long creatorId){
         if (!tagsExist(createGameRequest.getTags())) return Optional.empty();
+        if (createGameRequest.getDescription().equals("") || createGameRequest.getDescription() == null
+                || createGameRequest.getTitle().equals("") || createGameRequest.getTitle() ==  null) return Optional.empty();
         Optional<List<Tag>> tags = findTagsIfAvailable(createGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
         return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1));
+    }
+    public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId) {
+
+        EntityManager em = createEntityManager();
+        Game game;
+        try{
+        game = em.find(Game.class, editGameRequest.getGameId());
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+        if (editGameRequest.getDescription() == null) editGameRequest.setDescription(game.getDescription());
+        if (editGameRequest.getTitle() ==  null) editGameRequest.setTitle(game.getTitle());
+        if (editGameRequest.getWiki() ==  null) editGameRequest.setWiki(game.getWiki());
+        if (editGameRequest.getTags() ==  null) {
+            List<String> tags = new ArrayList<>();
+            for (Tag tag : game.getTags()) {
+                tags.add(tag.getName());
+            }
+            editGameRequest.setTags(tags);
+        }
+        else if (!tagsExist(editGameRequest.getTags())) return Optional.empty();
+        Optional<List<Tag>> tags = findTagsIfAvailable(editGameRequest.getTags());
+        if (tags.isEmpty()) return Optional.empty();
+        Set<Tag> tags1 = new HashSet<>(tags.get());
+        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1));
     }
 
     public static boolean isOwner(Long userId, Long gameId){
@@ -233,5 +287,13 @@ public class Games {
         }finally {
             em.close();
         }
+    }
+
+    public static List<GameListItem> prepareGameListResponse(List<UserGame> userGames, List<String> titles){
+        List<GameListItem> gameListItems = new ArrayList<>();
+        for (int i = 0; i < userGames.size(); i++) {
+            gameListItems.add(new GameListItem(userGames.get(i), titles.get(i)));
+        }
+        return gameListItems;
     }
 }

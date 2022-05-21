@@ -34,6 +34,7 @@ public class TagsHandler extends AbstractHandler {
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Optional<List<Tag>> availableTags = findAvailableTags();
                     if (availableTags.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                    AvailableTagsResponse response = new AvailableTagsResponse(availableTags.get());
                     res.status(200);
                     return toJson(response);
                 });
@@ -46,6 +47,7 @@ public class TagsHandler extends AbstractHandler {
                     if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
+                    if (tagsRequest.getTags().isEmpty()) return returnMessage(res, 500, "Something went wrong, try again");
 
                     try {
                         addTags(tagsRequest.getTags());
@@ -63,6 +65,7 @@ public class TagsHandler extends AbstractHandler {
                     if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
+                    if (tagsRequest.getTags().isEmpty()) return returnMessage(res, 500, "Something went wrong, try again");
 
                     try {
                         removeTags(tagsRequest.getTags());
