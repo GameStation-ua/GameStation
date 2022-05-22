@@ -54,11 +54,6 @@ public class User extends Actor{
     public User() {
     }
 
-    @Override
-    public boolean isUser(){
-        return true;
-    }
-
     public void addTag(Tag tag){
         likedTags.add(tag);
     }
