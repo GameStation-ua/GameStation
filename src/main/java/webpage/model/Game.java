@@ -26,6 +26,7 @@ public class Game extends Actor{
     private Set<UserGame> userGames;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gameId")
+    @OrderBy(value = "date ASC")
     private Set<GameUpdate> gameUpdates;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

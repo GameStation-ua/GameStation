@@ -15,7 +15,7 @@ public class GameUpdate {
     private Long gameId;
 
     @Column(name = "TITLE", nullable = false)
-    private String tile;
+    private String title;
 
     @Column(name = "CONTENT", nullable = false)
     private String content;
@@ -23,9 +23,9 @@ public class GameUpdate {
     @Column(name = "DATE", nullable = false)
     private final Date date = new Date();
 
-    public GameUpdate(Long gameId, String tile, String content) {
+    public GameUpdate(Long gameId, String title, String content) {
         this.gameId = gameId;
-        this.tile = tile;
+        this.title = title;
         this.content = content;
     }
 
@@ -36,8 +36,8 @@ public class GameUpdate {
         return gameId;
     }
 
-    public String getTile() {
-        return tile;
+    public String getTitle() {
+        return title;
     }
 
     public String getContent() {

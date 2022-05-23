@@ -7,10 +7,7 @@ import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameAprovalRequest;
 import webpage.requestFormats.GameUpdateRequest;
-import webpage.responseFormats.GameRequestResponse;
-import webpage.responseFormats.HardGameForResponse;
-import webpage.responseFormats.SoftGameResponse;
-import webpage.responseFormats.UserResponse;
+import webpage.responseFormats.*;
 import webpage.util.HandlerType;
 import webpage.util.NotificationType;
 
@@ -173,6 +170,21 @@ public class ABMGamesHandler extends AbstractHandler{
                 HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
                 res.status(200);
                 return toJson(gameForResponse);
+            });
+
+            get("/gameUpdate/*/*", (req, res) -> {
+                String token = req.headers("token");
+                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                String[] request = req.splat();
+                Long gameId = Long.valueOf(request[0]);
+                int pageNumber = Integer.parseInt(request[1]);
+
+                Optional<List<GameUpdate>> gameUpdates = findGameUpdatesByPage(gameId, pageNumber);
+                if (gameUpdates.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+
+                List<GameUpdateResponse> gameUpdateResponseList = prepareGameUpdatesResponse(gameUpdates.get());
+
+                return toJson(gameUpdateResponseList);
             });
         });
     }

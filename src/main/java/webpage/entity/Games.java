@@ -7,6 +7,7 @@ import webpage.requestFormats.GameUpdateRequest;
 import webpage.responseFormats.GameListItem;
 import webpage.responseFormats.GameRequestResponse;
 import webpage.responseFormats.GameResponse;
+import webpage.responseFormats.GameUpdateResponse;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -30,6 +31,30 @@ public class Games {
         }finally {
             em.close();
         }
+    }
+
+    public static Optional<List<GameUpdate>>findGameUpdatesByPage(Long gameId, int pageNum){
+        EntityManager em = createEntityManager();
+        try{
+            @SuppressWarnings("unchecked") List<GameUpdate> gameUpdates = em.createQuery("FROM GameUpdate WHERE gameId = ?1")
+                    .setParameter(1, gameId)
+                    .setFirstResult(pageNum * 10 - 10)
+                    .setMaxResults(10)
+                    .getResultList();
+            return Optional.of(gameUpdates);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            em.close();
+        }
+    }
+
+    public static List<GameUpdateResponse> prepareGameUpdatesResponse(List<GameUpdate> gameUpdates){
+        List<GameUpdateResponse> gameUpdateResponseList = new ArrayList<>();
+        for (GameUpdate gameUpdate : gameUpdates) {
+            gameUpdateResponseList.add(new GameUpdateResponse(gameUpdate));
+        }
+        return gameUpdateResponseList;
     }
 
     public static Optional<List<String>> findTitlesByUserGames(List<UserGame> userGames){
