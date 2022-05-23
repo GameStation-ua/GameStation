@@ -21,14 +21,15 @@
     }
     hashed.password = sha512(hashed.password)
     var json = JSON.stringify(hashed)
-    xhr.open("POST", "/login", false),
+    xhr.open("POST", "/login", false)
     xhr.setRequestHeader("Content-Type", "application/json")
     xhr.send(json)
     console.log(json)
     if (xhr.status === 200){
+      const token = JSON.parse(xhr.response)
+      console.log(token.message)
       Store.state.mesage = "send to home"
-      localStorage.setItem("token",xhr.responseText)
-      console.log(localStorage.getItem("token"))
+      localStorage.setItem("token",token.message)
     }
   }
 

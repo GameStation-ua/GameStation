@@ -1,39 +1,55 @@
 <script>
+
 export default {
   name: "index",
   data(){
     return {
       popupActivo1:false,
       popupActivo2:false,
-      tag:'',
-      tags:[]
+      tag1: '',
+      tagsTosend:{
+        tags: []
+      },
+      tagsTodelete:{
+        tags: []
+      },
     }
   },
   methods:{
     getTags(){
-      var res = new XMLHttpRequest()
+      const res = new XMLHttpRequest()
       res.open("GET", "/tags/available_tags", false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
-      this.tags = JSON.parse(res.response).availableTags
+      console.log(res.responseText)
+      this.tagsget = JSON.parse(res.response).availableTags
       console.log(this.tags)
+
+
     },
 
-    sendTags(){
+    sendTags(method, send, URL){
       var res = new XMLHttpRequest()
-      var json = JSON.stringify(this.tags)
-      res.open("PATCH", "/tags/available_tags/add", false)
+      var json = JSON.stringify(send)
+      res.open(method, URL, false)
       res.setRequestHeader("Accept", "application/json")
       res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("Authorization", localStorage.getItem("token"))
+      res.setRequestHeader("token", localStorage.getItem("token"))
       console.log(json)
       res.send(json)
     },
 
     addTag(){
-      this.tags.push({availableTag: this.tag})
-      this.sendTags()
+      this.tagsTosend.tags.push(this.tag1)
+      this.sendTags("PATCH", this.tagsTosend, "/tags/available_tags/add")
+      this.getTags()
+    },
+
+    removeTag(){
+      this.sendTags("DELETE", this.tagsTodelete, "/tags/available_tags/delete")
+      this.getTags()
+      this.tagsTodelete.tags = []
     }
   },
   beforeMount() {
@@ -44,7 +60,7 @@ export default {
 
 <template>
   <div>
-    {{tags}}
+    {{tagsTodelete.tags}}
     <h1>Admin Menu</h1>
     <div class="">
       <vs-tabs color="success">
@@ -53,25 +69,26 @@ export default {
             <vs-button @click="popupActivo1=true" color="success" type="filled">Add Tag</vs-button>
             <vs-button @click="popupActivo2=true" color="danger" type="filled">Delate Tag</vs-button>
             <div class="box">
-                <vs-list v-for="(show, index) in tags" :key=index>
-                  <vs-list-item  title=''>
-                    <vs-checkbox color="danger"/>
-                  </vs-list-item>
-                </vs-list>
+              <ul class="center">
+                <li v-for="(tag,index) in tagsget" :key="index">
+                  <vs-checkbox v-model="tagsTodelete.tags" :vs-value="tag">{{ tag }}</vs-checkbox>
+                </li>
+              </ul>
             </div>
           </div>
         </vs-tab>
         <div class="centerx">
           <vs-popup class="tagpopup"  title="Add Tag" :active.sync="popupActivo1" button-close-hidden="true">
-            <vs-input placeholder="Tag" color="success" v-model="this.tag"/>
+            <vs-input placeholder="Tag" color="success" v-model="tag1"/>
             <vs-button @click="addTag" color="success" type="filled">Add Tag</vs-button>
             <vs-button @click="popupActivo1=false" color="dark" type="flat">Cancel</vs-button>
           </vs-popup>
           <vs-popup class="tagpopup"  title="Delate Tag" :active.sync="popupActivo2" button-close-hidden="true">
+
             <p>
               Are you sure you want to delate the tags selected?
             </p>
-            <vs-button  color="danger" type="filled">Yes</vs-button>
+            <vs-button @click="removeTag" color="danger" type="filled">Yes</vs-button>
             <vs-button @click="popupActivo2=false" color="dark" type="flat">Cancel</vs-button>
           </vs-popup>
         </div>
@@ -106,14 +123,26 @@ h1{
 }
 
 .box{
-  position: fixed;
-  left: 120px;
-  top: 210px;
-  right: 0;
+  position: relative;
+  left: 130px;
+  top: -90px;
+  display: flex;
 }
 
 .tagpopup .vs-button{
   display: revert;
+}
+
+li{
+  display: flex;
+  position: relative;
+  color: white;
+}
+
+.center{
+  display: flex;
+  justify-content: space-between;
+
 }
 
 </style>

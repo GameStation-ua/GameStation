@@ -30,7 +30,7 @@ function register () {
   console.log(json)
   var mesage = JSON.parse(xhr.response)
   console.log(mesage)
-  if ( mesage.message === 'User created!'){
+  if ( mesage.message === 'User created!.'){
     notify({
       type: "success",
       title: "Register success",
