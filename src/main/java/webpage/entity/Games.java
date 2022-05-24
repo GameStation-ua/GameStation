@@ -36,7 +36,7 @@ public class Games {
     public static Optional<List<GameUpdate>>findGameUpdatesByPage(Long gameId, int pageNum){
         EntityManager em = createEntityManager();
         try{
-            @SuppressWarnings("unchecked") List<GameUpdate> gameUpdates = em.createQuery("FROM GameUpdate WHERE gameId = ?1")
+            @SuppressWarnings("unchecked") List<GameUpdate> gameUpdates = em.createQuery("FROM GameUpdate g WHERE gameId = ?1 ORDER BY g.date DESC")
                     .setParameter(1, gameId)
                     .setFirstResult(pageNum * 10 - 10)
                     .setMaxResults(10)

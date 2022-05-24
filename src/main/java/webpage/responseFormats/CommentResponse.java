@@ -9,7 +9,7 @@ public class CommentResponse {
     private final Long userId;
     private final String nickname;
     private final Integer userVote;
-    private final Date date = new Date();
+    private final Date date;
     private final String content;
     private final int votes;
 
@@ -20,5 +20,6 @@ public class CommentResponse {
         this.userId = comment.getUserId();
         this.content = comment.getContent();
         this.votes = comment.getVotes();
+        this.date = comment.getDate();
     }
 }
