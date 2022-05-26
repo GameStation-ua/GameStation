@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static webpage.entity.Users.findUserById;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Comments {
 
     public static Optional<Integer> findCommentVotesByUserIdAndCommentId(Long userId, Long commentId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             Integer vote = (Integer) em.createQuery("SELECT vote FROM UserComment uc WHERE uc.userId = ?1 AND uc.commentId = ?2")
                     .setParameter(1, userId)
@@ -25,12 +26,12 @@ public class Comments {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<Comment> findCommentById(Long commentId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             Comment comment = (Comment) em.createQuery("FROM Comment c WHERE c.id = ?1")
                     .setParameter(1, commentId)
@@ -39,7 +40,7 @@ public class Comments {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 

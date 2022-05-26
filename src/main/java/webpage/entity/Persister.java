@@ -2,8 +2,8 @@ package webpage.entity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 
 public class Persister {
@@ -12,7 +12,7 @@ public class Persister {
 
 
     public static <T> T merge(T entity){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         final EntityTransaction tx = em.getTransaction();
 
         try {
@@ -26,12 +26,12 @@ public class Persister {
             tx.rollback();
             throw e;
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static <T> void persist(T entity){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         final EntityTransaction tx = em.getTransaction();
 
         try {
@@ -44,12 +44,12 @@ public class Persister {
             tx.rollback();
             throw e;
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static <T> void remove(T entity){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         final EntityTransaction tx = em.getTransaction();
 
         try {
@@ -62,7 +62,7 @@ public class Persister {
             tx.rollback();
             throw e;
         }finally {
-            em.close();
+            close();
         }
     }
 }

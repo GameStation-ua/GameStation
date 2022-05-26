@@ -11,23 +11,24 @@ import java.util.List;
 import java.util.Optional;
 
 import static webpage.entity.Users.findUserById;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.currentEntityManager;
+import static webpage.util.EntityManagers.close;
 
 public class Threads {
 
     public static Optional<Thread> findThreadById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(Thread.class, id));
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<Thread> findThreadByIdJFComments(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             Thread thread = (Thread) em.createQuery("SELECT distinct t FROM Thread t join fetch t.comments WHERE t.id = ?1")
                     .setParameter(1, id)
@@ -36,12 +37,12 @@ public class Threads {
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<Thread> findThreadByIdJFFollowers(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             Thread thread = (Thread) em.createQuery("SELECT distinct t FROM Thread t join fetch t.followers WHERE t.id = ?1")
                     .setParameter(1, id)
@@ -50,11 +51,11 @@ public class Threads {
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
     public static Optional<List<Thread>> findThreadsByForumPage(Long gameId, Integer pageNumber){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Thread> threads = em.createQuery("FROM Thread t WHERE t.gameId = ?1")
                     .setParameter(1, gameId)
@@ -65,7 +66,7 @@ public class Threads {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 

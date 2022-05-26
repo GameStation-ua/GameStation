@@ -12,13 +12,14 @@ import java.util.Optional;
 
 import static webpage.entity.Persister.merge;
 import static webpage.handlers.NotificationHandler.sendNotification;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Actors {
 
 
     public static Optional<Actor> findActorById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(Actor.class, id));
         }catch (NullPointerException e){
@@ -27,7 +28,7 @@ public class Actors {
     }
 
     public static Optional<List<Comment>> findCommentsFromActorById(Long id, int pageNumber){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Comment> comments = em.createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
                     .setParameter(1, id)
@@ -37,6 +38,8 @@ public class Actors {
             return Optional.of(comments);
         }catch (Exception e){
             return Optional.empty();
+        }finally {
+            close();
         }
     }
 

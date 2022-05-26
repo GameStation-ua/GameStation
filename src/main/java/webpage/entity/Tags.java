@@ -4,7 +4,7 @@ import webpage.model.Game;
 import webpage.model.GameRequest;
 import webpage.model.Tag;
 import webpage.model.User;
-
+import static webpage.util.EntityManagers.close;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ import static webpage.entity.Games.findGameRequestsByTag;
 import static webpage.entity.Games.findGamesByTag;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Users.findUsersByTag;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Tags {
 
     public static Optional<List<Tag>> findLikedTagsByUserId(Long userId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Tag> tags = em.createQuery("SELECT likedTags FROM User u WHERE u.id = ?1")
                     .setParameter(1, userId)
@@ -28,12 +28,12 @@ public class Tags {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<Tag>> findAvailableTags(){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Tag> availableTags = em.createQuery("FROM Tag")
                     .getResultList();
@@ -41,12 +41,12 @@ public class Tags {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static boolean tagsExist(List<String> tags){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<String> availableTags = em.createQuery("SELECT name FROM Tag")
                     .getResultList();
@@ -57,7 +57,7 @@ public class Tags {
         }catch (Exception e){
             return false;
         }finally {
-            em.close();
+            close();
         }
     }
     public static void removeTags(List<String> tagsToAdd) {
@@ -80,7 +80,7 @@ public class Tags {
                 Optional<List<User>> usersWithTag = findUsersByTag(tag.get().getName());
                 Optional<List<GameRequest>> gameRequestsWithTag = findGameRequestsByTag(tag.get().getName());
                 if (gamesWithTag.isEmpty() || usersWithTag.isEmpty() || gameRequestsWithTag.isEmpty()) throw new RuntimeException("Error while fetching tag");
-                EntityManager em = createEntityManager();
+                EntityManager em = currentEntityManager();
                 try {
                     em.getTransaction().begin();
                     for (Game game : gamesWithTag.get()) {
@@ -101,7 +101,7 @@ public class Tags {
                     em.getTransaction().rollback();
                     throw new RuntimeException("error while removing tags");
                 }finally {
-                    em.close();
+                    close();
                 }
             }
         }
@@ -146,7 +146,7 @@ public class Tags {
     }
 
     public static Optional<Tag> findTagByName(String name){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             Tag tag = (Tag) em.createQuery("FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, name)
@@ -155,7 +155,7 @@ public class Tags {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 }
