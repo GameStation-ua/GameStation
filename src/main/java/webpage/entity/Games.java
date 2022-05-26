@@ -4,10 +4,7 @@ import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameUpdateRequest;
-import webpage.responseFormats.GameListItem;
-import webpage.responseFormats.GameRequestResponse;
-import webpage.responseFormats.GameResponse;
-import webpage.responseFormats.GameUpdateResponse;
+import webpage.responseFormats.*;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -55,6 +52,14 @@ public class Games {
             gameUpdateResponseList.add(new GameUpdateResponse(gameUpdate));
         }
         return gameUpdateResponseList;
+    }
+
+    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games){
+        List<SoftGameResponse> softGameResponseList = new ArrayList<>();
+        for (Game game : games) {
+            softGameResponseList.add(new SoftGameResponse(game));
+        }
+        return softGameResponseList;
     }
 
     public static Optional<List<String>> findTitlesByUserGames(List<UserGame> userGames){
@@ -122,16 +127,16 @@ public class Games {
         }
     }
 
-    public static Optional<List<GameResponse>> searchStringInGames(String searchTag){
+    public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
         EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                     .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                     .setMaxResults(10)
                     .getResultList();
-            List<GameResponse> gamesForResponse = new ArrayList<>();
+            List<SoftGameResponse> gamesForResponse = new ArrayList<>();
             for (Game game : games) {
-                gamesForResponse.add(new GameResponse(game));
+                gamesForResponse.add(new SoftGameResponse(game));
             }
             return Optional.of(gamesForResponse);
         }catch (Exception e){

@@ -2,6 +2,7 @@ package webpage.handlers;
 
 import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.SearchResponse;
+import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
@@ -23,7 +24,7 @@ public class SearchHandler extends AbstractHandler{
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
-               Optional<List<GameResponse>> games = searchStringInGames(searchString.toUpperCase());
+               Optional<List<SoftGameResponse>> games = searchStringInGames(searchString.toUpperCase());
                Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase());
                if (games.isEmpty() || users.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                res.status(200);

@@ -26,7 +26,6 @@ import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.createTagResponseList;
 import static webpage.entity.Users.*;
-import static webpage.responseFormats.SoftGameResponse.createSoftGameResponseList;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.Parser.toJson;
 
