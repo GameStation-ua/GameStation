@@ -4,20 +4,17 @@ import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameUpdateRequest;
-import webpage.responseFormats.GameListItem;
-import webpage.responseFormats.GameRequestResponse;
-import webpage.responseFormats.GameResponse;
-import webpage.responseFormats.GameUpdateResponse;
+import webpage.responseFormats.*;
 
 import javax.persistence.EntityManager;
 import java.util.*;
 
-import static webpage.util.EntityManagers.close;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.findTagsIfAvailable;
 import static webpage.entity.Tags.tagsExist;
 import static webpage.entity.Users.findCreatedGamesbyUserId;
+import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Games {
@@ -56,6 +53,14 @@ public class Games {
             gameUpdateResponseList.add(new GameUpdateResponse(gameUpdate));
         }
         return gameUpdateResponseList;
+    }
+
+    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games){
+        List<SoftGameResponse> softGameResponseList = new ArrayList<>();
+        for (Game game : games) {
+            softGameResponseList.add(new SoftGameResponse(game));
+        }
+        return softGameResponseList;
     }
 
     public static Optional<List<String>> findTitlesByUserGames(List<UserGame> userGames){
@@ -123,22 +128,23 @@ public class Games {
         }
     }
 
-    public static Optional<List<GameResponse>> searchStringInGames(String searchTag){
+    public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
         EntityManager em = currentEntityManager();
+        public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                     .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                     .setMaxResults(10)
                     .getResultList();
-            List<GameResponse> gamesForResponse = new ArrayList<>();
+            List<SoftGameResponse> gamesForResponse = new ArrayList<>();
             for (Game game : games) {
-                gamesForResponse.add(new GameResponse(game));
+                gamesForResponse.add(new SoftGameResponse(game));
             }
             return Optional.of(gamesForResponse);
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            close();
+            em.close();
         }
     }
     public static void addTagsToGame(List<Tag> tags, Game game) {
@@ -153,18 +159,18 @@ public class Games {
     }
 
     public static Optional<GameUpdate> findGameUpdateById(Long id){
-        EntityManager em = currentEntityManager();
+        EntityManager em = createEntityManager();
         try {
             return Optional.of(em.find(GameUpdate.class, id));
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
-            close();
+            em.close();
         }
     }
 
     public static Optional<List<Game>> search50GamesByTag(String searchTag){
-        EntityManager em = currentEntityManager();
+        EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                     .setParameter("search", searchTag)
@@ -174,12 +180,12 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            close();
+            em.close();
         }
     }
 
     public static Optional<List<Game>> findGamesByTag(String tag){
-        EntityManager em = currentEntityManager();
+        EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
@@ -188,12 +194,12 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            close();
+            em.close();
         }
     }
 
     public static Optional<List<GameRequest>> findGameRequestsByTag(String tag){
-        EntityManager em = currentEntityManager();
+        EntityManager em = createEntityManager();
         try {
             @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT gameRequestsWithTag FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
