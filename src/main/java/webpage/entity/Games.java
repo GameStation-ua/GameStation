@@ -130,7 +130,6 @@ public class Games {
 
     public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
         EntityManager em = currentEntityManager();
-        public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                     .setParameter(1, "%" + searchTag.toUpperCase() + "%")
@@ -159,7 +158,7 @@ public class Games {
     }
 
     public static Optional<GameUpdate> findGameUpdateById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(GameUpdate.class, id));
         }catch (NullPointerException e){
@@ -170,7 +169,7 @@ public class Games {
     }
 
     public static Optional<List<Game>> search50GamesByTag(String searchTag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                     .setParameter("search", searchTag)
@@ -185,7 +184,7 @@ public class Games {
     }
 
     public static Optional<List<Game>> findGamesByTag(String tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
@@ -199,7 +198,7 @@ public class Games {
     }
 
     public static Optional<List<GameRequest>> findGameRequestsByTag(String tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT gameRequestsWithTag FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
