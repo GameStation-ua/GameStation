@@ -4,7 +4,47 @@ export default {
   data(){
     return {
       popupActivo:false,
+      availableTags1: [],
+      gamedata:{
+        title: "",
+        description: "",
+        tags: [],
+        wiki: "",
+        imgsInCarousel: ""
+      }
     }
+  },
+  methods: {
+    getTags() {
+      const res = new XMLHttpRequest()
+      res.open("GET", "/tags/available_tags", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.availableTags1 = JSON.parse(res.response).availableTags
+      console.log(this.tags)
+    },
+    delAll(){
+      this.gamedata.tags = []
+    },
+    createGame(){
+      var xhr = new XMLHttpRequest()
+      var json = JSON.stringify(this.gamedata)
+      xhr.open("POST", "/game/solicitude/create", false)
+      xhr.setRequestHeader("Content-Type", "application/json")
+      xhr.setRequestHeader("token", localStorage.getItem("token"))
+      xhr.send(json)
+      console.log(json)
+      if (xhr.status === 200){
+        const id = JSON.parse(xhr.response)
+        console.log(id)
+        localStorage.setItem("id",id)
+      }
+    }
+  },
+  beforeMount() {
+    this.getTags()
   }
 }
 </script>
@@ -14,16 +54,32 @@ export default {
   <div>
     <H1>UpLoad Menu</H1>
     <div class="centerxmenu">
-      <vs-input label="Name" placeholder="" v-model="value1"/>
-      <vs-input label="Wiki" placeholder="Url" v-model="value1"/>
-      <vs-input label="Name" placeholder="Placeholder" v-model="value1"/>
-      <div>
+      <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
+      <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
+      <vs-input label="Number of Images" placeholder="number" type="number" v-model="gamedata.imgsInCarousel"/>
+      <div class="tags">
+        <div>
+          <label>Tags</label>
+        </div>
         <vs-button @click="popupActivo=true" color="primary" type="border">Open Default popup</vs-button>
         <vs-popup class="holamundo"  title="Select the tags of your game" :active.sync="popupActivo">
-
+          <div class="box">
+            <ul class="center">
+              <li v-for="(tag,index) in availableTags1" :key="index">
+                <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{ tag }}</vs-checkbox>
+              </li>
+            </ul>
+          </div>
+          <vs-button @click="popupActivo=false" color="success" type="filled">Confirm</vs-button>
+          <vs-button @click="delAll" color="danger" type="filled">Delete all</vs-button>
         </vs-popup>
       </div>
-      <vs-textarea label="Game Description" v-model="textarea" width="40%" height="300px"/>
+      <label id="description">Description</label>
+      <vs-textarea v-model="gamedata.description" width="40%" height="300px"/>
+      <div class="next">
+        <vs-button @click="createGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
+      </div>
+
     </div>
   </div>
 
@@ -33,12 +89,11 @@ export default {
 
 .centerxmenu{
   position: relative;
+  text-align: left;
   left: 10px;
 }
 .centerxmenu .vs-input{
-  margin-top: 40px;
   width: 40%;
-  text-align: left;
 
 }
 
@@ -52,8 +107,35 @@ export default {
 }
 
 .vs-textarea{
-  color: white;
-  text-align: left;
+  color: white !important;
 }
+
+ul{
+  display: flex;
+  flex-wrap: wrap
+}
+
+li{
+  display: flex;
+}
+
+label{
+  color: white !important;
+  margin-top: 2%;
+}
+
+.tags{
+  position: relative;
+
+  left: 4px;
+}
+
+.next{
+  position: absolute !important;
+  right: 20px;
+
+}
+
+
 
 </style>
