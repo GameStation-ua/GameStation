@@ -4,10 +4,7 @@ import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
 import webpage.requestFormats.GameUpdateRequest;
-import webpage.responseFormats.GameListItem;
-import webpage.responseFormats.GameRequestResponse;
-import webpage.responseFormats.GameResponse;
-import webpage.responseFormats.GameUpdateResponse;
+import webpage.responseFormats.*;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -17,24 +14,25 @@ import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.findTagsIfAvailable;
 import static webpage.entity.Tags.tagsExist;
 import static webpage.entity.Users.findCreatedGamesbyUserId;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Games {
 
 
     public static Optional<Game> findGameById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(Game.class, id));
         }catch (NullPointerException e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<GameUpdate>>findGameUpdatesByPage(Long gameId, int pageNum){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try{
             @SuppressWarnings("unchecked") List<GameUpdate> gameUpdates = em.createQuery("FROM GameUpdate g WHERE gameId = ?1 ORDER BY g.date DESC")
                     .setParameter(1, gameId)
@@ -45,7 +43,7 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
@@ -55,6 +53,14 @@ public class Games {
             gameUpdateResponseList.add(new GameUpdateResponse(gameUpdate));
         }
         return gameUpdateResponseList;
+    }
+
+    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games){
+        List<SoftGameResponse> softGameResponseList = new ArrayList<>();
+        for (Game game : games) {
+            softGameResponseList.add(new SoftGameResponse(game));
+        }
+        return softGameResponseList;
     }
 
     public static Optional<List<String>> findTitlesByUserGames(List<UserGame> userGames){
@@ -68,20 +74,20 @@ public class Games {
     }
 
     private static Optional<String> findTitleById(Long gameId) {
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             String title = (String) em.createQuery("SELECT g.name FROM Game g WHERE g.id = ?1").setParameter(1, gameId).getSingleResult();
             return Optional.of(title);
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
 
     public static Optional<Game> findGameByIdJFFollowers(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.followers WHERE g.id = ?1 ")
                     .setParameter(1, id)
@@ -89,12 +95,12 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<UserGame>> findUserGamesbyGameId(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<UserGame> userGames = em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1")
                     .setParameter(1, id)
@@ -103,12 +109,12 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<Game>> find5GamesByTagName(Tag tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> gamesTag1 = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                     .setMaxResults(5)
@@ -118,20 +124,20 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
-    public static Optional<List<GameResponse>> searchStringInGames(String searchTag){
-        EntityManager em = createEntityManager();
+    public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
                     .setParameter(1, "%" + searchTag.toUpperCase() + "%")
                     .setMaxResults(10)
                     .getResultList();
-            List<GameResponse> gamesForResponse = new ArrayList<>();
+            List<SoftGameResponse> gamesForResponse = new ArrayList<>();
             for (Game game : games) {
-                gamesForResponse.add(new GameResponse(game));
+                gamesForResponse.add(new SoftGameResponse(game));
             }
             return Optional.of(gamesForResponse);
         }catch (Exception e){
@@ -152,7 +158,7 @@ public class Games {
     }
 
     public static Optional<GameUpdate> findGameUpdateById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(GameUpdate.class, id));
         }catch (NullPointerException e){
@@ -163,7 +169,7 @@ public class Games {
     }
 
     public static Optional<List<Game>> search50GamesByTag(String searchTag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = :search")
                     .setParameter("search", searchTag)
@@ -178,7 +184,7 @@ public class Games {
     }
 
     public static Optional<List<Game>> findGamesByTag(String tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT games FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
@@ -192,7 +198,7 @@ public class Games {
     }
 
     public static Optional<List<GameRequest>> findGameRequestsByTag(String tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT gameRequestsWithTag FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
@@ -201,7 +207,7 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
@@ -224,14 +230,14 @@ public class Games {
     }
     public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId) {
 
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         Game game;
         try{
         game = em.find(Game.class, editGameRequest.getGameId());
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
         if (editGameRequest.getDescription() == null) editGameRequest.setDescription(game.getDescription());
         if (editGameRequest.getTitle() ==  null) editGameRequest.setTitle(game.getTitle());
@@ -260,7 +266,7 @@ public class Games {
     }
 
     public static Optional<Tag> findTagByName(String name){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
              Tag tags = (Tag) em.createQuery("FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, name)
@@ -269,19 +275,19 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<GameRequest> findGameRequestById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             GameRequest gameRequest = em.find(GameRequest.class, id);
             return Optional.of(gameRequest);
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
@@ -298,7 +304,7 @@ public class Games {
     }
 
     public static Optional<List<GameRequestResponse>> getGameRequestsAsResponses(){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<GameRequest> gameRequests = em.createQuery("SELECT distinct g FROM GameRequest g join fetch g.tags")
                     .getResultList();
@@ -310,7 +316,7 @@ public class Games {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 

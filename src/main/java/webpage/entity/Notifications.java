@@ -3,7 +3,7 @@ package webpage.entity;
 import webpage.model.Notification;
 import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
-
+import static webpage.util.EntityManagers.close;
 import java.util.List;
 
 public class Notifications {

@@ -6,7 +6,7 @@ import webpage.model.*;
 import webpage.requestFormats.FollowRequest;
 import webpage.responseFormats.UserResponse;
 import webpage.util.NotificationType;
-
+import static webpage.util.EntityManagers.close;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.Optional;
 
 import static webpage.entity.Persister.merge;
 import static webpage.handlers.NotificationHandler.sendNotification;
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 
 public class Users {
 
     public static Optional<User> findUserById(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             return Optional.of(em.find(User.class, id));
         }catch (NullPointerException e){
@@ -29,7 +29,7 @@ public class Users {
     }
 
     public static Optional<List<Game>> findCreatedGamesbyUserId(Long id){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("SELECT createdGames FROM User u WHERE u.id = ?1")
                     .setParameter(1, id)
@@ -38,7 +38,7 @@ public class Users {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
@@ -55,7 +55,7 @@ public class Users {
     }
 
     public static Optional<User> findUserByUsername(String username){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             User user = (User) em.createQuery("FROM User u WHERE u.username = :username")
                     .setParameter("username", username)
@@ -64,12 +64,12 @@ public class Users {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<UserResponse>> searchStringInUsers(String searchString){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
                     .setParameter(1, "%" + searchString.toUpperCase() + "%")
@@ -83,7 +83,7 @@ public class Users {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
@@ -95,7 +95,7 @@ public class Users {
     }
 
 
-    public static Long getIdByToken(String token){
+    public static Long  getIdByToken(String token){
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token).getBody();
@@ -110,7 +110,7 @@ public class Users {
     }
 
     public static Optional<List<User>> findUsersByTag(String tag){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<User> users = em.createQuery("SELECT users FROM Tag t WHERE t.name = ?1")
                     .setParameter(1, tag)
@@ -119,7 +119,7 @@ public class Users {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 }

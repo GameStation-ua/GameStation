@@ -6,12 +6,13 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class UserGames {
 
     public static Optional<List<UserGame>> findUserGameByUserId(Long userId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<UserGame> gameList = em.createQuery("FROM UserGame ug WHERE ug.userId = ?1")
                     .setParameter(1, userId)
@@ -20,12 +21,12 @@ public class UserGames {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<List<Long>> findGameIdsByUserId(Long userId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Long> gamesIds = em.createQuery("SELECT gameId FROM UserGame ug WHERE ug.userId = ?1")
                     .setParameter(1, userId)
@@ -34,12 +35,12 @@ public class UserGames {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 
     public static Optional<UserGame> findUserGameByUserIdAndGameId(Long gameId, Long userId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             UserGame game = (UserGame) em.createQuery("FROM UserGame ug WHERE ug.gameId = ?1 AND ug.userId = ?2")
                     .setParameter(1, gameId)
@@ -49,7 +50,7 @@ public class UserGames {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 }

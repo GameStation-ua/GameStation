@@ -1,16 +1,16 @@
 package webpage.entity;
 
 import webpage.model.UserComment;
-
+import static webpage.util.EntityManagers.close;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-import static webpage.util.EntityManagers.createEntityManager;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class UserComments {
 
     public static Optional<UserComment> findUserCommentByCommentIdAndUserId(Long commentId, Long userId){
-        EntityManager em = createEntityManager();
+        EntityManager em = currentEntityManager();
         try {
             UserComment userComment = (UserComment) em.createQuery("FROM UserComment WHERE commentId = ?1 AND userId = ?2")
                     .setParameter(1, commentId)
@@ -20,7 +20,7 @@ public class UserComments {
         }catch (Exception e){
             return Optional.empty();
         }finally {
-            em.close();
+            close();
         }
     }
 }

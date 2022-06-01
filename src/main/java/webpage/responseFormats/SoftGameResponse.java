@@ -15,12 +15,4 @@ public class SoftGameResponse {
         this.gameId = game.getId();
         this.title = game.getTitle();
     }
-
-    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games){
-        List<SoftGameResponse> softGameResponseList = new ArrayList<>();
-        for (Game game : games) {
-            softGameResponseList.add(new SoftGameResponse(game));
-        }
-        return softGameResponseList;
-    }
 }
