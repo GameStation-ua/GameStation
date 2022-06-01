@@ -60,7 +60,6 @@ export default {
 
 <template>
   <div>
-    {{tagsTodelete.tags}}
     <h1>Admin Menu</h1>
     <div class="">
       <vs-tabs color="success">

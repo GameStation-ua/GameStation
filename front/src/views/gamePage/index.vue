@@ -47,6 +47,21 @@ export default {
               <vs-button color="primary" type="border">Forum</vs-button>
               <vs-button color="warning" type="border">Wiki</vs-button>
             </div>
+            <div style="display: flex; margin-top: 10px">
+              <label style="margin-left: 10%">Tags</label>
+            </div>
+            <div style="display: flex; margin-left: 10%">
+              <a href="">rpg</a>
+              <a href="">rpg</a>
+            </div>
+            <vs-divider style="background: white; width: 80%; left: 10%"/>
+            <div style="display: flex">
+              <label style="margin-left: 10%">Average</label>
+            </div>
+            <div style="width: 80%; margin-left: 10%">
+              <label style="margin-top: -10px; margin-bottom: -40px; margin-left: 20%">60%</label>
+              <vs-progress :percent="60" color="success">success</vs-progress>
+            </div>
           </div>
         </div>
       </div>
@@ -59,6 +74,11 @@ export default {
 
 .images{
   width: 60%;
+}
+
+.rightContent{
+  position: sticky;
+  top: 10px;
 }
 
 .otherButtons .vs-button{
@@ -77,10 +97,6 @@ export default {
   width: 80%;
   margin: auto;
   margin-top: 10px;
-}
-
-label{
-  text-align: left !important;
 }
 
 #main{
@@ -132,9 +148,18 @@ label{
   position: relative;
 }
 
+h1{
+  color: white;
+  left: 30%;
+}
+
 p{
   color: white;
   text-align: left;
+}
+
+a{
+  margin-right: 10px;
 }
 
 </style>
