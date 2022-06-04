@@ -2,6 +2,7 @@ package webpage.entity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+
 import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 

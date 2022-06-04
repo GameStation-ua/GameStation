@@ -1,10 +1,11 @@
 package webpage.entity;
 
 import webpage.model.UserComment;
-import static webpage.util.EntityManagers.close;
+
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
+import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 
 public class UserComments {

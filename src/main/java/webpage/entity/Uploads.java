@@ -3,7 +3,7 @@ package webpage.entity;
 import com.mortennobel.imagescaling.ResampleOp;
 import spark.Request;
 import spark.Response;
-import static webpage.util.EntityManagers.close;
+
 import javax.imageio.ImageIO;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;

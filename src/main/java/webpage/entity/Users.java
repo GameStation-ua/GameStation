@@ -6,7 +6,7 @@ import webpage.model.*;
 import webpage.requestFormats.FollowRequest;
 import webpage.responseFormats.UserResponse;
 import webpage.util.NotificationType;
-import static webpage.util.EntityManagers.close;
+
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static webpage.entity.Persister.merge;
 import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
 

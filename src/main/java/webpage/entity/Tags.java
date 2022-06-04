@@ -4,7 +4,7 @@ import webpage.model.Game;
 import webpage.model.GameRequest;
 import webpage.model.Tag;
 import webpage.model.User;
-import static webpage.util.EntityManagers.close;
+
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import static webpage.entity.Games.findGameRequestsByTag;
 import static webpage.entity.Games.findGamesByTag;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Users.findUsersByTag;
+import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Tags {
