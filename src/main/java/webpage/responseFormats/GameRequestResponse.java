@@ -8,6 +8,7 @@ import java.util.Set;
 
 public class GameRequestResponse {
 
+    private final Long id;
     private final String title;
     private final String description;
     private final Set<String> tags;
@@ -15,6 +16,7 @@ public class GameRequestResponse {
     private final Integer imgsInCarousel;
 
     public GameRequestResponse(GameRequest gr) {
+        this.id = gr.getId();
         this.title = gr.getTitle();
         this.description = gr.getDescription();
         Set<String> tags = new HashSet<>();
