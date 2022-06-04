@@ -3,6 +3,7 @@ import Home from "@/views/home/index";
 import Admin from "@/views/adminMenu/index";
 import GamePage from "@/views/gamePage/index";
 import UpLoadMenu from "@/views/upLoadMenu/index";
+import UpLoadMenuImages from "@/views/upLoadMenu/images/images"
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/upLoadMenu',
     name: 'upLoadMenu',
     component: UpLoadMenu
+  },
+  {
+    path:'/upLoadMenuImages/:id',
+    name: 'upLoadMenuImages',
+    component: UpLoadMenuImages
   },
 
 

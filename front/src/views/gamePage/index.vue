@@ -45,7 +45,7 @@ export default {
             <vs-button color="danger" type="border">Follow game</vs-button>
             <div class="otherButtons">
               <vs-button color="primary" type="border">Forum</vs-button>
-              <vs-button color="warning" type="border">Wiki</vs-button>
+              <vs-button color="warning" type="border" target href="https://megamitensei.fandom.com/wiki/Persona_5">Wiki</vs-button>
             </div>
             <div style="display: flex; margin-top: 10px">
               <label style="margin-left: 10%">Tags</label>

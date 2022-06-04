@@ -1,4 +1,5 @@
 <script>
+import router from "@/router";
 export default {
   name: "index.vue",
   data(){
@@ -40,6 +41,8 @@ export default {
         const id = JSON.parse(xhr.response)
         console.log(id)
         localStorage.setItem("id",id)
+        router.push('/upLoadMenuImages/${id}')
+
       }
     }
   },
@@ -53,34 +56,36 @@ export default {
 
   <div>
     <H1>UpLoad Menu</H1>
-    <div class="centerxmenu">
-      <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
-      <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
-      <vs-input label="Number of Images" placeholder="number" type="number" v-model="gamedata.imgsInCarousel"/>
-      <div class="tags">
-        <div>
-          <label>Tags</label>
-        </div>
-        <vs-button @click="popupActivo=true" color="primary" type="border">Open Default popup</vs-button>
-        <vs-popup class="holamundo"  title="Select the tags of your game" :active.sync="popupActivo">
-          <div class="box">
-            <ul class="center">
-              <li v-for="(tag,index) in availableTags1" :key="index">
-                <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{ tag }}</vs-checkbox>
-              </li>
-            </ul>
+    <div class="form-box">
+      <div class="centerxmenu">
+        <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
+        <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
+        <vs-input label="Number of Images" placeholder="number" type="number" v-model="gamedata.imgsInCarousel"/>
+        <div class="tags">
+          <div>
+            <label>Tags</label>
           </div>
-          <vs-button @click="popupActivo=false" color="success" type="filled">Confirm</vs-button>
-          <vs-button @click="delAll" color="danger" type="filled">Delete all</vs-button>
-        </vs-popup>
+          <vs-button @click="popupActivo=true" color="primary" type="border">Open Default popup</vs-button>
+          <vs-popup class="holamundo"  title="Select the tags of your game" :active.sync="popupActivo">
+            <div class="box">
+              <ul class="center">
+                <li v-for="(tag,index) in availableTags1" :key="index">
+                  <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{ tag }}</vs-checkbox>
+                </li>
+              </ul>
+            </div>
+            <vs-button @click="popupActivo=false" color="success" type="filled">Confirm</vs-button>
+            <vs-button @click="delAll" color="danger" type="filled">Delete all</vs-button>
+          </vs-popup>
+        </div>
+        <label id="description">Description</label>
+        <vs-textarea v-model="gamedata.description" width="70%" height="300px"/>
+        <div class="next">
+          <vs-button @click="createGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
+        </div>
       </div>
-      <label id="description">Description</label>
-      <vs-textarea v-model="gamedata.description" width="40%" height="300px"/>
-      <div class="next">
-        <vs-button @click="createGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
-      </div>
-
     </div>
+
   </div>
 
 </template>
@@ -108,6 +113,8 @@ export default {
 
 .vs-textarea{
   color: white !important;
+  background: #242222;
+  border: 1px solid rgb(255 255 255 / 8%) !important;
 }
 
 ul{
@@ -134,6 +141,16 @@ label{
   position: absolute !important;
   right: 20px;
 
+}
+
+.form-box {
+  width: 50%;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 50px 0;
+  color: #fff;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.5);
+  margin: 30px auto;
+  height: fit-content;
 }
 
 
