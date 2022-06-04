@@ -155,7 +155,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
-                Optional<Game> game = Games.findGameById(gameId);
+                Optional<Game> game = findGameByIdJFFollowers(gameId);
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
                 if (game.isEmpty() || userGames.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
@@ -166,7 +166,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 UserResponse userResponse = new UserResponse(creator.get());
                 List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
 
-                HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, game.get().getGameUpdates());
+                HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
                 res.status(200);
                 return toJson(gameForResponse);
             });

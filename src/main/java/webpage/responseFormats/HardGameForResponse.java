@@ -15,9 +15,8 @@ public class HardGameForResponse {
     private final String wiki;
     private final UserResponse creators;
     private final List<String> tags;
-    private final Set<GameUpdate> gameUpdates;
 
-    public HardGameForResponse(long gameId, float meanScore, int numberOfFollowers, String title, String description, int imgsInCarousel, String wiki, UserResponse creators, List<String> tags, Set<GameUpdate> gameUpdates) {
+    public HardGameForResponse(long gameId, float meanScore, int numberOfFollowers, String title, String description, int imgsInCarousel, String wiki, UserResponse creators, List<String> tags) {
         this.gameId = gameId;
         this.meanScore = meanScore;
         this.numberOfFollowers = numberOfFollowers;
@@ -27,6 +26,5 @@ public class HardGameForResponse {
         this.wiki = wiki;
         this.creators = creators;
         this.tags = tags;
-        this.gameUpdates = gameUpdates;
     }
 }
