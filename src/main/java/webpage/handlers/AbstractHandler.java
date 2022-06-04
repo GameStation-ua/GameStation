@@ -13,8 +13,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
-import static spark.Spark.before;
-import static spark.Spark.options;
 import static webpage.util.SecretKey.key;
 
 public abstract class AbstractHandler implements Handler {

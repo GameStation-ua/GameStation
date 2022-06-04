@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static webpage.entity.Users.findUserById;
-import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.EntityManagers.close;
+import static webpage.util.EntityManagers.currentEntityManager;
 
 public class Threads {
 

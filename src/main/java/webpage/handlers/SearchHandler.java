@@ -1,6 +1,5 @@
 package webpage.handlers;
 
-import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.SearchResponse;
 import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.UserResponse;
