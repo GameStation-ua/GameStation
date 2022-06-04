@@ -15,8 +15,8 @@ public class EntityManagers {
   }
 
   public static EntityManager currentEntityManager() {
-    final EntityManager em = emRef.get();
-    if (em == null) {
+    EntityManager em = emRef.get();
+    if (em == null || !em.isOpen()) {
       emRef.set(emf.createEntityManager());
     }
     return emRef.get();
