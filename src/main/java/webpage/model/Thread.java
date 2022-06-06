@@ -16,7 +16,7 @@ public class Thread extends Actor{
     @Column(name = "DATE", nullable = false)
     private Date date = new Date();
 
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "DESCRIPTION", nullable = false, length = 8000)
     private String description;
 
     public Thread(long creatorId, Long gameId, String description, String name) {

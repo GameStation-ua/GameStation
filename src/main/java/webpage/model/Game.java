@@ -9,7 +9,7 @@ public class Game extends Actor{
     @Column(name = "CREATOR_ID")
     private Long creatorId;
 
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "DESCRIPTION", nullable = false, length = 8000)
     private String description;
 
     @Column(name = "WIKI")
