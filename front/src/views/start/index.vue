@@ -10,7 +10,7 @@
 
   function verify (){
     var res = new XMLHttpRequest()
-    res.open("GET", "http://localhost:8443/login", false)
+    res.open("GET", "/login", false)
     res.setRequestHeader("Content-Type", "application/json")
     res.setRequestHeader("token", localStorage.getItem("token"))
     res.send(null)

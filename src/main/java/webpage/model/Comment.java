@@ -21,7 +21,7 @@ public class Comment {
     @Column(name = "DATE", nullable = false)
     private final Date date = new Date();
 
-    @Column(name = "CONTENT", nullable = false)
+    @Column(name = "CONTENT", nullable = false, length = 8000)
     private String content;
 
     @Column(name = "ACTOR_ID", nullable = false)

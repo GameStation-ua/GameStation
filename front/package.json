@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "serve": "npm i && vue-cli-service serve",
+    "build": "npm i && vue-cli-service build",
+    "lint": "npm i && vue-cli-service lint"
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.3.4",

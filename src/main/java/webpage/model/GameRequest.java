@@ -14,7 +14,7 @@ public class GameRequest {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "DESCRIPTION", nullable = false, length = 8000)
     private String description;
 
     @Column(name = "WIKI", nullable = false)
