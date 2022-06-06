@@ -3,10 +3,15 @@ export default {
   name: "images",
   data(){
     return {
-      headers:{
+      headersMain:{
         token: localStorage.getItem('token'),
         id: localStorage.getItem('id'),
         imgType: 'main'
+      },
+      headersCarousel:{
+        token: localStorage.getItem('token'),
+        id: localStorage.getItem('id'),
+        imgType: 'carousel'
       }
     }
   }
@@ -18,7 +23,8 @@ export default {
   <div>
     <div class="form-box">
       <div class="centerx">
-        <vs-upload limit="5" :headers="headers" fileName="uploaded_file" action="/upload/attachImg" />
+        <vs-upload limit="1" :headers="headersMain" fileName="uploaded_file" action="/upload/attachImg" />
+        <vs-upload limit="10" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg" />
       </div>
     </div>
   </div>

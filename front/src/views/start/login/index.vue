@@ -11,8 +11,6 @@
     password: ""
   })
 
-
-
   function login () {
     var xhr = new XMLHttpRequest()
     const hashed = {

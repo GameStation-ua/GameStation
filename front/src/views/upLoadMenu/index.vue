@@ -11,7 +11,7 @@ export default {
         description: "",
         tags: [],
         wiki: "",
-        imgsInCarousel: ""
+        imgsInCarousel: 0
       }
     }
   },
@@ -41,7 +41,7 @@ export default {
         const id = JSON.parse(xhr.response)
         console.log(id)
         localStorage.setItem("id",id)
-        router.push('/upLoadMenuImages/${id}')
+        router.push('/upLoadMenuImages/' + id.toString())
 
       }
     }
@@ -60,7 +60,6 @@ export default {
       <div class="centerxmenu">
         <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
         <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
-        <vs-input label="Number of Images" placeholder="number" type="number" v-model="gamedata.imgsInCarousel"/>
         <div class="tags">
           <div>
             <label>Tags</label>
@@ -79,7 +78,7 @@ export default {
           </vs-popup>
         </div>
         <label id="description">Description</label>
-        <vs-textarea v-model="gamedata.description" width="70%" height="300px"/>
+        <vs-textarea  counter="1024" v-model="gamedata.description" width="70%" height="300px"/>
         <div class="next">
           <vs-button @click="createGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
         </div>
