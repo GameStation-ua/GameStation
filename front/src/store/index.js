@@ -6,7 +6,6 @@ export default createStore({
     mesage:'',
     tokenUser:'',
     search:'',
-    isAdmin:''
 
   }
 })

@@ -17,7 +17,7 @@ const routes = [
     component: Admin
   },
   {
-    path: '/gamePage',
+    path: '/gamePage/:id',
     name: 'gamePage',
     component: GamePage
   },

@@ -84,7 +84,6 @@ export default {
     gameData(id){
       console.log(this.gameRequests)
       console.log(id)
-
       this.gameRequests.map((game)=>{
         if (game.id === id){
           this.selectedGame = game

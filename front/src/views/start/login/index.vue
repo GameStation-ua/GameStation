@@ -28,6 +28,14 @@
       console.log(token.message)
       Store.state.mesage = "send to home"
       localStorage.setItem("token",token.message)
+      const res = new XMLHttpRequest()
+      res.open("GET", '/isAdmin', false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      const is = JSON.parse(res.response).message
+      console.log(is)
+      localStorage.setItem("isAdmin", is)
     }
   }
 

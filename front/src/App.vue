@@ -3,6 +3,7 @@
   import {ref} from 'vue'
 
   let active = ref(false)
+  let isAdmin = ref(localStorage.getItem("isAdmin").toString())
 
 
 
@@ -21,25 +22,11 @@
     router.push(rout)
   }
 
-  function isAdmin(){
-    const res = new XMLHttpRequest()
-    res.open("GET", '/isAdmin', false)
-    res.setRequestHeader("Content-Type", "application/json")
-    res.setRequestHeader("token", localStorage.getItem("token"))
-    res.send(null)
-    const is = JSON.parse(res.response).message
-    console.log(is)
-    Store.state.isAdmin = is
-    console.log(Store.state.isAdmin)
-
-  }
-
 
 </script>
 <template lang="html">
   <Start v-if="!$store.state.mesage"></Start>
   <template v-else>
-    {{isAdmin()}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
     <vs-navbar v-model="activeItem" class="nabarx">
@@ -103,7 +90,7 @@
         <vs-sidebar-item index="5" >
           Card
         </vs-sidebar-item>
-        <div v-if="Store.state.isAdmin === 'true'">
+        <div v-if="isAdmin === 'true'">
           <vs-divider  icon="code" position="left">
             User
           </vs-divider>
