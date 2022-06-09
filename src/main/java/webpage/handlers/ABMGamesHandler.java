@@ -1,7 +1,6 @@
 package webpage.handlers;
 
 import org.apache.commons.io.FileUtils;
-import webpage.entity.Games;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
@@ -28,6 +27,7 @@ import static webpage.entity.Tags.createTagResponseList;
 import static webpage.entity.Users.*;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.Parser.toJson;
+import static webpage.util.ServerInitializer.ImagesPath;
 
 public class ABMGamesHandler extends AbstractHandler{
 
@@ -49,7 +49,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try {
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get("src/main/resources/public/game_requests/" + gameRequest1.getId()));
+                        Files.createDirectories(Paths.get(ImagesPath + "/game_requests/" + gameRequest1.getId()));
                         res.status(200);
                         return "" + gameRequest1.getId();
                     } catch (Exception e) {
@@ -72,7 +72,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try{
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get("src/main/resources/public/game_requests/" + gameRequest1.getId()));
+                        Files.createDirectories(Paths.get(ImagesPath + "/game_requests/" + gameRequest1.getId()));
                         res.status(200);
                         return  "" + gameRequest1.getId();
                     }catch (Exception e){
@@ -96,7 +96,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                     try {
                         Game game = createGameFromRequest(gameRequest.get());
-                        FileUtils.moveDirectory( new File("src/main/resources/public/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File("src/main/resources/public/games/" + game.getId()).getAbsoluteFile());
+                        FileUtils.moveDirectory( new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + game.getId()).getAbsoluteFile());
                     }catch (Exception e){
                         return returnMessage(res, 500, "Something went wrong");
                     }

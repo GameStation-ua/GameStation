@@ -33,7 +33,7 @@ function register () {
   if ( mesage === 'User created!'){
     notify({
       type: "success",
-      title: "Register success",
+      title: "Register success! please Log In",
     });
     emit('changeTab', 'login')
   }

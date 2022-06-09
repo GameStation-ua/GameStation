@@ -5,9 +5,22 @@ import webpage.handlers.NotificationHandler;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static spark.Spark.*;
 
 public class ServerInitializer {
+
+    public final static String ImagesPath = System.getenv("SystemDrive") + "/ImagesGameStation";
+
+    public static void createPaths() throws IOException {
+        Files.createDirectories(Paths.get(ImagesPath + "/game_requests"));
+        Files.createDirectories(Paths.get(ImagesPath + "/game_updates"));
+        Files.createDirectories(Paths.get(ImagesPath + "/games"));
+        Files.createDirectories(Paths.get(ImagesPath + "/profile_pictures"));
+    }
 
     public static void initializeHandlers(){
         webSocket("/notifications", NotificationHandler.class);

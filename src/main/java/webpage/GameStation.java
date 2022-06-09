@@ -5,17 +5,19 @@ import webpage.util.Handler;
 import webpage.util.HandlerProvider;
 import webpage.util.HandlerProviderImpl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static spark.Spark.*;
-import static webpage.util.ServerInitializer.enableCORS;
-import static webpage.util.ServerInitializer.generateEMF;
+import static webpage.util.ServerInitializer.*;
 
 public class GameStation {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         generateEMF();
         //        staticFiles.location("/public");
-        String projectDir = System.getProperty("user.dir");
-        staticFiles.externalLocation(projectDir + "/src/main/resources/public");
+        createPaths();
         // use location on real server
         webSocket("/notifications", NotificationHandler.class);
         port(8443);
