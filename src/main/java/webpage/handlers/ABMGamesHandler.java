@@ -156,8 +156,10 @@ public class ABMGamesHandler extends AbstractHandler{
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
                 Optional<Game> game = findGameByIdJFFollowers(gameId);
+                if(game.isEmpty()) game = findGameById(gameId);
+
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
-                if (game.isEmpty() || userGames.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                if (userGames.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
                 float meanScore = getMeanScore(userGames.get());
                 Optional<User> creator = findUserById(game.get().getCreatorId());
@@ -166,7 +168,12 @@ public class ABMGamesHandler extends AbstractHandler{
                 UserResponse userResponse = new UserResponse(creator.get());
                 List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
 
-                HardGameForResponse gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
+                HardGameForResponse gameForResponse;
+                try {
+                    gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
+                }catch (Exception e){
+                    gameForResponse = new HardGameForResponse(gameId, meanScore, 0, game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
+                }
                 res.status(200);
                 return toJson(gameForResponse);
             });

@@ -45,7 +45,6 @@ public class ServerInitializer {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Request-Method", "*");
             response.header("Access-Control-Allow-Headers", "*");
-            response.type("application/json");
         });
     }
 }

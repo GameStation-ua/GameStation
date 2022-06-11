@@ -89,7 +89,7 @@ public class Games {
     public static Optional<Game> findGameByIdJFFollowers(Long id){
         EntityManager em = currentEntityManager();
         try {
-            return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.followers WHERE g.id = ?1 ")
+            return Optional.of((Game) em.createQuery("SELECT distinct g FROM Game g join fetch g.followers WHERE g.id = ?1")
                     .setParameter(1, id)
                     .getSingleResult());
         }catch (Exception e){

@@ -23,8 +23,8 @@ public class HandlerProviderImpl implements HandlerProvider {
         handlers.put(searchHandler.getType(), searchHandler);
         final TagsHandler tagsHandler = new TagsHandler();
         handlers.put(tagsHandler.getType(), tagsHandler);
-        final UploadHandler uploadHandler = new UploadHandler();
-        handlers.put(uploadHandler.getType(), uploadHandler);
+        final ImageHandler imageHandler = new ImageHandler();
+        handlers.put(imageHandler.getType(), imageHandler);
         final GameListHandler gameListHandler = new GameListHandler();
         handlers.put(gameListHandler.getType(), gameListHandler);
         final ABMGamesHandler abmGamesHandler = new ABMGamesHandler();
