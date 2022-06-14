@@ -16,9 +16,7 @@ public class GameStation {
 
     public static void main(String[] args) throws IOException {
         generateEMF();
-        //        staticFiles.location("/public");
         createPaths();
-        // use location on real server
         webSocket("/notifications", NotificationHandler.class);
         port(8443);
         enableCORS();

@@ -15,7 +15,7 @@ public class LogInHandler extends AbstractHandler{
 
     public void handle() {
         path("/login", () -> {
-            get("", (req, res) -> {
+            get("","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 return returnMessage(res, 200, "Send to home");

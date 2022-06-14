@@ -38,7 +38,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
             path("/solicitude", () -> {
 
-                post("/create", (req, res) -> {
+                post("/create","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
@@ -57,7 +57,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                 });
 
-                post("/edit/:gameId", (req, res) -> {
+                post("/edit/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -80,7 +80,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                 });
 
-                post("/approval", (req, res) -> {
+                post("/approval","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -104,7 +104,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 });
             });
 
-            get("/createdgames", (req, res) ->{
+            get("/createdgames","application/json", (req, res) ->{
                 String token = req.headers("token");
 
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
@@ -117,7 +117,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 return toJson(softGameResponseList);
             });
 
-            post("/gameupdate/add", (req, res) -> {
+            post("/gameupdate/add","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -136,7 +136,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 }
             });
 
-            get("/gamerequests", (req, res) -> {
+            get("/gamerequests","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -150,7 +150,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 return toJson(gameRequestResponse);
             });
 
-            get("/info/:gameId", (req, res) -> {
+            get("/info/:gameId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long gameId = Long.valueOf(req.params(":gameId"));
@@ -178,7 +178,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 return toJson(gameForResponse);
             });
 
-            get("/gameUpdate/*/*", (req, res) -> {
+            get("/gameUpdate/*/*","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 String[] request = req.splat();

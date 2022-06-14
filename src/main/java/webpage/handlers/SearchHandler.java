@@ -18,7 +18,7 @@ public class SearchHandler extends AbstractHandler{
 
     public void handle(){
         path("/search", () -> {
-           get("/:searchString", (req, res) -> {
+           get("/:searchString","application/json", (req, res) -> {
                String searchString = req.params(":searchString");
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
