@@ -81,23 +81,20 @@
             <vs-button color="success" icon="more_horiz" type="flat"></vs-button>
           </h4>
         </div>
-        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/')">
+        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/profile')">
           Home
-        </vs-sidebar-item>
-        <vs-sidebar-item index="2" icon="gavel" >
-          History
         </vs-sidebar-item>
         <vs-divider icon="person" position="left">
           User
         </vs-divider>
-        <vs-sidebar-item index="3" icon="verified_user">
-          Configurations
-        </vs-sidebar-item>
-        <vs-sidebar-item index="4" icon="account_box">
+        <vs-sidebar-item index="2" icon="account_box">
           Profile
         </vs-sidebar-item>
-        <vs-sidebar-item index="5" >
-          Card
+        <vs-sidebar-item index="3" icon="list">
+          My List
+        </vs-sidebar-item>
+        <vs-sidebar-item index="4" icon="games">
+          My Games
         </vs-sidebar-item>
         <div v-if="isAdmin === 'true'">
           <vs-divider  icon="code" position="left">
