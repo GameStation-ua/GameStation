@@ -67,6 +67,9 @@ public class ImageHandler extends AbstractHandler{
                 baos.flush();
                 rawImage = baos.toByteArray();
             }
+            catch (Exception e){
+                System.out.println("lol");
+            }
             Base64.Encoder encoder = Base64.getEncoder();
 
             return encoder.encode(rawImage);

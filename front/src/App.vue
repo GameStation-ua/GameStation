@@ -6,10 +6,8 @@
   let isAdmin = ref(localStorage.getItem("isAdmin").toString())
 
 
-
   import Store from './store'
   import router from "@/router";
-
 
   function logout(){
     setTimeout(()=>{
@@ -18,7 +16,18 @@
     },1000);
   }
 
+  function search(){
+    localStorage.setItem("search", Store.state.search)
+    if (localStorage.getItem("inSearch") === "true"){
+      location.reload()
+    }else{
+      localStorage.setItem("inSearch", "true")
+      router.push("/search/" + Store.state.search.toString())
+    }
+  }
+
   function page(rout){
+    localStorage.setItem("inSearch", "false")
     router.push(rout)
   }
 
@@ -33,7 +42,7 @@
         <vs-button radius @click="active=!active" color="dark" type="flat" icon="menu" id="one"></vs-button>
         <img class="logo" alt="GS logo" src="@/assets/navIcon.png" @click="page('/')">
       <div class="rightx">
-        <vs-input icon="search"  placeholder="Search" v-model="$store.state.search" color="success"/>
+        <vs-input icon="search"  placeholder="Search" v-model="$store.state.search" v-on:keyup.enter="search" color="success"/>
         <div class="dropdown">
           <vs-dropdown vs-trigger-click="true">
             <vs-button radius color="dark" type="flat" icon="notifications" id="two"></vs-button>

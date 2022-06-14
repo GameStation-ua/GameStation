@@ -29,12 +29,27 @@ export default {
       this.gamesRecomended = JSON.parse(res.response)
       console.log(this.gamesRecomended.gamesTag1)
     },
-    imgsInCarousel(id){
-      return  require("../../../../src/main/resources/public/games/" + id.toString() + "/main.png")
+    gamepage(game){
+      localStorage.setItem("id", game.id)
+      this.page('/gamePage/' + game.id.toString())
+    },
+    getImg(id){
+      const res = new XMLHttpRequest()
+      res.open("GET", "/image", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      return res.response
+    },
+    img(id){
+       return require("../../../../src/main/resources/public/games/" + id.toString() + "/main.png")
     }
   },
   beforeMount() {
     this.recomendedGames()
+    localStorage.setItem("inSearch", "false")
   }
 }
 
@@ -54,11 +69,11 @@ export default {
       </template>
     </carousel>
     <div style="margin-bottom: 50px">
-      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[0]}}</h1>
-      <Carousel :items-to-show="3.3" wrapAround="false" :mouseDrag="false">
+      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[0].toUpperCase()}}</h1>
+      <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide + 1" style="border-radius: 8px">
-          <div @click="page('/gamePage/' + game.id.toString())" class="carousel__item1">
-            <img :src="imgsInCarousel(game.id)" style="width: 100%; height: fit-content">
+          <div @click="gamepage(game)" class="carousel__item1">
+            <img :src="'data:image.png;base64,' + getImg(game.id).toString()" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -71,11 +86,11 @@ export default {
       </Carousel>
     </div>
     <div style="margin-bottom: 50px">
-      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[1]}}</h1>
-      <Carousel :items-to-show="3.3" wrapAround="false" :mouseDrag="false">
+      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[1].toUpperCase()}}</h1>
+      <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag2" :key="slide + 1" style="border-radius: 8px">
-          <div @click="page('/gamePage/' + game.id.toString())" class="carousel__item1">
-            <img :src="imgsInCarousel(game.id)" style="width: 100%; height: fit-content">
+          <div @click="gamepage(game)" class="carousel__item1">
+            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -88,11 +103,11 @@ export default {
       </Carousel>
     </div>
     <div style="margin-bottom: 50px">
-      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[2]}}</h1>
-      <Carousel :items-to-show="3.3" wrapAround="false" :mouseDrag="false">
+      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[2].toUpperCase()}}</h1>
+      <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag3" :key="slide + 1" style="border-radius: 8px">
-          <div @click="page('/gamePage/' + game.id.toString())" class="carousel__item1">
-            <img :src="imgsInCarousel(game.id)" style="width: 100%; height: fit-content">
+          <div @click="gamepage(game)" class="carousel__item1" >
+            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -105,11 +120,11 @@ export default {
       </Carousel>
     </div>
     <div style="margin-bottom: 50px">
-      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[3]}}</h1>
-      <Carousel :items-to-show="3.3" wrapAround="false" :mouseDrag="false">
+      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[3].toUpperCase()}}</h1>
+      <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag4" :key="slide + 1" style="border-radius: 8px">
-          <div @click="page('/gamePage/' + game.id.toString())" class="carousel__item1">
-            <img :src="imgsInCarousel(game.id)" style="width: 100%; height: fit-content">
+          <div @click="gamepage(game)" class="carousel__item1" >
+            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -122,11 +137,11 @@ export default {
       </Carousel>
     </div>
     <div style="margin-bottom: 50px">
-      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[4]}}</h1>
-      <Carousel :items-to-show="3.3" wrapAround="false" :mouseDrag="false">
+      <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[4].toUpperCase()}}</h1>
+      <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag5" :key="slide + 1" style="border-radius: 8px">
-          <div @click="page('/gamePage/' + game.id.toString())" class="carousel__item1">
-            <img :src="imgsInCarousel(game.id)" style="width: 100%; height: fit-content">
+          <div @click="gamepage(game)" class="carousel__item1" alt="logo">
+            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
