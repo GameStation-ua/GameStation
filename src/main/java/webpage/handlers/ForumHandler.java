@@ -22,7 +22,7 @@ public class ForumHandler extends AbstractHandler{
     @Override
     public void handle() {
         path("/forum", () -> {
-            get("/thread/:threadId", (req, res) -> {
+            get("/thread/:threadId","application/json", (req, res) -> {
                     String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -37,7 +37,7 @@ public class ForumHandler extends AbstractHandler{
 
             });
 
-            post("/thread/create", (req, res) -> {
+            post("/thread/create","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -52,7 +52,7 @@ public class ForumHandler extends AbstractHandler{
                     }
             });
 
-            get("/threadPage/*/*", (req, res) -> {
+            get("/threadPage/*/*","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 String[] request = req.splat();

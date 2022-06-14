@@ -24,7 +24,7 @@ public class GameListHandler extends AbstractHandler{
     @Override
     public void handle() {
         path("/gamelist", () -> {
-            get("/:userId", (req, res) -> {
+            get("/:userId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -40,7 +40,7 @@ public class GameListHandler extends AbstractHandler{
                 return toJson(gameListItems);
             });
 
-            patch("/add", (req, res) -> {
+            patch("/add","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -57,7 +57,7 @@ public class GameListHandler extends AbstractHandler{
                 }
             });
 
-            patch("/delete", (req, res) -> {
+            patch("/delete","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -74,7 +74,7 @@ public class GameListHandler extends AbstractHandler{
                 }
             });
 
-            patch("/edit", (req, res) -> {
+            patch("/edit","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);

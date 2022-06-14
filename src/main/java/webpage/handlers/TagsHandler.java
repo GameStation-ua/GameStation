@@ -29,7 +29,7 @@ public class TagsHandler extends AbstractHandler {
     public void handle() {
         path("/tags", () -> {
             path("/available_tags", () -> {
-                get("", (req, res) -> {
+                get("","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Optional<List<Tag>> availableTags = findAvailableTags();
@@ -77,7 +77,7 @@ public class TagsHandler extends AbstractHandler {
             });
 
             path("/users", () -> {
-                get("", (req, res) -> {
+                get("","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
@@ -138,7 +138,7 @@ public class TagsHandler extends AbstractHandler {
             });
 
             path("/games", () -> {
-                patch("/add/:gameId", (req, res) -> {
+                patch("/add/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
@@ -165,7 +165,7 @@ public class TagsHandler extends AbstractHandler {
                     }
                 });
 
-                delete("/delete/:gameId", (req, res) -> {
+                delete("/delete/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
                     if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
@@ -192,7 +192,7 @@ public class TagsHandler extends AbstractHandler {
                 });
             });
 
-            get("/search/:searchTag", (req, res) -> {
+            get("/search/:searchTag","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 String searchTag = req.params(":searchTag");
