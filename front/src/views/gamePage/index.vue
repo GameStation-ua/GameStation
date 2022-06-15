@@ -5,11 +5,11 @@ export default {
   name: "index.vue",
   data(){
     return {
-      img: require("../../../../src/main/resources/public/games/" + localStorage.getItem("id").toString() + "/main.png"),
-      imgSelect: require("../../../../src/main/resources/public/games/" + localStorage.getItem("id").toString() + "/main.png"),
+      img: "",
+      imgSelect: "",
       infoUrl: "/game/info/" + localStorage.getItem("id"),
       gameInfo: {},
-      imgs:[require("../../../../src/main/resources/public/games/" + localStorage.getItem("id").toString() + "/main.png")]
+      imgs:[]
     }
   },
   components: {
@@ -19,6 +19,7 @@ export default {
   },
   methods:{
     getGameInfo(){
+      this.getImg()
       const res = new XMLHttpRequest()
       res.open("GET", this.infoUrl, false)
       res.setRequestHeader("Content-Type", "application/json")
@@ -29,13 +30,32 @@ export default {
       console.log(this.gamesInfo)
       console.log(this.gameInfo.gameId)
       for (let i = 0; i < this.gameInfo.imgsInCarousel; i++) {
-        this.imgs.push(require("../../../../src/main/resources/public/games/" + localStorage.getItem("id").toString() + "/carousel=" + (i+1).toString() + ".png"))
+        const xhr = new XMLHttpRequest()
+        xhr.open("GET", "/image", false)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/carousel=" + (i+1).toString() + ".png")
+        xhr.setRequestHeader("token", localStorage.getItem("token"))
+        xhr.send(null)
+        console.log(xhr.response)
+        this.imgs.push('data:image.png;base64,' + xhr.response)
       }
       console.log(this.imgs)
     },
     mainImg(selected){
         this.imgSelect=selected
     },
+    getImg(){
+      const res = new XMLHttpRequest()
+      res.open("GET", "/image", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/main.png")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.img = 'data:image.png;base64,' + res.response
+      this.imgSelect = 'data:image.png;base64,' + res.response
+      this.imgs.push('data:image.png;base64,' + res.response)
+    }
   },
   beforeMount() {
     this.getGameInfo()
@@ -59,10 +79,19 @@ export default {
               <Navigation />
             </template>
           </Carousel>
-          <h2>Description</h2>
+          <h2 style="text-align: left; color: white">Description</h2>
           <p>
             {{gameInfo.description}}
           </p>
+          <vs-divider style="background: white"/>
+          <h2 style="text-align: left; color: white">Publisher</h2>
+          <div class="publisher">
+            <vs-avatar size="large" src=""/>
+            <div style="display: block; position: relative; left: 10px">
+              <h1 style="position: relative; top: 5px">{{ gameInfo.creators.nickname }}</h1>
+            </div>
+            <vs-button color="danger" type="border" icon="favorite" style="position: absolute; right: 10px; top: 10px;"></vs-button>
+          </div>
         </div>
         <div class="right">
           <div class="rightContent" style="position: sticky !important;">
@@ -185,6 +214,17 @@ p{
 
 a{
   margin-right: 10px;
+}
+
+.publisher{
+  background: rgba(0, 0, 0, 0.8);
+  color: #000000;
+  position: relative;
+  left: 10px;
+  display: flex;
+  height: 60px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 </style>

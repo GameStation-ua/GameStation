@@ -1,13 +1,12 @@
 <script>
 import 'vue3-carousel/dist/carousel.css';
-import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
+import { Carousel, Slide, Navigation } from 'vue3-carousel';
 import router from "@/router";
 export default {
   name: "index",
   components: {
     Carousel,
     Slide,
-    Pagination,
     Navigation,
   },
   data(){
@@ -43,9 +42,6 @@ export default {
       console.log(res.responseText)
       return res.response
     },
-    img(id){
-       return require("../../../../src/main/resources/public/games/" + id.toString() + "/main.png")
-    }
   },
   beforeMount() {
     this.recomendedGames()
@@ -58,16 +54,6 @@ export default {
 
 <template>
   <div class="scroller">
-    <carousel :items-to-show="1" wrapAround="true">
-      <slide v-for="slide in 10" :key="slide">
-        <div class="carousel__item">{{ slide }}</div>
-      </slide>
-
-      <template #addons>
-        <navigation />
-        <pagination />
-      </template>
-    </carousel>
     <div style="margin-bottom: 50px">
       <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[0].toUpperCase()}}</h1>
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
