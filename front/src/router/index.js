@@ -4,6 +4,8 @@ import Admin from "@/views/adminMenu/index";
 import GamePage from "@/views/gamePage/index";
 import UpLoadMenu from "@/views/upLoadMenu/index";
 import UpLoadMenuImages from "@/views/upLoadMenu/images/images"
+import Search from "@/views/search/index"
+import Profile from "@/views/profile/index"
 
 const routes = [
   {
@@ -31,6 +33,16 @@ const routes = [
     name: 'upLoadMenuImages',
     component: UpLoadMenuImages
   },
+  {
+    path:'/search/:id',
+    name: 'search',
+    component: Search
+  },
+  {
+    path:'/profile',
+    name: 'profile',
+    component: Profile
+  }
 
 
 

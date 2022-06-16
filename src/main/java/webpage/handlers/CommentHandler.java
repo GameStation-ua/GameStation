@@ -30,7 +30,7 @@ public class CommentHandler extends AbstractHandler{
     @Override
     public void handle() {
         path("/comment", () -> {
-            post("/game/:gameId", (req, res) -> {
+            post("/game/:gameId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
@@ -58,7 +58,7 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
 
-            post("/thread/:threadId", (req, res) -> {
+            post("/thread/:threadId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 CommentRequest commentRequest = fromJson(req.body(), CommentRequest.class);
@@ -96,7 +96,7 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
 
-            post("/user/:targetUserId", (req, res) -> {
+            post("/user/:targetUserId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
@@ -125,7 +125,7 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
 
-            get("/commentPage/*/*", (req, res) ->{
+            get("/commentPage/*/*","application/json", (req, res) ->{
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -139,7 +139,7 @@ public class CommentHandler extends AbstractHandler{
                 return toJson(new CommentListResponse(commentResponseList));
             });
 
-            post("/upvote/:commentId", (req, res) -> {
+            post("/upvote/:commentId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -156,7 +156,7 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
 
-            post("/downvote/:commentId", (req, res) -> {
+            post("/downvote/:commentId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
@@ -173,7 +173,7 @@ public class CommentHandler extends AbstractHandler{
                 }
             });
 
-            post("/neutralvote/:commentId", (req, res) -> {
+            post("/neutralvote/:commentId","application/json", (req, res) -> {
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);

@@ -23,7 +23,7 @@ public class FollowHandler extends AbstractHandler{
     @Override
     public void handle() {
         path("/follow", () -> {
-           patch("/add/:actorId", (req, res) -> {
+           patch("/add/:actorId","application/json", (req, res) -> {
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                FollowRequest followRequest = fromJson(req.body(), FollowRequest.class);
@@ -43,7 +43,7 @@ public class FollowHandler extends AbstractHandler{
                }
            });
 
-           patch("/delete/:actorId", (req, res) -> {
+           patch("/delete/:actorId", "application/json", (req, res) -> {
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
                Claims claims = Jwts.parser()

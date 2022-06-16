@@ -25,7 +25,7 @@ import static webpage.util.ServerInitializer.ImagesPath;
 public class ImageHandler extends AbstractHandler{
 
     public void handle(){
-        path("/upload", () -> post("/attachImg", (req, res) -> {
+        path("/upload", () -> post("/attachImg","application/json", (req, res) -> {
             String token = req.headers("token");
             if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
             ImgType imgType = fromJson(req.headers("imgType"), ImgType.class);

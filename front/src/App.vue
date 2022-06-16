@@ -6,10 +6,8 @@
   let isAdmin = ref(localStorage.getItem("isAdmin").toString())
 
 
-
   import Store from './store'
   import router from "@/router";
-
 
   function logout(){
     setTimeout(()=>{
@@ -18,7 +16,18 @@
     },1000);
   }
 
+  function search(){
+    localStorage.setItem("search", Store.state.search)
+    if (localStorage.getItem("inSearch") === "true"){
+      location.reload()
+    }else{
+      localStorage.setItem("inSearch", "true")
+      router.push("/search/" + Store.state.search.toString())
+    }
+  }
+
   function page(rout){
+    localStorage.setItem("inSearch", "false")
     router.push(rout)
   }
 
@@ -33,7 +42,7 @@
         <vs-button radius @click="active=!active" color="dark" type="flat" icon="menu" id="one"></vs-button>
         <img class="logo" alt="GS logo" src="@/assets/navIcon.png" @click="page('/')">
       <div class="rightx">
-        <vs-input icon="search"  placeholder="Search" v-model="$store.state.search" color="success"/>
+        <vs-input icon="search"  placeholder="Search" v-model="$store.state.search" v-on:keyup.enter="search" color="success"/>
         <div class="dropdown">
           <vs-dropdown vs-trigger-click="true">
             <vs-button radius color="dark" type="flat" icon="notifications" id="two"></vs-button>
@@ -72,23 +81,20 @@
             <vs-button color="success" icon="more_horiz" type="flat"></vs-button>
           </h4>
         </div>
-        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/')">
+        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/profile')">
           Home
-        </vs-sidebar-item>
-        <vs-sidebar-item index="2" icon="gavel" >
-          History
         </vs-sidebar-item>
         <vs-divider icon="person" position="left">
           User
         </vs-divider>
-        <vs-sidebar-item index="3" icon="verified_user">
-          Configurations
-        </vs-sidebar-item>
-        <vs-sidebar-item index="4" icon="account_box">
+        <vs-sidebar-item index="2" icon="account_box">
           Profile
         </vs-sidebar-item>
-        <vs-sidebar-item index="5" >
-          Card
+        <vs-sidebar-item index="3" icon="list">
+          My List
+        </vs-sidebar-item>
+        <vs-sidebar-item index="4" icon="games">
+          My Games
         </vs-sidebar-item>
         <div v-if="isAdmin === 'true'">
           <vs-divider  icon="code" position="left">

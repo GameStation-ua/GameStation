@@ -28,7 +28,6 @@ public class RegisterHandler extends AbstractHandler {
                 if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
                     return returnMessage(res, 200, "You need to meet password requirements");
                 } else {
-                    res.type("application/json");
                     registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
                     User user1 = new User(registerRequest.getNickname(),
                             registerRequest.getUsername(),

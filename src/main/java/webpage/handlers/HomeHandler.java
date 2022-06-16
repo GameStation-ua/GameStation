@@ -29,7 +29,7 @@ public class HomeHandler extends AbstractHandler{
 
     public void handle(){
 
-        get("/home", (req, res) -> {
+        get("/home","application/json", (req, res) -> {
             String token = req.headers("token");
             if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
             Long userId = getIdByToken(token);
@@ -63,7 +63,7 @@ public class HomeHandler extends AbstractHandler{
             return  toJson(homeResponse);
         });
 
-        get("/isAdmin", (req, res) -> {
+        get("/isAdmin","application/json", (req, res) -> {
             String token = req.headers("token");
             if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
             Claims claims = Jwts.parser()

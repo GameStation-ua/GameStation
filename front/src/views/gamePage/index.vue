@@ -1,13 +1,64 @@
 <script>
 import { Carousel, Slide, Navigation } from 'vue3-carousel';
+
 export default {
   name: "index.vue",
+  data(){
+    return {
+      img: "",
+      imgSelect: "",
+      infoUrl: "/game/info/" + localStorage.getItem("id"),
+      gameInfo: {},
+      imgs:[]
+    }
+  },
   components: {
     Carousel,
     Slide,
     Navigation,
-  },methods:{
-
+  },
+  methods:{
+    getGameInfo(){
+      this.getImg()
+      const res = new XMLHttpRequest()
+      res.open("GET", this.infoUrl, false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.gameInfo = JSON.parse(res.response)
+      console.log(this.gamesInfo)
+      console.log(this.gameInfo.gameId)
+      for (let i = 0; i < this.gameInfo.imgsInCarousel; i++) {
+        const xhr = new XMLHttpRequest()
+        xhr.open("GET", "/image", false)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/carousel=" + (i+1).toString() + ".png")
+        xhr.setRequestHeader("token", localStorage.getItem("token"))
+        xhr.send(null)
+        console.log(xhr.response)
+        this.imgs.push('data:image.png;base64,' + xhr.response)
+      }
+      console.log(this.imgs)
+    },
+    mainImg(selected){
+        this.imgSelect=selected
+    },
+    getImg(){
+      const res = new XMLHttpRequest()
+      res.open("GET", "/image", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/main.png")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.img = 'data:image.png;base64,' + res.response
+      this.imgSelect = 'data:image.png;base64,' + res.response
+      this.imgs.push('data:image.png;base64,' + res.response)
+    }
+  },
+  beforeMount() {
+    this.getGameInfo()
   }
 }
 </script>
@@ -18,49 +69,52 @@ export default {
       <div class="gameInfo">
         <div class="images">
           <div class="image">
-            <img id="main" src="https://areajugones.sport.es/wp-content/uploads/2016/10/persona-5-portada.jpg">
+            <img id="main" :src="imgSelect">
           </div>
-          <Carousel :items-to-show="4" wrapAround="true">
-            <Slide v-for="slide in 10" :key="slide">
-              <div class="carousel__images">
-              </div>
+          <Carousel :items-to-show="3" wrapAround="true" :mouseDrag="false" snapAlign="left">
+            <Slide v-for="slide in imgs" :key="slide">
+              <img :src="slide" style="width: 100%; cursor: pointer" @click="mainImg(slide)">
             </Slide>
             <template #addons>
               <Navigation />
             </template>
           </Carousel>
-          <h2>Description</h2>
+          <h2 style="text-align: left; color: white">Description</h2>
           <p>
-            Persona 5 is a fantasy based on reality which follows a group of troubled high school students: the protagonist and a collection of compatriots he meets along the way. These disturbed and troubled teenagers gradually realize that they are living in a toxic and dangerous world resembling a prison full of slavery, oppression and injustice, ruled by corrupted and twisted adults. They can't live with the system and can't live without it, and simply existing means they are at risk of being doomed and condemned to a life of slavery.
-
-            In order to seek freedom, liberation and justice, they live dual lives as rebellious Phantom Thieves of Hearts. Using a mysterious smartphone app, they undertake fantastical adventures by using otherworldly powers to enter the hearts of people (specifically, corrupt adults in positions of power) in order to re-shape and transform them. The Phantom Thieves realize that society forces people to wear masks to protect their inner vulnerabilities, and by confronting their inner selves and by literally ripping off their protective mask do the heroes awaken their inner power, using it to help those in need. Ultimately, the group of Phantom Thieves seeks to change their day-to-day world to match their perception, end slavery and see through the masks modern society wears.
-
-            An enhanced version, titled Persona 5 Royal, was released on PlayStation 4 on October 31st, 2019 in Japan and worldwide on March 31, 2020. It includes many new features, including new characters, battle mechanics and a third semester added to the story. This might not necessarily entirely replace the original game (particularly for PlayStation 3 players), however, as Persona enthusiasts may still enjoy this game's slightly higher difficulty, as well as prefer the original enemy and boss behaviors.
+            {{gameInfo.description}}
           </p>
+          <vs-divider style="background: white"/>
+          <h2 style="text-align: left; color: white">Publisher</h2>
+          <div class="publisher">
+            <vs-avatar size="large" src=""/>
+            <div style="display: block; position: relative; left: 10px">
+              <h1 style="position: relative; top: 5px">{{ gameInfo.creators.nickname }}</h1>
+            </div>
+            <vs-button color="danger" type="border" icon="favorite" style="position: absolute; right: 10px; top: 10px;"></vs-button>
+          </div>
         </div>
         <div class="right">
           <div class="rightContent" style="position: sticky !important;">
-            <img id="rightimg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Persona_5_logo.svg/640px-Persona_5_logo.svg.png">
+            <img id="rightimg" :src="img">
             <vs-button color="success" type="border">Add to list</vs-button>
             <vs-button color="danger" type="border">Follow game</vs-button>
             <div class="otherButtons">
               <vs-button color="primary" type="border">Forum</vs-button>
-              <vs-button color="warning" type="border" target href="https://megamitensei.fandom.com/wiki/Persona_5">Wiki</vs-button>
+              <vs-button color="warning" type="border" target :href="gameInfo.wiki">Wiki</vs-button>
             </div>
             <div style="display: flex; margin-top: 10px">
               <label style="margin-left: 10%">Tags</label>
             </div>
             <div style="display: flex; margin-left: 10%">
-              <a href="">rpg</a>
-              <a href="">rpg</a>
+              <a v-for="(tag, index) in gameInfo.tags" :key="index" href="">{{tag}}</a>
             </div>
             <vs-divider style="background: white; width: 80%; left: 10%"/>
             <div style="display: flex">
-              <label style="margin-left: 10%">Average</label>
+              <label style="margin-left: 10%; margin-top: -5px">Average</label>
             </div>
-            <div style="width: 80%; margin-left: 10%">
-              <label style="margin-top: -10px; margin-bottom: -40px; margin-left: 20%">60%</label>
-              <vs-progress :percent="60" color="success">success</vs-progress>
+            <div style="width: 80%; margin-left: 10%; display: flex">
+              <vs-progress :percent="gameInfo.meanScore" color="success" style="right: 0; width: 92%; margin-right: 5px">success</vs-progress>
+              <label style="margin-top: -10px; margin-bottom: -40px">{{ gameInfo.meanScore }}%</label>
             </div>
           </div>
         </div>
@@ -160,6 +214,17 @@ p{
 
 a{
   margin-right: 10px;
+}
+
+.publisher{
+  background: rgba(0, 0, 0, 0.8);
+  color: #000000;
+  position: relative;
+  left: 10px;
+  display: flex;
+  height: 60px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 </style>
