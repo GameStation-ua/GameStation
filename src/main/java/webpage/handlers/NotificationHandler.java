@@ -25,7 +25,7 @@ import static webpage.util.SecretKey.key;
 @WebSocket
 public class NotificationHandler {
 
-    private static final BiMap<Long, Session> sessionMap =  Maps.synchronizedBiMap(HashBiMap.create());
+    private static final BiMap<Long, Session> sessionMap = Maps.synchronizedBiMap(HashBiMap.create());
 
     @OnWebSocketConnect
     public void onConnect(Session user){
@@ -70,7 +70,6 @@ public class NotificationHandler {
             return;
         }
         prepareNotificationResponse(notificationResponse, userOptional.get());
-
 
         String s = toJson(notificationResponse);
         user.getRemote().sendString(s);
