@@ -15,8 +15,9 @@ import java.util.Optional;
 
 import static spark.Spark.*;
 import static webpage.entity.Games.*;
+import static webpage.entity.Images.findImg;
 import static webpage.entity.Persister.merge;
-import static webpage.entity.Uploads.upload;
+import static webpage.entity.Images.upload;
 import static webpage.entity.Users.getIdByToken;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.ServerInitializer.ImagesPath;
@@ -58,18 +59,12 @@ public class ImageHandler extends AbstractHandler{
             String token = req.headers("token");
             if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
-            BufferedImage bi = ImageIO.read(new File(ImagesPath + req.headers("path")));
-
-            byte[] rawImage = null;
-            try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                ImageIO.write( bi, "png", baos );
-
-                baos.flush();
-                rawImage = baos.toByteArray();
+            try {
+                res.status(200);
+                return findImg(req.headers("path"));
+            }catch (Exception e){
+                return returnMessage(res, 500, "Something went wrong");
             }
-            Base64.Encoder encoder = Base64.getEncoder();
-
-            return encoder.encode(rawImage);
         });
     }
 
