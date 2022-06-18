@@ -1,9 +1,6 @@
 package webpage.responseFormats;
 
-import webpage.model.GameUpdate;
-
 import java.util.List;
-import java.util.Set;
 
 public class HardGameForResponse {
     private final long gameId;

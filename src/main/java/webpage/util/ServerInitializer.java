@@ -4,7 +4,6 @@ import webpage.handlers.NotificationHandler;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

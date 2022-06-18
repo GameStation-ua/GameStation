@@ -6,10 +6,9 @@ import webpage.util.HandlerProvider;
 import webpage.util.HandlerProviderImpl;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-import static spark.Spark.*;
+import static spark.Spark.port;
+import static spark.Spark.webSocket;
 import static webpage.util.ServerInitializer.*;
 
 public class GameStation {
