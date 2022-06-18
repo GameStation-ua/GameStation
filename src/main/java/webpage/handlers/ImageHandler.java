@@ -6,18 +6,13 @@ import webpage.model.GameUpdate;
 import webpage.util.HandlerType;
 import webpage.util.ImgType;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.Base64;
 import java.util.Optional;
 
 import static spark.Spark.*;
 import static webpage.entity.Games.*;
 import static webpage.entity.Images.findImg;
-import static webpage.entity.Persister.merge;
 import static webpage.entity.Images.upload;
+import static webpage.entity.Persister.merge;
 import static webpage.entity.Users.getIdByToken;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.ServerInitializer.ImagesPath;
@@ -35,6 +30,8 @@ public class ImageHandler extends AbstractHandler{
                     Optional<GameRequest> gameRequest = findGameRequestById(Long.valueOf(req.headers("id")));
                     if (gameRequest.isEmpty() || !(gameRequest.get().getCreatorId().equals(getIdByToken(token)))) return returnMessage(res, 401, "Unauthorized");
                     return upload(req, res, 960, 540, ImagesPath + "/game_requests/" + req.headers("id") + "/main.png");
+
+
                 case CAROUSEL:
                     Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
                     if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token)))) return returnMessage(res, 401, "Unauthorized");
@@ -42,6 +39,8 @@ public class ImageHandler extends AbstractHandler{
                     gameRequest1.get().setImgsInCarousel(gameRequest1.get().getImgsInCarousel() + 1);
                     merge(gameRequest1.get());
                     return returnMessage;
+
+
                 case GAME_UPDATE:
                     Optional<GameUpdate> gameUpdate = findGameUpdateById(Long.valueOf(req.headers("id")));
                     if (gameUpdate.isEmpty()) return returnMessage(res, 500, "Something went wrong");
@@ -50,8 +49,12 @@ public class ImageHandler extends AbstractHandler{
                     if (!(game.get().getCreatorId().equals(getIdByToken(token)))) return returnMessage(res, 401, "Unauthorized");
 
                     return upload(req, res, 960, 540, ImagesPath + "/game_updates/" + gameUpdate.get().getId() + ".png");
+
+
                 case PROFILE:
                     return upload(req, res, 540, 540, ImagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");
+
+
                 default: return returnMessage(res, 500, "Something went wrong");
             }
         }));

@@ -104,11 +104,11 @@ public class ABMGamesHandler extends AbstractHandler{
                 });
             });
 
-            get("/createdgames","application/json", (req, res) ->{
+            get("/createdgames/:userId","application/json", (req, res) ->{
                 String token = req.headers("token");
 
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
-                Long userId = getIdByToken(token);
+                Long userId = Long.valueOf(req.params(":userId"));
 
                 Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
                 if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
