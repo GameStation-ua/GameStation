@@ -37,6 +37,10 @@ export default {
     gamepage(id){
       localStorage.setItem("id", id)
       this.page('/gamePage/' + id.toString())
+    },
+    userpage(user){
+      localStorage.setItem('selectedProfile', JSON.stringify(user))
+      this.page('/profile/' + user.id.toString())
     }
   },
   beforeMount() {
@@ -56,8 +60,8 @@ export default {
           <h1>{{ gameSearch.title }}</h1>
         </div>
       </div>
-      <h3>Related users and Developmers</h3>
-      <div v-for="(userSearch,index) in searchresultusers" :key="index" class="selection" @click="gameData(gameRequest.id)" style="cursor: pointer ">
+      <h3>Related users and Developers</h3>
+      <div v-for="(userSearch,index) in searchresultusers" :key="index" class="selection" @click="userpage(userSearch)" style="cursor: pointer ">
         <vs-avatar size="140px" src="https://avatars2.githubusercontent.com/u/31676496?s=460&v=4"/>
         <div style="display: block; position: relative; left: 10px">
           <h1>{{ userSearch.nickname }}</h1>

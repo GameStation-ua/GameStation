@@ -11,6 +11,13 @@ export default {
   },
   data(){
     return {
+      imgs:{
+        img1:[],
+        img2:[],
+        img3:[],
+        img4:[],
+        img5:[],
+      },
       gamesRecomended:[],
     }
   }
@@ -26,7 +33,18 @@ export default {
       res.send(null)
       console.log(res.responseText)
       this.gamesRecomended = JSON.parse(res.response)
-      console.log(this.gamesRecomended.gamesTag1)
+      localStorage.setItem('userData', JSON.stringify(this.gamesRecomended.user))
+      for (let i = 0; i < this.gamesRecomended.gamesTag1.length; i++) {
+        this.imgs.img1.push(this.getImg(this.gamesRecomended.gamesTag1[i].id))
+      }for (let i = 0; i < this.gamesRecomended.gamesTag2.length; i++) {
+        this.imgs.img2.push(this.getImg(this.gamesRecomended.gamesTag2[i].id))
+      }for (let i = 0; i < this.gamesRecomended.gamesTag3.length; i++) {
+        this.imgs.img3.push(this.getImg(this.gamesRecomended.gamesTag3[i].id))
+      }for (let i = 0; i < this.gamesRecomended.gamesTag4.length; i++) {
+        this.imgs.img4.push(this.getImg(this.gamesRecomended.gamesTag4[i].id))
+      }for (let i = 0; i < this.gamesRecomended.gamesTag5.length; i++) {
+        this.imgs.img5.push(this.getImg(this.gamesRecomended.gamesTag5[i].id))
+      }console.log(this.imgs)
     },
     gamepage(game){
       localStorage.setItem("id", game.id)
@@ -40,7 +58,7 @@ export default {
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
       console.log(res.responseText)
-      return res.response
+      return 'data:image.png;base64,' + res.response.toString()
     },
   },
   beforeMount() {
@@ -57,9 +75,9 @@ export default {
     <div style="margin-bottom: 50px">
       <h1 style="text-align: left; left: 20px; position: relative">{{gamesRecomended.userLikedTags[0].toUpperCase()}}</h1>
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
-        <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide + 1" style="border-radius: 8px">
+        <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="'data:image.png;base64,' + getImg(game.id).toString()" style="width: 100%" alt="logo">
+            <img :src="imgs.img1[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -76,7 +94,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag2" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
+            <img :src="imgs.img2[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -93,7 +111,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag3" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
+            <img :src="imgs.img3[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -110,7 +128,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag4" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
+            <img :src="imgs.img4[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -127,7 +145,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag5" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" alt="logo">
-            <img :src="'data:image.png;base64,' + getImg(game.id)" style="width: 100%" alt="logo">
+            <img async :src="imgs.img5[slide]" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>

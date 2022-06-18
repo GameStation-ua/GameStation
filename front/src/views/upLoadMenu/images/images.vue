@@ -25,9 +25,9 @@ export default {
       <div class="centerx">
         <h1>Main Image</h1>
         <p></p>
-        <vs-upload limit="1" :headers="headersMain" fileName="uploaded_file" action="/upload/attachImg" />
+        <vs-upload limit="1" :headers="headersMain" fileName="uploaded_file" action="/upload/attachImg"/>
         <h1>Carousel Image</h1>
-        <vs-upload limit="10" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg" />
+        <vs-upload limit="10" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg"/>
       </div>
     </div>
   </div>

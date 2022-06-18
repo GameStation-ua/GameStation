@@ -26,6 +26,12 @@
     }
   }
 
+  function profile(){
+    localStorage.setItem('selectedProfile', localStorage.getItem('userData'))
+    const data = localStorage.getItem('userData')
+    page('/profile/' + data.id)
+  }
+
   function page(rout){
     localStorage.setItem("inSearch", "false")
     router.push(rout)
@@ -81,13 +87,13 @@
             <vs-button color="success" icon="more_horiz" type="flat"></vs-button>
           </h4>
         </div>
-        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/profile')">
+        <vs-sidebar-item index="1" icon="home" color="success" @click="page('/')">
           Home
         </vs-sidebar-item>
         <vs-divider icon="person" position="left">
           User
         </vs-divider>
-        <vs-sidebar-item index="2" icon="account_box">
+        <vs-sidebar-item index="2" icon="account_box" @click="profile()">
           Profile
         </vs-sidebar-item>
         <vs-sidebar-item index="3" icon="list">

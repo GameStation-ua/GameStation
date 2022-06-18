@@ -39,7 +39,7 @@ const routes = [
     component: Search
   },
   {
-    path:'/profile',
+    path:'/profile/:id',
     name: 'profile',
     component: Profile
   }
