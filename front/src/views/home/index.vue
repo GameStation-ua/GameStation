@@ -66,8 +66,6 @@ export default {
     localStorage.setItem("inSearch", "false")
   }
 }
-
-
 </script>
 
 <template>

@@ -7,7 +7,7 @@ export default {
     return {
       img: "",
       imgSelect: "",
-      infoUrl: "/game/info/" + localStorage.getItem("id"),
+      infoUrl: "/game/info/" + this.$route.params.id.toString(),
       gameInfo: {},
       imgs:[]
     }
@@ -19,6 +19,7 @@ export default {
   },
   methods:{
     getGameInfo(){
+      console.log(this.infoUrl)
       this.getImg()
       const res = new XMLHttpRequest()
       res.open("GET", this.infoUrl, false)
@@ -33,7 +34,7 @@ export default {
         const xhr = new XMLHttpRequest()
         xhr.open("GET", "/image", false)
         xhr.setRequestHeader("Content-Type", "application/json")
-        xhr.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/carousel=" + (i+1).toString() + ".png")
+        xhr.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/carousel=" + (i+1).toString() + ".png")
         xhr.setRequestHeader("token", localStorage.getItem("token"))
         xhr.send(null)
         console.log(xhr.response)
@@ -48,7 +49,7 @@ export default {
       const res = new XMLHttpRequest()
       res.open("GET", "/image", false)
       res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + localStorage.getItem("id") + "/main.png")
+      res.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/main.png")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
       console.log(res.responseText)
@@ -106,7 +107,7 @@ export default {
               <label style="margin-left: 10%">Tags</label>
             </div>
             <div style="display: flex; margin-left: 10%">
-              <a v-for="(tag, index) in gameInfo.tags" :key="index" href="">{{tag}}</a>
+              <a v-for="(tag, index) in gameInfo.tags" :key="index" v-bind:href=" '/search/tag/' + tag ">{{tag}}</a>
             </div>
             <vs-divider style="background: white; width: 80%; left: 10%"/>
             <div style="display: flex">

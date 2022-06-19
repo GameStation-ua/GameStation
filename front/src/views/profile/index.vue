@@ -4,6 +4,7 @@ export default {
   name: "index",
   data(){
     return{
+      verifi: JSON.parse(localStorage.getItem('userData')).id,
       user: {},
       colorx:'success',
       gamelist:[],
@@ -13,7 +14,7 @@ export default {
   methods: {
     getDevelopedGames(){
       const res = new XMLHttpRequest()
-      res.open("GET", "/game/createdgames", false)
+      res.open("GET", "/game/createdgames/" + this.user.id, false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
@@ -31,6 +32,9 @@ export default {
     },
     getUser(){
       this.user = JSON.parse(localStorage.getItem('selectedProfile'))
+      console.log(this.user.id)
+      console.log(this.verifi)
+      console.log(this.$route.params)
     },
     getImg(id){
       const res = new XMLHttpRequest()
@@ -61,7 +65,7 @@ export default {
 <template>
   <div class="scroller">
     <div class="form-box">
-      <div style="display: flex">
+      <div style="display: flex; position: relative">
         <div style="width: 15%; position: relative; left: 5%">
           <img src="https://plantillasdememes.com/img/plantillas/messirve01624673157.jpg" style="width: 100%; border-radius:150px">
         </div>
@@ -69,8 +73,12 @@ export default {
           <h2>Nickname</h2>
           <h3>{{user.nickname}}</h3>
           <h2>tags</h2>
-          <a v-for="(tag, index) in user.likedTags" :key="index" href="">{{tag}}</a>
+          <a v-for="(tag, index) in user.likedTags" :key="index" v-bind:href=" '/search/tag/' + tag " >{{tag}}</a>
         </div>
+        <div v-if="user.id === verifi">
+          <vs-button  color="primary" type="border" icon="edit" style="position: absolute; display: flex; right: 5%; top: 0">Edit User</vs-button>
+        </div>
+        <div v-else></div>
       </div>
       <div style="margin-top: 30px">
         <vs-tabs :color="colorx" alignment="fixed">
@@ -97,6 +105,7 @@ export default {
         </vs-tabs>
       </div>
     </div>
+
   </div>
 </template>
 

@@ -10,16 +10,15 @@
   import router from "@/router";
 
   function logout(){
-    setTimeout(()=>{
-      Store.state.mesage = "";
-      localStorage.setItem("token", "")
-    },1000);
+
   }
 
   function search(){
-    localStorage.setItem("search", Store.state.search)
     if (localStorage.getItem("inSearch") === "true"){
-      location.reload()
+      router.push("/search/" + Store.state.search.toString())
+      setTimeout(()=>{
+        location.reload()
+      },10);
     }else{
       localStorage.setItem("inSearch", "true")
       router.push("/search/" + Store.state.search.toString())
@@ -28,7 +27,7 @@
 
   function profile(){
     localStorage.setItem('selectedProfile', localStorage.getItem('userData'))
-    const data = localStorage.getItem('userData')
+    const data = JSON.parse(localStorage.getItem('userData'))
     page('/profile/' + data.id)
   }
 
