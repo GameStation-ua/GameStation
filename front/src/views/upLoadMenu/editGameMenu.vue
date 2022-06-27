@@ -1,11 +1,12 @@
 <script>
 import router from "@/router";
 export default {
-  name: "index.vue",
+  name: "editGameMenu.vue",
   data(){
     return {
-      popupActivo:false,
+      popupActivo: false,
       availableTags1: [],
+      infoUrl: "/game/info/" + this.$route.params.id.toString(),
       gamedata:{
         title: "",
         description: "",
@@ -16,6 +17,19 @@ export default {
     }
   },
   methods: {
+    getgameinfo(){
+      const res = new XMLHttpRequest()
+      res.open("GET", this.infoUrl, false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.gamedata.title = JSON.parse(res.response).title
+      this.gamedata.description = JSON.parse(res.response).description
+      this.gamedata.tags = JSON.parse(res.response).tags
+      this.gamedata.wiki = JSON.parse(res.response).wiki
+      this.gamedata.imgsInCarousel = JSON.parse(res.response).imgsInCarousel
+    },
     getTags() {
       const res = new XMLHttpRequest()
       res.open("GET", "/tags/available_tags", false)
@@ -29,24 +43,21 @@ export default {
     delAll(){
       this.gamedata.tags = []
     },
-    createGame(){
+    editGame(){
       var xhr = new XMLHttpRequest()
       var json = JSON.stringify(this.gamedata)
-      xhr.open("POST", "/game/solicitude/create", false)
+      xhr.open("POST", "/game/edit/" + this.$route.params.id.toString(), false)
       xhr.setRequestHeader("Content-Type", "application/json")
       xhr.setRequestHeader("token", localStorage.getItem("token"))
       xhr.send(json)
       console.log(json)
       if (xhr.status === 200){
-        const id = JSON.parse(xhr.response)
-        console.log(id)
-        localStorage.setItem("id",id)
-        router.push('/upLoadMenuImages/' + id.toString())
-
+        router.push('/')
       }
     }
   },
   beforeMount() {
+    this.getgameinfo()
     this.getTags()
   }
 }
@@ -70,7 +81,7 @@ export default {
               <div class="box">
                 <ul class="center">
                   <li v-for="(tag,index) in availableTags1" :key="index">
-                    <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{ tag }}</vs-checkbox>
+                    <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{tag}}</vs-checkbox>
                   </li>
                 </ul>
               </div>
@@ -81,12 +92,12 @@ export default {
           <label id="description">Description</label>
           <vs-textarea  counter="1024" v-model="gamedata.description" width="70%" height="300px"/>
           <div class="next">
-            <vs-button @click="createGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
+            <vs-button @click="editGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
           </div>
         </div>
       </div>
     </div>
-    </div>
+  </div>
 
 
 </template>

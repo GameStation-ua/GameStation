@@ -1,4 +1,5 @@
 <script>
+import { notify } from "@kyvg/vue3-notification";
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Navigation } from 'vue3-carousel';
 import router from "@/router";
@@ -60,6 +61,24 @@ export default {
       console.log(res.responseText)
       return 'data:image.png;base64,' + res.response.toString()
     },
+    addToList(id){
+       const data = {
+         gameId: id.toString(),
+         score: null,
+         status: null
+       }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/gamelist/add", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        notify({
+          type: "success",
+          title: "Game added to your list",
+        });
+      }
+    }
   },
   beforeMount() {
     this.recomendedGames()
@@ -79,7 +98,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" ></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="addToList(game.id)"></vs-button>
           </div>
         </Slide>
         <template #addons>

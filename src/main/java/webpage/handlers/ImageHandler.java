@@ -66,7 +66,7 @@ public class ImageHandler extends AbstractHandler{
                 res.status(200);
                 return findImg(req.headers("path"));
             }catch (Exception e){
-                return returnMessage(res, 500, "Something went wrong");
+                return returnMessage(res, 404, "Something went wrong");
             }
         });
     }
