@@ -200,7 +200,7 @@ public class TagsHandler extends AbstractHandler {
                 Optional<List<Game>> games = search50GamesByTag(searchTag);
                 if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
-                List<GameResponse> gamesForResponse = getGameResponses(games.get());
+                List<GameResponse> gamesForResponse = getGameResponses(games.get(), getIdByToken(token));
 
                 res.status(200);
                 return toJson(new SearchTagResponse(gamesForResponse));

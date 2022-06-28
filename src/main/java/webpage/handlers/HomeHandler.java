@@ -36,7 +36,7 @@ public class HomeHandler extends AbstractHandler{
             Optional<User> user = findUserById(userId);
             if (user.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
-            UserResponse userResponse = new UserResponse(user.get());            // User ready
+            UserResponse userResponse = new UserResponse(user.get(), userId);            // User ready
 
             List<Tag> tags = new ArrayList<>(user.get().getLikedTags());
 
@@ -52,11 +52,11 @@ public class HomeHandler extends AbstractHandler{
                 return returnMessage(res, 500, "Something went wrong");
             }
 
-            List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get());
-            List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get());
-            List<GameResponse> gamesForResponse3 = gameForResponseList(gamesTag3.get());
-            List<GameResponse> gamesForResponse4 = gameForResponseList(gamesTag4.get());
-            List<GameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get());
+            List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get(), userId);
+            List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get(), userId);
+            List<GameResponse> gamesForResponse3 = gameForResponseList(gamesTag3.get(), userId);
+            List<GameResponse> gamesForResponse4 = gameForResponseList(gamesTag4.get(), userId);
+            List<GameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get(), userId);
             List<String> tagResponseList = createTagResponseList(tags);
             HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
             res.status(200);
@@ -98,10 +98,10 @@ public class HomeHandler extends AbstractHandler{
         return HandlerType.HOME;
     }
 
-    private List<GameResponse> gameForResponseList(List<Game> games){
+    private List<GameResponse> gameForResponseList(List<Game> games, Long userId){
         List<GameResponse> gamesForResponse = new ArrayList<>();
         for (Game game : games) {
-            gamesForResponse.add(new GameResponse(game));
+            gamesForResponse.add(new GameResponse(game, userId));
         }
         return gamesForResponse;
     }

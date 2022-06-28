@@ -70,13 +70,13 @@ public class Threads {
         }
     }
 
-    public static Optional<List<ThreadResponse>> prepareSoftThreadResponse(List<Thread> threads) {
+    public static Optional<List<ThreadResponse>> prepareSoftThreadResponse(List<Thread> threads, Long userId) {
         List<ThreadResponse> softThreadsResponse = new ArrayList<>();
         for (Thread thread : threads) {
             Optional<User> user = findUserById(thread.getCreatorId());
             if (user.isEmpty()) return Optional.empty();
 
-            softThreadsResponse.add(new ThreadResponse(thread, user.get()));
+            softThreadsResponse.add(new ThreadResponse(thread, user.get(),userId));
         }
         return Optional.of(softThreadsResponse);
     }

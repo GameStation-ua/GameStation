@@ -43,6 +43,19 @@ public class Actors {
         }
     }
 
+    public static boolean findIfFollowing(Long actorId, Long userId){
+        EntityManager em = currentEntityManager();
+        try {
+            Integer bool = (Integer) em.createNativeQuery("SELECT 0 FROM USER_ACTOR WHERE FOLLOWERS_ID = ?1 AND FOLLOWEDACTORS_ID = ?2")
+                    .setParameter(1, userId)
+                    .setParameter(2, actorId)
+                    .getSingleResult();
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     public static boolean checkIfFollows(Long userId, Actor actor){
         boolean alreadyFollows = false;
         for (User follower : actor.getFollowers()) {

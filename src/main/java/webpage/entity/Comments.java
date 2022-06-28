@@ -50,7 +50,7 @@ public class Comments {
 
             Integer vote = findCommentVotesByUserIdAndCommentId(userId, comment.getId());
 
-            Optional<User> user = findUserById(userId);
+            Optional<User> user = findUserById(comment.getUserId());
 
             if (user.isEmpty()) continue;
 

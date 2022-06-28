@@ -112,7 +112,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                 Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
                 if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
-                List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get());
+                List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get(), getIdByToken(token));
                 res.status(200);
                 return toJson(softGameResponseList);
             });
@@ -165,14 +165,15 @@ public class ABMGamesHandler extends AbstractHandler{
                 Optional<User> creator = findUserById(game.get().getCreatorId());
                 if (creator.isEmpty()) return returnMessage(res, 400, "Something went wrong");
 
-                UserResponse userResponse = new UserResponse(creator.get());
+                UserResponse userResponse = new UserResponse(creator.get(), getIdByToken(token));
                 List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
+                Long userId = getIdByToken(token);
 
                 HardGameForResponse gameForResponse;
                 try {
-                    gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
+                    gameForResponse = new HardGameForResponse(gameId, meanScore, game.get().getFollowers().size(), game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, userId);
                 }catch (Exception e){
-                    gameForResponse = new HardGameForResponse(gameId, meanScore, 0, game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse);
+                    gameForResponse = new HardGameForResponse(gameId, meanScore, 0, game.get().getTitle(), game.get().getDescription(), game.get().getImgsInCarousel(), game.get().getWiki(), userResponse, tagsForResponse, userId);
                 }
                 res.status(200);
                 return toJson(gameForResponse);

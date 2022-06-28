@@ -69,7 +69,7 @@ public class Users {
         }
     }
 
-    public static Optional<List<UserResponse>> searchStringInUsers(String searchString){
+    public static Optional<List<UserResponse>> searchStringInUsers(String searchString, Long userId){
         EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<User> users = em.createQuery("FROM User u WHERE UPPER(u.name) LIKE ?1")
@@ -78,7 +78,7 @@ public class Users {
                     .getResultList();
             List<UserResponse> usersForResponse = new ArrayList<>();
             for (User user : users) {
-                usersForResponse.add(new UserResponse(user));
+                usersForResponse.add(new UserResponse(user, userId));
             }
             return Optional.of(usersForResponse);
         }catch (Exception e){
