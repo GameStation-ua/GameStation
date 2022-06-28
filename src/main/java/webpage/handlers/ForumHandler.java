@@ -23,7 +23,7 @@ public class ForumHandler extends AbstractHandler{
     public void handle() {
         path("/forum", () -> {
             get("/thread/:threadId","application/json", (req, res) -> {
-                    String token = req.headers("token");
+                String token = req.headers("token");
                 if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
                 Optional<Thread> thread = findThreadById(Long.valueOf(req.params(":threadId")));
@@ -33,7 +33,7 @@ public class ForumHandler extends AbstractHandler{
                 if (user.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                 res.status(200);
-                return toJson(new ThreadResponse(thread.get(), user.get()));
+                return toJson(new ThreadResponse(thread.get(), user.get(), getIdByToken(token)));
 
             });
 
@@ -64,7 +64,7 @@ public class ForumHandler extends AbstractHandler{
 
                 if (threads.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
-                Optional<List<ThreadResponse>> softThreadsResponse = prepareSoftThreadResponse(threads.get());
+                Optional<List<ThreadResponse>> softThreadsResponse = prepareSoftThreadResponse(threads.get(), getIdByToken(token));
                 if (softThreadsResponse.isEmpty()) return returnMessage(res, 500, "Something went wrong");
 
                 res.status(200);

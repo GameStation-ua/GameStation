@@ -55,10 +55,10 @@ public class Games {
         return gameUpdateResponseList;
     }
 
-    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games){
+    public static List<SoftGameResponse> createSoftGameResponseList(List<Game> games, Long userId){
         List<SoftGameResponse> softGameResponseList = new ArrayList<>();
         for (Game game : games) {
-            softGameResponseList.add(new SoftGameResponse(game));
+            softGameResponseList.add(new SoftGameResponse(game, userId));
         }
         return softGameResponseList;
     }
@@ -128,7 +128,7 @@ public class Games {
         }
     }
 
-    public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag){
+    public static Optional<List<SoftGameResponse>> searchStringInGames(String searchTag, Long userId){
         EntityManager em = currentEntityManager();
         try {
             @SuppressWarnings("unchecked") List<Game> games = em.createQuery("FROM Game g WHERE UPPER(g.name) LIKE ?1")
@@ -137,7 +137,7 @@ public class Games {
                     .getResultList();
             List<SoftGameResponse> gamesForResponse = new ArrayList<>();
             for (Game game : games) {
-                gamesForResponse.add(new SoftGameResponse(game));
+                gamesForResponse.add(new SoftGameResponse(game, userId));
             }
             return Optional.of(gamesForResponse);
         }catch (Exception e){
@@ -211,10 +211,10 @@ public class Games {
         }
     }
 
-    public static List<GameResponse> getGameResponses(List<Game> games) {
+    public static List<GameResponse> getGameResponses(List<Game> games, Long userId) {
         List<GameResponse> gamesForResponse = new ArrayList<>();
         for (Game game : games) {
-            gamesForResponse.add(new GameResponse(game));
+            gamesForResponse.add(new GameResponse(game, userId));
         }
         return gamesForResponse;
     }

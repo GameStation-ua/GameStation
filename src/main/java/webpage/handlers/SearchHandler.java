@@ -11,6 +11,7 @@ import java.util.Optional;
 import static spark.Spark.get;
 import static spark.Spark.path;
 import static webpage.entity.Games.searchStringInGames;
+import static webpage.entity.Users.getIdByToken;
 import static webpage.entity.Users.searchStringInUsers;
 import static webpage.util.Parser.toJson;
 
@@ -23,8 +24,9 @@ public class SearchHandler extends AbstractHandler{
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
 
-               Optional<List<SoftGameResponse>> games = searchStringInGames(searchString.toUpperCase());
-               Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase());
+               Long userId = getIdByToken(token);
+               Optional<List<SoftGameResponse>> games = searchStringInGames(searchString.toUpperCase(), userId);
+               Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase(), userId);
                if (games.isEmpty() || users.isEmpty()) return returnMessage(res, 500, "Something went wrong");
                res.status(200);
                return toJson(new SearchResponse(games.get(),users.get()));
