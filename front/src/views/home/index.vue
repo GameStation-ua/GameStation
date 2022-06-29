@@ -1,5 +1,4 @@
 <script>
-import { notify } from "@kyvg/vue3-notification";
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Navigation } from 'vue3-carousel';
 import router from "@/router";
@@ -20,6 +19,14 @@ export default {
         img5:[],
       },
       gamesRecomended:[],
+      listdata:{
+        gameId: '',
+        score: 0,
+        status: ''
+      },
+      selectedGame:{},
+      popupActivo:false,
+      options1:['Playing', 'Dropped', 'On hold', 'Waiting', 'Completed'],
     }
   }
   ,methods:{
@@ -61,23 +68,20 @@ export default {
       console.log(res.responseText)
       return 'data:image.png;base64,' + res.response.toString()
     },
-    addToList(id){
-       const data = {
-         gameId: id.toString(),
-         score: null,
-         status: null
-       }
+    addToList(){
       const res = new XMLHttpRequest()
       res.open("PATCH", "/gamelist/add", false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(JSON.stringify(data))
-      if (res.status === 200){
-        notify({
-          type: "success",
-          title: "Game added to your list",
-        });
-      }
+      res.send(JSON.stringify(this.listdata))
+      this.popupActivo = false
+
+    },
+    openPopup(game){
+      this.selectedGame = game
+      this.popupActivo = true
+      this.listdata.gameId = game.id
+      console.log(this.selectedGame)
     }
   },
   beforeMount() {
@@ -98,7 +102,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" @click="addToList(game.id)"></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
         <template #addons>
@@ -115,7 +119,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" ></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
         <template #addons>
@@ -132,7 +136,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" ></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
         <template #addons>
@@ -149,7 +153,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" ></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
         <template #addons>
@@ -166,7 +170,7 @@ export default {
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-            <vs-button color="primary" type="border" icon="add" ></vs-button>
+            <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
         <template #addons>
@@ -174,14 +178,42 @@ export default {
         </template>
       </Carousel>
     </div>
-    <h2></h2>
+    <vs-popup class="holamundo"  title="List data" :active.sync="popupActivo">
+      <h1 style="color: black">{{selectedGame.title}}</h1>
+      <div style="display: block">
+        <label style="color: black">Status</label>
+        <ul class="leftx">
+          <li>
+            <vs-radio color="success" v-model="listdata.status" vs-value="Playing">Playing</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="danger" v-model="listdata.status" vs-value="Dropped">Dropped</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="warning" v-model="listdata.status" vs-value="On hold">On hold</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="dark" v-model="listdata.status" vs-value="Waiting">Waiting</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="rgb(87, 251, 187)" v-model="listdata.status" vs-value="Completed">Completed</vs-radio>
+          </li>
+        </ul>
+        <label style="color: black">Score</label>
+        <vs-slider v-model="listdata.score"/>
+        <div style="display: flex">
+          <vs-button @click="addToList()" color="success" type="border">Add</vs-button>
+          <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>
+        </div>
+      </div>
+    </vs-popup>
   </div>
   <router-view/>
 </template>
 
 
 
-<style>
+<style lang="css">
 .carousel__item {
   min-height: 500px;
   width: 100%;
@@ -194,7 +226,6 @@ export default {
   align-items: center;
   left: 0 !important;
 }
-
 .carousel__item1 {
   font-size: 20px;
   border-radius: 8px;
@@ -204,16 +235,13 @@ export default {
   cursor: pointer;
   position: relative;
 }
-
 .scroller {
   overflow-x: hidden;
   height: calc(100% - 100px);
 }
-
 .carousel__slide {
   padding: 10px;
 }
-
 .carousel__prev{
   box-sizing: content-box;
   color: #ffffff;
@@ -229,15 +257,21 @@ export default {
 .carousel__next--in-active {
   display: none;
 }
-
 .buttons{
   position: absolute;
   bottom: 15px;
   right: 15px;
 }
-
 .buttons .vs-button{
   margin-right: 3px;
 }
-
+input.input-select.vs-select--input{
+  background: white;
+}
+li{
+  margin-right: 10px;
+}
+.vs-radio--label{
+  color: black !important;
+}
 </style>

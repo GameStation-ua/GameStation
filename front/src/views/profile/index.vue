@@ -99,8 +99,7 @@ export default {
           <img :src="img" style="width: 100%; border-radius:150px">
         </div>
         <div style="display: block; left: 10%; position: relative; text-align: left">
-          <h2>Nickname</h2>
-          <h3>{{user.nickname}}</h3>
+          <h1>{{user.nickname}}</h1>
           <h2>tags</h2>
           <a v-for="(tag, index) in user.likedTags" :key="index" v-bind:href=" '/search/tag/' + tag " >{{tag}}</a>
         </div>
@@ -112,11 +111,12 @@ export default {
       <div style="margin-top: 30px">
         <vs-tabs :color="colorx" alignment="fixed">
           <vs-tab @click="colorx = 'success'" label="GameList">
-            <div class="con-tab-ejemplo">
+            <div class="con-tab-ejemplo" style="display: block">
               <div v-for="(games,index) in gamelist" :key="index" class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
                 <img :src="gamelistimg[index]" style="height: 100%" alt="logo">
                 <div style="display: block; position: relative; left: 10px">
                   <h1>{{ games.title }}</h1>
+                  <label v-if="games.score.toString() !== '0'">score: {{games.score.toString()}}</label>
                 </div>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default {
               <div v-for="(games,index) in debelopedGames" :key="index" class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
                 <img :src="debelopedGamesimg[index]" style="height: 100%" alt="logo">
                 <div style="display: block; position: relative; left: 10px">
-                  <h1>{{ games.title }}</h1>
+                  <h1>{{games.title}}</h1>
                 </div>
               </div>
             </div>

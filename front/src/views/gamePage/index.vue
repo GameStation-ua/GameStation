@@ -9,7 +9,12 @@ export default {
       imgSelect: "",
       infoUrl: "/game/info/" + this.$route.params.id.toString(),
       gameInfo: {},
-      imgs:[]
+      imgs:[],
+      textarea: '',
+      counterDanger: false,
+      page:1,
+      commentsUrl: '/comment/commentPage/' + this.$route.params.id.toString() + '/' + this.page.toString(),
+      comments:[],
     }
   },
   components: {
@@ -56,10 +61,33 @@ export default {
       this.img = 'data:image.png;base64,' + res.response
       this.imgSelect = 'data:image.png;base64,' + res.response
       this.imgs.push('data:image.png;base64,' + res.response)
+    },
+    getcomments(){
+      const res = new XMLHttpRequest()
+      res.open("GET", this.commentsUrl , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.comments = JSON.parse(res.response).comments
+      console.log(this.comments)
+    },
+    comment(){
+      const data ={
+        content: this.textarea,
+        path: '/gamePage/' + this.$route.params.id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("POST", "/comment/game/" + this.$route.params.id.toString(), false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/main.png")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
     }
   },
   beforeMount() {
     this.getGameInfo()
+    this.get
   }
 }
 </script>
@@ -118,6 +146,16 @@ export default {
               <label style="margin-top: -10px; margin-bottom: -40px">{{ gameInfo.meanScore }}%</label>
             </div>
           </div>
+        </div>
+      </div>
+      <h1 style="display: flex; position: relative; left: -5px">Comments</h1>
+      <div style="width: 60%">
+        <vs-textarea counter="300" :counter-danger.sync="counterDanger" v-model="textarea" width="100%" height="200px"/>
+        <div style="display: flex; position: relative; right: 10px; margin-left: 10px">
+          <vs-button @click="comment()" color="success" type="filled">Comment</vs-button>
+        </div>
+        <div style="margin-top: 20px">
+
         </div>
       </div>
     </div>
@@ -227,5 +265,7 @@ a{
   margin-right: 10px;
   margin-bottom: 10px;
 }
-
+.vs-textarea:focus{
+  resize: none!important;
+}
 </style>
