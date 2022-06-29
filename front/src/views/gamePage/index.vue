@@ -13,8 +13,6 @@ export default {
       textarea: '',
       counterDanger: false,
       page:1,
-      commentsUrl: '/comment/commentPage/' + this.$route.params.id.toString() + '/' + this.page.toString(),
-      comments:[],
     }
   },
   components: {
@@ -64,7 +62,7 @@ export default {
     },
     getcomments(){
       const res = new XMLHttpRequest()
-      res.open("GET", this.commentsUrl , false)
+      res.open("GET", '/comment/commentPage/' + this.$route.params.id.toString() + '/' + this.page.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(null)
