@@ -31,9 +31,9 @@ public class TagsHandler extends AbstractHandler {
             path("/available_tags", () -> {
                 get("","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     Optional<List<Tag>> availableTags = findAvailableTags();
-                    if (availableTags.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                    if (availableTags.isEmpty()) return returnJson(res, 500, "Something went wrong");
                     AvailableTagsResponse response = new AvailableTagsResponse(availableTags.get());
                     res.status(200);
                     return toJson(response);
@@ -41,49 +41,49 @@ public class TagsHandler extends AbstractHandler {
 
                 patch("/add", "application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                     boolean isAdmin = getIsAdminByToken(token);
-                    if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
+                    if (!isAdmin) return returnJson(res, 401, "Unauthorized");
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
-                    if (tagsRequest.getTags().isEmpty()) return returnMessage(res, 500, "Something went wrong, try again");
+                    if (tagsRequest.getTags().isEmpty()) return returnJson(res, 500, "Something went wrong, try again");
 
                     try {
                         addTags(tagsRequest.getTags());
                     } catch (Throwable r) {
-                        return returnMessage(res, 500, "Something went wrong, try again");
+                        return returnJson(res, 500, "Something went wrong, try again");
                     }
-                    return returnMessage(res, 200, "Tags are now in the system");
+                    return returnJson(res, 200, "Tags are now in the system");
                 });
 
                 delete("/delete", "application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                     boolean isAdmin = getIsAdminByToken(token);
-                    if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
+                    if (!isAdmin) return returnJson(res, 401, "Unauthorized");
 
                     AvailableTagsRequest tagsRequest = fromJson(req.body(), AvailableTagsRequest.class);
-                    if (tagsRequest.getTags().isEmpty()) return returnMessage(res, 500, "Something went wrong, try again");
+                    if (tagsRequest.getTags().isEmpty()) return returnJson(res, 500, "Something went wrong, try again");
 
                     try {
                         removeTags(tagsRequest.getTags());
                     } catch (Throwable r) {
-                        return returnMessage(res, 500, "Something went wrong, try again");
+                        return returnJson(res, 500, "Something went wrong, try again");
                     }
-                    return returnMessage(res, 200, "Tags successfully removed");
+                    return returnJson(res, 200, "Tags successfully removed");
                 });
             });
 
             path("/users", () -> {
                 get("","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
 
                     Optional<User> user = findUserById(userId);
-                    if (user.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                    if (user.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                     UserTagsResponse response = new UserTagsResponse(user.get().getLikedTags());
                     res.status(200);
@@ -92,47 +92,47 @@ public class TagsHandler extends AbstractHandler {
 
                 delete("/delete", "application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
                     Long userId = getIdByToken(token);
 
                     Optional<User> user = findUserById(userId);
-                    if (user.isEmpty()) return returnMessage(res, 400, "User not found");
+                    if (user.isEmpty()) return returnJson(res, 400, "User not found");
                     Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
-                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
+                    if (requestTags.isEmpty()) return returnJson(res, 500, "Server error, try again");
 
                     removeTagsFromUser(requestTags.get(), user.get());
                     try {
                         merge(user.get());
-                        return returnMessage(res, 200, "Tags successfully removed");
+                        return returnJson(res, 200, "Tags successfully removed");
                     } catch (Throwable e) {
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
 
                 patch("/add", "application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
                     Long userId = getIdByToken(token);
                     Optional<User> user = findUserById(userId);
 
                     if (!tagsExist(tagsRequest.getTags()) || user.isEmpty()) {
-                        return returnMessage(res, 400, "Something went wrong");
+                        return returnJson(res, 400, "Something went wrong");
                     }
                     Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
-                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
+                    if (requestTags.isEmpty()) return returnJson(res, 500, "Server error, try again");
 
 
                     addTagsToUser(requestTags.get(), user.get());
 
                     try {
                         merge(user.get());
-                        return returnMessage(res, 200, "Tags successfully added");
+                        return returnJson(res, 200, "Tags successfully added");
                     } catch (Throwable e) {
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
             });
@@ -140,65 +140,65 @@ public class TagsHandler extends AbstractHandler {
             path("/games", () -> {
                 patch("/add/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
                     Optional<Game> game = Games.findGameById(Long.valueOf(req.params(":gameId")));
 
-                    if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                    if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                     Long userId = getIdByToken(token);
 
                     if (!Objects.equals(game.get().getCreatorId(), userId)) {
-                        return returnMessage(res, 401, "Unauthorized");
+                        return returnJson(res, 401, "Unauthorized");
                     }
                     Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
-                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
+                    if (requestTags.isEmpty()) return returnJson(res, 500, "Server error, try again");
 
                     addTagsToGame(requestTags.get(), game.get());
 
                     try {
                         merge(game.get());
-                        return returnMessage(res, 200, "Tags added");
+                        return returnJson(res, 200, "Tags added");
                     } catch (Throwable e) {
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
 
                 delete("/delete/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     UserTagsRequest tagsRequest = fromJson(req.body(), UserTagsRequest.class);
 
                     Optional<Game> game = Games.findGameById(Long.valueOf(req.params(":gameId")));
 
-                    if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                    if (!tagsExist(tagsRequest.getTags()) || game.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                     Long userId = getIdByToken(token);
 
-                    if (!Objects.equals(game.get().getCreatorId(), userId)) return returnMessage(res, 401, "Unauthorized");
+                    if (!Objects.equals(game.get().getCreatorId(), userId)) return returnJson(res, 401, "Unauthorized");
 
                     Optional<List<Tag>> requestTags = findTagsIfAvailable(tagsRequest.getTags());
-                    if (requestTags.isEmpty()) return returnMessage(res, 500, "Server error, try again");
+                    if (requestTags.isEmpty()) return returnJson(res, 500, "Server error, try again");
 
                     removeTagsFromGame(requestTags.get(), game.get());
 
                     try {
                         merge(game.get());
-                        return returnMessage(res, 200, "Tags removed");
+                        return returnJson(res, 200, "Tags removed");
                     } catch (Throwable e) {
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
             });
 
             get("/search/:searchTag","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 String searchTag = req.params(":searchTag");
 
                 Optional<List<Game>> games = search50GamesByTag(searchTag);
-                if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (games.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                 List<GameResponse> gamesForResponse = getGameResponses(games.get(), getIdByToken(token));
 

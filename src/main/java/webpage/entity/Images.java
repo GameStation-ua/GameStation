@@ -11,11 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import static webpage.handlers.AbstractHandler.returnMessage;
+import static webpage.handlers.AbstractHandler.returnJson;
 import static webpage.util.ServerInitializer.ImagesPath;
 
 public class Images {
@@ -66,14 +65,14 @@ public class Images {
         try {
             if (uploadAndRescale(req, dir, width, height)) {
                 res.status(500);
-                return returnMessage(res, 200, "Image uploaded");
+                return returnJson(res, 200, "Image uploaded");
             }else {
                 res.status(500);
-                return returnMessage(res, 500, "Something went wrong");
+                return returnJson(res, 500, "Something went wrong");
             }
         }catch (Exception e){
             res.status(500);
-            return returnMessage(res, 500, "Something went wrong");
+            return returnJson(res, 500, "Something went wrong");
         }
     }
 
@@ -106,7 +105,6 @@ public class Images {
 
             // we want image in png format
             ImageIO.write(newResizedImage, fileExtension, target.toFile());
-
         }
 
         public static byte[] findImg(String path) throws IOException {
@@ -119,8 +117,6 @@ public class Images {
                 baos.flush();
                 rawImage = baos.toByteArray();
             }
-            Base64.Encoder encoder = Base64.getEncoder();
-
-            return encoder.encode(rawImage);
+            return rawImage;
         }
 }

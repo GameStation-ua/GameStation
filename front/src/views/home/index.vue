@@ -82,6 +82,16 @@ export default {
       this.popupActivo = true
       this.listdata.gameId = game.id
       console.log(this.selectedGame)
+    },
+    followGame(game){
+       const data = {
+         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+       }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/add/" + game.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
     }
   },
   beforeMount() {
@@ -98,10 +108,10 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="imgs.img1[slide]" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="imgs.url[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+            <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -118,7 +128,7 @@ export default {
             <img :src="imgs.img2[slide]" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+            <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -200,7 +210,7 @@ export default {
           </li>
         </ul>
         <label style="color: black">Score</label>
-        <vs-slider v-model="listdata.score"/>
+        <vs-slider v-model="listdata.score"  max="100"/>
         <div style="display: flex">
           <vs-button @click="addToList()" color="success" type="border">Add</vs-button>
           <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>

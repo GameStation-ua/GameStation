@@ -21,12 +21,12 @@ public class RegisterHandler extends AbstractHandler {
         path("/register", () -> {
             post("", "application/json", (req, res) -> {
                 RegisterRequest registerRequest = fromJson(req.body(), RegisterRequest.class);
-                if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) return returnMessage(res, 406, "You need to fill all the fields");
+                if (registerRequest.getPassword() == null || registerRequest.getUsername() == null || registerRequest.getNickname() == null) return returnJson(res, 406, "You need to fill all the fields");
 
                 Optional<User> user = findUserByUsername(registerRequest.getUsername());
-                if (user.isPresent()) return returnMessage(res, 200, "Username already taken");
+                if (user.isPresent()) return returnJson(res, 200, "Username already taken");
                 if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
-                    return returnMessage(res, 200, "You need to meet password requirements");
+                    return returnJson(res, 200, "You need to meet password requirements");
                 } else {
                     registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
                     User user1 = new User(registerRequest.getNickname(),
@@ -34,9 +34,9 @@ public class RegisterHandler extends AbstractHandler {
                             registerRequest.getPassword());
                     try{
                         persist(user1);
-                        return returnMessage(res, 201, "User created!");
+                        return returnJson(res, 201, "User created!");
                     }catch (Throwable r) {
-                        return returnMessage(res, 500, "Something went wrong, try again");
+                        return returnJson(res, 500, "Something went wrong, try again");
                     }
                 }
             });
