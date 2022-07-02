@@ -8,6 +8,7 @@ import webpage.model.Tag;
 import webpage.model.User;
 import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.HomeResponse;
+import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.UserResponse;
 import webpage.util.HandlerType;
 
@@ -52,11 +53,11 @@ public class HomeHandler extends AbstractHandler{
                 return returnJson(res, 500, "Something went wrong");
             }
 
-            List<GameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get(), userId);
-            List<GameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get(), userId);
-            List<GameResponse> gamesForResponse3 = gameForResponseList(gamesTag3.get(), userId);
-            List<GameResponse> gamesForResponse4 = gameForResponseList(gamesTag4.get(), userId);
-            List<GameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get(), userId);
+            List<SoftGameResponse> gamesForResponse1 = gameForResponseList(gamesTag1.get(), userId);
+            List<SoftGameResponse> gamesForResponse2 = gameForResponseList(gamesTag2.get(), userId);
+            List<SoftGameResponse> gamesForResponse3 = gameForResponseList(gamesTag3.get(), userId);
+            List<SoftGameResponse> gamesForResponse4 = gameForResponseList(gamesTag4.get(), userId);
+            List<SoftGameResponse> gamesForResponse5 = gameForResponseList(gamesTag5.get(), userId);
             List<String> tagResponseList = createTagResponseList(tags);
             HomeResponse homeResponse = new HomeResponse(userResponse, tagResponseList, gamesForResponse1, gamesForResponse2, gamesForResponse3, gamesForResponse4, gamesForResponse5);
             res.status(200);
@@ -98,10 +99,10 @@ public class HomeHandler extends AbstractHandler{
         return HandlerType.HOME;
     }
 
-    private List<GameResponse> gameForResponseList(List<Game> games, Long userId){
-        List<GameResponse> gamesForResponse = new ArrayList<>();
+    private List<SoftGameResponse> gameForResponseList(List<Game> games, Long userId){
+        List<SoftGameResponse> gamesForResponse = new ArrayList<>();
         for (Game game : games) {
-            gamesForResponse.add(new GameResponse(game, userId));
+            gamesForResponse.add(new SoftGameResponse(game, userId));
         }
         return gamesForResponse;
     }
