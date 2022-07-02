@@ -5,13 +5,13 @@ import java.util.List;
 public class HomeResponse {
     private final UserResponse user;
     private final List<String> userLikedTags;
-    private final List<GameResponse> gamesTag1;
-    private final List<GameResponse> gamesTag2;
-    private final List<GameResponse> gamesTag3;
-    private final List<GameResponse> gamesTag4;
-    private final List<GameResponse> gamesTag5;
+    private final List<SoftGameResponse> gamesTag1;
+    private final List<SoftGameResponse> gamesTag2;
+    private final List<SoftGameResponse> gamesTag3;
+    private final List<SoftGameResponse> gamesTag4;
+    private final List<SoftGameResponse> gamesTag5;
 
-    public HomeResponse(UserResponse user, List<String> userLikedTags, List<GameResponse> gamesTag1, List<GameResponse> gamesTag2, List<GameResponse> gamesTag3, List<GameResponse> gamesTag4, List<GameResponse> gamesTag5) {
+    public HomeResponse(UserResponse user, List<String> userLikedTags, List<SoftGameResponse> gamesTag1, List<SoftGameResponse> gamesTag2, List<SoftGameResponse> gamesTag3, List<SoftGameResponse> gamesTag4, List<SoftGameResponse> gamesTag5) {
         this.user = user;
         this.userLikedTags = userLikedTags;
         this.gamesTag1 = gamesTag1;
