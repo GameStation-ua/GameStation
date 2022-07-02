@@ -31,7 +31,7 @@ public class NotificationHandler {
     public void onConnect(Session user){
         try {
             checkRegistered(user);
-            sendNotifications(user);
+            sendNotifications(user, user.getUpgradeRequest().getHeader("Sec-WebSocket-Protocol"));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -54,9 +54,9 @@ public class NotificationHandler {
         sessionMap.inverse().remove(user);
     }
 
-    private void sendNotifications(Session user) {
+    private void sendNotifications(Session user, String auth) {
         try{
-        String token = user.getUpgradeRequest().getHeader("token");
+        String token = user.getUpgradeRequest().getHeader("Sec-WebSocket-Protocol");
         Long userId = getIdByToken(token);
         Optional<User> userOptional = findUserById(userId);
 
@@ -72,6 +72,7 @@ public class NotificationHandler {
         prepareNotificationResponse(notificationResponse, userOptional.get());
 
         String s = toJson(notificationResponse);
+        user.getUpgradeResponse().setHeader("Sec-WebSocket-Protocol", token);
         user.getRemote().sendString(s);
         }catch (Throwable e){
             onError(user, e);
