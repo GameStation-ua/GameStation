@@ -22,12 +22,12 @@ public class SearchHandler extends AbstractHandler{
            get("/:searchString","application/json", (req, res) -> {
                String searchString = req.params(":searchString");
                String token = req.headers("token");
-               if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+               if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                Long userId = getIdByToken(token);
                Optional<List<SoftGameResponse>> games = searchStringInGames(searchString.toUpperCase(), userId);
                Optional<List<UserResponse>> users = searchStringInUsers(searchString.toUpperCase(), userId);
-               if (games.isEmpty() || users.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+               if (games.isEmpty() || users.isEmpty()) return returnJson(res, 500, "Something went wrong");
                res.status(200);
                return toJson(new SearchResponse(games.get(),users.get()));
            });

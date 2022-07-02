@@ -40,12 +40,12 @@ public class ABMGamesHandler extends AbstractHandler{
 
                 post("/create","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                     Long userId = getIdByToken(token);
                     CreateGameRequest createGameRequest = fromJson(req.body(), CreateGameRequest.class);
 
                     Optional<GameRequest> gameRequest = createGameRequest(createGameRequest, userId);
-                    if (gameRequest.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                    if (gameRequest.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                     try {
                         GameRequest gameRequest1 = merge(gameRequest.get());
@@ -53,22 +53,22 @@ public class ABMGamesHandler extends AbstractHandler{
                         res.status(200);
                         return "" + gameRequest1.getId();
                     } catch (Exception e) {
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
 
                 post("/edit/:gameId","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                     Long gameId = Long.valueOf(req.params(":gameId"));
                     Long userId = getIdByToken(token);
 
-                    if (!isOwner(userId, gameId)) return returnMessage(res, 401, "Unauthorized");
+                    if (!isOwner(userId, gameId)) return returnJson(res, 401, "Unauthorized");
                     EditGameRequest editGameRequest = fromJson(req.body(), EditGameRequest.class);
 
                     Optional<GameRequest> gameRequest = editGameRequest(editGameRequest, userId);
-                    if (gameRequest.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                    if (gameRequest.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                     try{
                         GameRequest gameRequest1 = merge(gameRequest.get());
@@ -76,42 +76,42 @@ public class ABMGamesHandler extends AbstractHandler{
                         res.status(200);
                         return  "" + gameRequest1.getId();
                     }catch (Exception e){
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
                 });
 
                 post("/approval","application/json", (req, res) -> {
                     String token = req.headers("token");
-                    if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                    if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                     boolean isAdmin = getIsAdminByToken(token);
-                    if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
+                    if (!isAdmin) return returnJson(res, 401, "Unauthorized");
                     GameAprovalRequest gameAprovalRequest = fromJson(req.body(), GameAprovalRequest.class);
                     Optional<GameRequest> gameRequest = findGameRequestById(gameAprovalRequest.getGameRequestId());
-                    if (gameRequest.isEmpty())return returnMessage(res, 400, "Request not found");
+                    if (gameRequest.isEmpty())return returnJson(res, 400, "Request not found");
 
                     if (!gameAprovalRequest.isApproved()){
                         remove(gameRequest.get());
-                        return returnMessage(res, 200, "Request rejected");
+                        return returnJson(res, 200, "Request rejected");
                     }
                     try {
                         Game game = createGameFromRequest(gameRequest.get());
                         FileUtils.moveDirectory( new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + game.getId()).getAbsoluteFile());
                     }catch (Exception e){
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
-                    return returnMessage(res, 200, "Request accepted");
+                    return returnJson(res, 200, "Request accepted");
                 });
             });
 
             get("/createdgames/:userId","application/json", (req, res) ->{
                 String token = req.headers("token");
 
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long userId = Long.valueOf(req.params(":userId"));
 
                 Optional<List<Game>> games = findCreatedGamesbyUserId(userId);
-                if (games.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (games.isEmpty()) return returnJson(res, 500, "Something went wrong");
                 List<SoftGameResponse> softGameResponseList = createSoftGameResponseList(games.get(), getIdByToken(token));
                 res.status(200);
                 return toJson(softGameResponseList);
@@ -119,32 +119,32 @@ public class ABMGamesHandler extends AbstractHandler{
 
             post("/gameupdate/add","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 GameUpdateRequest gameUpdateRequest = fromJson(req.body(), GameUpdateRequest.class);
-                if (!isOwner(userId, gameUpdateRequest.getGameId())) return returnMessage(res, 401, "Unauthorized");
+                if (!isOwner(userId, gameUpdateRequest.getGameId())) return returnJson(res, 401, "Unauthorized");
                 Optional<Game> game = findGameByIdJFFollowers(gameUpdateRequest.getGameId());
-                if (game.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (game.isEmpty()) return returnJson(res, 500, "Something went wrong");
                 Notification notification = new Notification(NotificationType.GAME_POSTED_UPDATE, game.get(), null, gameUpdateRequest.getPath());
                 try {
                     createGameUpdate(gameUpdateRequest);
                     persistNotificationToFollowers(notification, game.get());
                     sendNotificationToFollowers(notification, game.get());
-                    return returnMessage(res, 200, "OK");
+                    return returnJson(res, 200, "OK");
                 }catch (Exception e){
-                    return returnMessage(res, 500, "Something went wrong");
+                    return returnJson(res, 500, "Something went wrong");
                 }
             });
 
             get("/gamerequests","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                 boolean isAdmin = getIsAdminByToken(token);
-                if (!isAdmin) return returnMessage(res, 401, "Unauthorized");
+                if (!isAdmin) return returnJson(res, 401, "Unauthorized");
 
                 Optional<List<GameRequestResponse>> gameResponses = getGameRequestsAsResponses();
-                if (gameResponses.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (gameResponses.isEmpty()) return returnJson(res, 500, "Something went wrong");
                 List<GameRequestResponse> gameRequestResponse = gameResponses.get();
                 res.status(200);
                 return toJson(gameRequestResponse);
@@ -152,18 +152,18 @@ public class ABMGamesHandler extends AbstractHandler{
 
             get("/info/:gameId","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
                 Optional<Game> game = findGameByIdJFFollowers(gameId);
                 if(game.isEmpty()) game = findGameById(gameId);
 
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
-                if (userGames.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                if (userGames.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                 float meanScore = getMeanScore(userGames.get());
                 Optional<User> creator = findUserById(game.get().getCreatorId());
-                if (creator.isEmpty()) return returnMessage(res, 400, "Something went wrong");
+                if (creator.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                 UserResponse userResponse = new UserResponse(creator.get(), getIdByToken(token));
                 List<String> tagsForResponse = createTagResponseList(new ArrayList<>(game.get().getTags()));
@@ -181,13 +181,13 @@ public class ABMGamesHandler extends AbstractHandler{
 
             get("/gameUpdate/*/*","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 String[] request = req.splat();
                 Long gameId = Long.valueOf(request[0]);
                 int pageNumber = Integer.parseInt(request[1]);
 
                 Optional<List<GameUpdate>> gameUpdates = findGameUpdatesByPage(gameId, pageNumber);
-                if (gameUpdates.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (gameUpdates.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                 List<GameUpdateResponse> gameUpdateResponseList = prepareGameUpdatesResponse(gameUpdates.get());
 

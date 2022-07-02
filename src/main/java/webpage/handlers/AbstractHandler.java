@@ -42,12 +42,13 @@ public abstract class AbstractHandler implements Handler {
                 .setIssuedAt(new Date())
                 .claim("id", user.getId())
                 .claim("isAdmin", user.isAdmin())
-                .signWith(HS256, TextCodec.BASE64.decode(key)
-                ).compact();
+                .signWith(HS256, TextCodec.BASE64.decode(key))
+                .compact();
     }
 
-    public static String returnMessage(Response res, Integer status, String message){
+    public static String returnJson(Response res, Integer status, String message){
             res.status(status);
+            res.header("Content-Type", "application/json");
             return "{\"message\":\"" + message + "\"}";
     }
 

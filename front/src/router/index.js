@@ -6,8 +6,9 @@ import UpLoadMenu from "@/views/upLoadMenu/index";
 import UpLoadMenuImages from "@/views/upLoadMenu/images/images"
 import Search from "@/views/search/index"
 import Profile from "@/views/profile/index"
-import EditProfile from "@/views/profile/edit"
+import EditProfile from "@/views/profile/edit/edit"
 import SearchTag from  "@/views/search/searchTags"
+import EditGameMenu from "@/views/upLoadMenu/editGameMenu"
 
 const routes = [
   {
@@ -46,14 +47,19 @@ const routes = [
     component: Profile
   },
   {
-    path: '/profile/edit/:id',
-    name: 'editProfile',
+    path: '/profileEdit/:id',
+    name: 'profileEdit',
     component: EditProfile
   },
   {
     path: '/search/tag/:tag',
     name: 'editProfile',
     component: SearchTag
+  },
+  {
+    path: '/editGameMenu/:id',
+    name: 'editGameMenu',
+    component: EditGameMenu
   }
 
 

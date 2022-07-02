@@ -25,27 +25,27 @@ public class FollowHandler extends AbstractHandler{
         path("/follow", () -> {
            patch("/add/:actorId","application/json", (req, res) -> {
                String token = req.headers("token");
-               if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+               if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                FollowRequest followRequest = fromJson(req.body(), FollowRequest.class);
                Long userId = getIdByToken(token);
 
                Optional<Actor> actor = findActorById(Long.valueOf(req.params(":actorId")));
                Optional<User> user = findUserById(userId);
-               if (actor.isEmpty() || user.isEmpty()) return returnMessage(res, 400, "Something went wrong");
-               if (checkIfFollows(userId, actor.get())) return returnMessage(res, 400, "Already follows");
+               if (actor.isEmpty() || user.isEmpty()) return returnJson(res, 400, "Something went wrong");
+               if (checkIfFollows(userId, actor.get())) return returnJson(res, 400, "Already follows");
                user.get().addFollowedActor(actor.get());
                notifyIfUser(followRequest, actor.get(), user.get());
                try{
                    merge(user.get());
-                   return returnMessage(res, 200, "OK");
+                   return returnJson(res, 200, "OK");
                } catch(Throwable e){
-                   return returnMessage(res, 500, "Something went wrong");
+                   return returnJson(res, 500, "Something went wrong");
                }
            });
 
            patch("/delete/:actorId", "application/json", (req, res) -> {
                String token = req.headers("token");
-               if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+               if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                Claims claims = Jwts.parser()
                        .setSigningKey(key)
                        .parseClaimsJws(token).getBody();
@@ -54,16 +54,16 @@ public class FollowHandler extends AbstractHandler{
                Optional<Actor> actor = findActorById(Long.valueOf(req.params(":actorId")));
                Optional<User> user = findUserById(userId);
 
-               if (actor.isEmpty() || user.isEmpty()) return returnMessage(res, 400, "Bad request");
+               if (actor.isEmpty() || user.isEmpty()) return returnJson(res, 400, "Bad request");
 
 
-               if (!checkIfFollows(userId, actor.get())) return returnMessage(res, 400, "Doesn't follow");
+               if (!checkIfFollows(userId, actor.get())) return returnJson(res, 400, "Doesn't follow");
                user.get().removeFollowedActor(actor.get());
                try {
                    merge(user.get());
-                   return returnMessage(res, 200, "OK");
+                   return returnJson(res, 200, "OK");
                } catch (Throwable e) {
-                   return returnMessage(res, 500, "Something went wrong");
+                   return returnJson(res, 500, "Something went wrong");
                }
            });
         });

@@ -24,13 +24,13 @@ public class ForumHandler extends AbstractHandler{
         path("/forum", () -> {
             get("/thread/:threadId","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
 
                 Optional<Thread> thread = findThreadById(Long.valueOf(req.params(":threadId")));
-                if (thread.isEmpty()) return returnMessage(res, 400, "Invalid Thread");
+                if (thread.isEmpty()) return returnJson(res, 400, "Invalid Thread");
 
                 Optional<User> user = findUserById(thread.get().getCreatorId());
-                if (user.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (user.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                 res.status(200);
                 return toJson(new ThreadResponse(thread.get(), user.get(), getIdByToken(token)));
@@ -39,22 +39,22 @@ public class ForumHandler extends AbstractHandler{
 
             post("/thread/create","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
                 ThreadRequest threadRequest = fromJson(req.body(), ThreadRequest.class);
                     
                     try {
                     Thread thread = new Thread(userId, threadRequest.getGameId(), threadRequest.getDescription(), threadRequest.getTitle());
                         persist(thread);
-                        return returnMessage(res, 200, "OK");
+                        return returnJson(res, 200, "OK");
                     }catch (Throwable e){
-                        return returnMessage(res, 500, "Something went wrong");
+                        return returnJson(res, 500, "Something went wrong");
                     }
             });
 
             get("/threadPage/*/*","application/json", (req, res) -> {
                 String token = req.headers("token");
-                if (!verifyJWT(token)) return returnMessage(res, 401, "Not logged in");
+                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 String[] request = req.splat();
                 Long gameId = Long.valueOf(request[0]);
                 int pageNumber = Integer.parseInt(request[1]);
@@ -62,10 +62,10 @@ public class ForumHandler extends AbstractHandler{
 
                 Optional<List<Thread>> threads = findThreadsByForumPage(gameId, pageNumber);
 
-                if (threads.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (threads.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                 Optional<List<ThreadResponse>> softThreadsResponse = prepareSoftThreadResponse(threads.get(), getIdByToken(token));
-                if (softThreadsResponse.isEmpty()) return returnMessage(res, 500, "Something went wrong");
+                if (softThreadsResponse.isEmpty()) return returnJson(res, 500, "Something went wrong");
 
                 res.status(200);
                 return toJson(softThreadsResponse.get());
