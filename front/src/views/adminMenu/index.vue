@@ -11,7 +11,6 @@ export default {
   data(){
     return {
       gameRequests:[],
-      mainImg:[],
       popupActivo1:false,
       popupActivo2:false,
       popupActivo3:false,
@@ -72,18 +71,6 @@ export default {
       this.getTags()
       this.tagsTodelete.tags = []
     },
-    getSrc(){
-      for (let i = 0; i < this.gameRequests.length; i++) {
-        const res = new XMLHttpRequest()
-        res.open("GET", "/image", false)
-        res.setRequestHeader("Content-Type", "application/json")
-        res.setRequestHeader("path", "/games/" + this.gameRequests[i].id.toString() + "/main.png")
-        res.setRequestHeader("token", localStorage.getItem("token"))
-        res.send(null)
-        console.log(res.responseText)
-        this.mainImg.push('data:image.png;base64,' + res.response)
-      }
-    },
     gameData(id){
       console.log(this.gameRequests)
       console.log(id)
@@ -92,27 +79,11 @@ export default {
           this.selectedGame = game
           this.popupActivo3 = true
           console.log(this.selectedGame.title)
-          const res = new XMLHttpRequest()
-          res.open("GET", "/image", false)
-          res.setRequestHeader("Content-Type", "application/json")
-          res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
-          res.setRequestHeader("token", localStorage.getItem("token"))
-          res.send(null)
-          console.log(res.responseText)
-          this.img = 'data:image.png;base64,' + res.response
+          this.img = 'http://localhost:8443/image/game_requests/' + id.toString() + '/main.png'
           return
         }
         return
       })
-    },
-    imgsInCarousel(num, id){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + id.toString() + + "/carousel=" + num.toString() + ".png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      return  'data:image.png;base64,' + res.response
     },
     approval(result, id){
       const approval = {
@@ -176,7 +147,7 @@ export default {
         <vs-tab label="Publish Game List" style="display: flex; flex-wrap: wrap" @click="getSrc">
           <div v-for="(gameRequest,index) in gameRequests" :key="index" class="selection" @click="gameData(gameRequest.id)" style="cursor: pointer ">
             <div class="Img" style="height: 100%">
-              <img :src="mainImg[index]" style="height: 100%">
+              <img :src="'http://localhost:8443/image/game_requests/' + gameRequest.id.toString() + '/main.png'" style="height: 100%">
             </div>
             <div style="display: block; position: relative; left: 10px">
               <h1>{{ gameRequest.title }}</h1>
@@ -204,7 +175,7 @@ export default {
                 <Carousel :items-to-show="3" wrapAround="false" :mouseDrag="false" :touchDrag="false">
                   <Slide v-for="slide in selectedGame.imgsInCarousel" :key="slide">
                     <div class="carousel__admin">
-                      <img :src="imgsInCarousel(slide, selectedGame.id)" style="width: 100%">
+                      <img :src="'http://localhost:8443/image/game_requests/' + selectedGame.id.toString() + '/carousel=' + slide.toString() + '.png'" style="width: 100%">
                     </div>
                   </Slide>
                   <template #addons>

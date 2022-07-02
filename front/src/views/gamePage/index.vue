@@ -34,14 +34,7 @@ export default {
       console.log(this.gamesInfo)
       console.log(this.gameInfo.gameId)
       for (let i = 0; i < this.gameInfo.imgsInCarousel; i++) {
-        const xhr = new XMLHttpRequest()
-        xhr.open("GET", "/image", false)
-        xhr.setRequestHeader("Content-Type", "application/json")
-        xhr.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/carousel=" + (i+1).toString() + ".png")
-        xhr.setRequestHeader("token", localStorage.getItem("token"))
-        xhr.send(null)
-        console.log(xhr.response)
-        this.imgs.push('data:image.png;base64,' + xhr.response)
+        this.imgs.push("http://localhost:8443/image/games/" + this.$route.params.id.toString() + "/carousel=" + (i+1).toString() + ".png")
       }
       console.log(this.imgs)
     },
@@ -49,16 +42,9 @@ export default {
         this.imgSelect=selected
     },
     getImg(){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/main.png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      console.log(res.responseText)
-      this.img = 'data:image.png;base64,' + res.response
-      this.imgSelect = 'data:image.png;base64,' + res.response
-      this.imgs.push('data:image.png;base64,' + res.response)
+      this.img = 'http://localhost:8443/image/games/' + this.$route.params.id.toString() + '/main.png'
+      this.imgSelect = 'http://localhost:8443/image/games/' + this.$route.params.id.toString() + '/main.png'
+      this.imgs.push('http://localhost:8443/image/games/' + this.$route.params.id.toString() + '/main.png')
     },
     getcomments(){
       const res = new XMLHttpRequest()
@@ -85,7 +71,7 @@ export default {
   },
   beforeMount() {
     this.getGameInfo()
-    this.get
+    this.getcomments()
   }
 }
 </script>
@@ -113,7 +99,7 @@ export default {
           <vs-divider style="background: white"/>
           <h2 style="text-align: left; color: white">Publisher</h2>
           <div class="publisher">
-            <vs-avatar size="large" src=""/>
+            <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + this.gameInfo.creators.id.toString() + '.png'"/>
             <div style="display: block; position: relative; left: 10px">
               <h1 style="position: relative; top: 5px">{{ gameInfo.creators.nickname }}</h1>
             </div>

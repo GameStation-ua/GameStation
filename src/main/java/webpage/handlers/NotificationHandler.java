@@ -80,7 +80,7 @@ public class NotificationHandler {
 
     private void checkRegistered(Session user) {
         if (!sessionMap.containsValue(user)) {
-            String token = user.getUpgradeRequest().getHeader("token");
+            String token = user.getUpgradeRequest().getHeader("Sec-WebSocket-Protocol");
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
                     .parseClaimsJws(token).getBody();

@@ -22,15 +22,6 @@ export default {
       this.searchresultGames = JSON.parse(res.response).gameList
       console.log(this.searchresult)
     },
-    getImg(id){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      return res.response
-    },
     gamepage(id){
       this.page('/gamePage/' + id.toString())
     },
@@ -48,7 +39,7 @@ export default {
       <h3>Related games</h3>
       <div v-for="(gameSearch,index) in searchresultGames" :key="index" style="position: relative">
         <div @click="gamepage(gameSearch.id)" style="cursor: pointer" class="selection">
-          <img :src="'data:image.png;base64,' + getImg(gameSearch.id)" style="height: 100%" alt="logo">
+          <img :src="'http://localhost:8443/image/games/' + gameSearch.id.toString() + '/main.png'" style="height: 100%" alt="logo">
           <div style="display: block; position: relative; left: 10px">
             <h1>{{ gameSearch.title }}</h1>
           </div>
