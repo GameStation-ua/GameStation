@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
 import webpage.model.Notification;
 import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
@@ -29,16 +30,16 @@ public class NotificationHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session user){
-        try {
-            checkRegistered(user);
-            sendNotifications(user, user.getUpgradeRequest().getHeader("Sec-WebSocket-Protocol"));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     @OnWebSocketMessage
     public void onMessege(Session user, String text){
+        try {
+            checkRegistered(user, text);
+            sendNotifications(user, text);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     static public void sendNotification(Long userId, Notification notification){
@@ -54,11 +55,10 @@ public class NotificationHandler {
         sessionMap.inverse().remove(user);
     }
 
-    private void sendNotifications(Session user, String auth) {
+    private void sendNotifications(Session user, String message) {
         try{
-        String token = user.getUpgradeRequest().getHeader("Sec-WebSocket-Protocol");
-        Long userId = getIdByToken(token);
-        Optional<User> userOptional = findUserById(userId);
+            Long userId = getIdByToken(message);
+            Optional<User> userOptional = findUserById(userId);
 
         if (userOptional.isEmpty()){
             onError(user, new Exception("User not found"));
@@ -72,19 +72,17 @@ public class NotificationHandler {
         prepareNotificationResponse(notificationResponse, userOptional.get());
 
         String s = toJson(notificationResponse);
-        user.getUpgradeResponse().setHeader("Sec-WebSocket-Protocol", token);
         user.getRemote().sendString(s);
         }catch (Throwable e){
             onError(user, e);
         }
     }
 
-    private void checkRegistered(Session user) {
+    private void checkRegistered(Session user, String mesasge) {
         if (!sessionMap.containsValue(user)) {
-            String token = user.getUpgradeRequest().getHeader("token");
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
-                    .parseClaimsJws(token).getBody();
+                    .parseClaimsJws(mesasge).getBody();
             sessionMap.put(Long.valueOf((Integer)claims.get("id")), user);
         }
     }
