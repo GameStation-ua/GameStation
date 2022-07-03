@@ -96,10 +96,15 @@ export default {
           </vs-tab>
           <vs-tab @click="colorx = 'danger'" label="Published Games">
             <div class="con-tab-ejemplo">
-              <div v-for="(games,index) in debelopedGames" :key="index" class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
-                <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
-                <div style="display: block; position: relative; left: 10px">
-                  <h1>{{games.title}}</h1>
+              <div v-for="(games,index) in debelopedGames" :key="index">
+                <div class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
+                  <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
+                  <div style="display: block; position: relative; left: 10px">
+                    <h1>{{games.title}}</h1>
+                  </div>
+                </div>
+                <div v-if="user.id === verifi">
+                  <vs-button  color="primary" type="border" icon="edit" style="position: absolute; display: flex; right: 5%; top: 20px" :to="'/editGameMenu/' + games.gameId.toString()"></vs-button>
                 </div>
               </div>
             </div>

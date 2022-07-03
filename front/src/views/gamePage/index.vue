@@ -13,6 +13,7 @@ export default {
       textarea: '',
       counterDanger: false,
       page:1,
+      comments: []
     }
   },
   components: {
@@ -67,6 +68,10 @@ export default {
       res.setRequestHeader("path", "/games/" + this.$route.params.id.toString() + "/main.png")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
+      if (res.status === 200){
+        location.reload()
+      }
+
     }
   },
   beforeMount() {
@@ -138,8 +143,15 @@ export default {
         <div style="display: flex; position: relative; right: 10px; margin-left: 10px">
           <vs-button @click="comment()" color="success" type="filled">Comment</vs-button>
         </div>
-        <div style="margin-top: 20px">
-
+        <div v-for="(comment, index) in comments" :key="index" style="margin-top: 40px;display: flex; flex-wrap: wrap">
+          <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + comment.userId.toString() + '.png'"/>
+          <div style="display: block; width: 90%">
+            <div style="display: flex; margin-bottom: -15px">
+              <p style=" text-align: left;color: white; display: flex; position: relative; margin-right: 10px">{{ comment.nickname}}</p>
+              <p style=" text-align: left;color: #2c3e50; display: flex; position: relative">{{comment.date.toString()}}</p>
+            </div>
+            <p style="overflow-wrap: break-word">{{ comment.content}}</p>
+          </div>
         </div>
       </div>
     </div>

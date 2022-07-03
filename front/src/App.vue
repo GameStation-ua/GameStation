@@ -9,11 +9,17 @@
 
   import Store from './store'
   import router from "@/router";
+  import socket from "@/socketjs";
 
-  Socket.addEventListener('connect',(Data) =>{
-    console.log(Data)
-  })
+  socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+  });
 
+  function getNotif(){
+    Socket.addEventListener('open',()=>{
+      socket.send(localStorage.getItem('token'))
+    })
+  }
 
   function logout(){
     setTimeout(()=>{
@@ -55,7 +61,6 @@
 <template lang="html">
   <Start v-if="!$store.state.mesage"></Start>
   <template v-else>
-    {{}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
     <vs-navbar v-model="activeItem" class="nabarx">
@@ -133,9 +138,10 @@
         </div>
       </vs-sidebar>
     </div>
+    {{getNotif()}}
     <router-view/>
   </template>
-  <notifications />
+  <notifications/>
 </template>
 
 <style>

@@ -1,2 +1,2 @@
-const socket = new WebSocket('ws://localhost:8443/notifications', localStorage.getItem('token'));
+const socket = new WebSocket('ws://localhost:8443/notifications');
 export default socket

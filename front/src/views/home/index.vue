@@ -37,7 +37,7 @@ export default {
     },
     gamepage(game){
       localStorage.setItem("id", game.id)
-      this.page('/gamePage/' + game.id.toString())
+      this.page('/gamePage/' + game.gameId.toString())
     },
 
     addToList(){
@@ -52,7 +52,7 @@ export default {
     openPopup(game){
       this.selectedGame = game
       this.popupActivo = true
-      this.listdata.gameId = game.id
+      this.listdata.gameId = game.gameId
       console.log(this.selectedGame)
     },
     followGame(game){
@@ -60,7 +60,7 @@ export default {
          path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
        }
       const res = new XMLHttpRequest()
-      res.open("PATCH", "/follow/add/" + game.id.toString() , false)
+      res.open("PATCH", "/follow/add/" + game.gameId.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
@@ -80,7 +80,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="'http://localhost:8443/image/games/' + game.id.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
@@ -97,7 +97,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag2" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="'http://localhost:8443/image/games/' + game.id.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
@@ -114,7 +114,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag3" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="'http://localhost:8443/image/games/' + game.id.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -131,7 +131,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag4" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="'http://localhost:8443/image/games/' + game.id.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -148,7 +148,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag5" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" alt="logo">
-            <img :src="'http://localhost:8443/image/games/' + game.id.toString() + '/main.png'" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
