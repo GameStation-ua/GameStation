@@ -1,5 +1,6 @@
 package webpage.entity;
 
+import org.apache.commons.io.FileUtils;
 import spark.Request;
 import spark.Response;
 
@@ -9,6 +10,7 @@ import javax.servlet.ServletException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -27,6 +29,12 @@ public class Images {
             File file = new File(directory);
             copyInputStreamToFile(is, file);
         }
+    }
+    public static void moveImagesFromRequest(File srcDir, File destDir) throws IOException {
+
+        Files.delete(destDir.toPath());
+
+        FileUtils.moveDirectory(srcDir, destDir);
     }
 
     public static boolean rescale(String directory, int width, int height) {

@@ -16,11 +16,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static spark.Spark.*;
 import static webpage.entity.Actors.persistNotificationToFollowers;
 import static webpage.entity.Actors.sendNotificationToFollowers;
 import static webpage.entity.Games.*;
+import static webpage.entity.Images.moveImagesFromRequest;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.createTagResponseList;
@@ -105,7 +107,8 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                     try {
                         Long gameId = editGame(gameRequest.get());
-                        FileUtils.moveDirectory(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + gameId).getAbsoluteFile());
+                        moveImagesFromRequest(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + gameId).getAbsoluteFile());
+
                     }catch (Exception e){
                         return returnJson(res, 500, "Something went wrong");
                     }
