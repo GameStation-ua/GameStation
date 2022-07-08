@@ -32,15 +32,47 @@ public class GameRequest {
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Tag> tags;
 
-    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags) {
+    @Column(name = "ALREADY_EXISTS")
+    private boolean alreadyExists;
+
+    @Column(name = "GAMEID")
+    private Long gameId;
+
+    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags, boolean alreadyExists) {
         this.title = title;
         this.description = description;
         this.wiki = wiki;
         this.creatorId = creatorId;
         this.tags = tags;
+        this.alreadyExists = alreadyExists;
+    }
+    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags, boolean alreadyExists, Long gameId) {
+        this.title = title;
+        this.description = description;
+        this.wiki = wiki;
+        this.creatorId = creatorId;
+        this.tags = tags;
+        this.alreadyExists = alreadyExists;
+        this.gameId = gameId;
     }
 
     public GameRequest() {
+    }
+
+    public boolean isAlreadyExists() {
+        return alreadyExists;
+    }
+
+    public void setAlreadyExists(boolean alreadyExists) {
+        this.alreadyExists = alreadyExists;
+    }
+
+    public Long getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(Long gameId) {
+        this.gameId = gameId;
     }
 
     public void addTag(Tag tag){

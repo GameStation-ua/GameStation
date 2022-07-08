@@ -226,7 +226,7 @@ public class Games {
         Optional<List<Tag>> tags = findTagsIfAvailable(createGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
-        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1));
+        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1, true));
     }
     public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId) {
 
@@ -253,7 +253,7 @@ public class Games {
         Optional<List<Tag>> tags = findTagsIfAvailable(editGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
-        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1));
+        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1, false, game.getId()));
     }
 
     public static boolean isOwner(Long userId, Long gameId){
@@ -296,6 +296,22 @@ public class Games {
             Game game1 = merge(game);
             remove(gameRequest);
             return game1;
+    }
+
+    public static long editGame(GameRequest gameRequest){
+        Optional<Game> game = findGameById(gameRequest.getGameId());
+        if (game.isEmpty()) return -1;
+
+        setGameData(gameRequest, game.get());
+        merge(game.get());
+        return game.get().getId();
+    }
+
+    private static void setGameData(GameRequest gameRequest, Game game){
+        game.setDescription(gameRequest.getDescription());
+        game.setTitle(gameRequest.getTitle());
+        game.setWiki(gameRequest.getWiki());
+        game.setTags(gameRequest.getTags());
     }
 
     public static void createGameUpdate(GameUpdateRequest gur){

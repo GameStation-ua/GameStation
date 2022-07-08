@@ -94,9 +94,18 @@ public class ABMGamesHandler extends AbstractHandler{
                         remove(gameRequest.get());
                         return returnJson(res, 200, "Request rejected");
                     }
+                    if (!gameRequest.get().isAlreadyExists()) {
+                        try {
+                            Game game = createGameFromRequest(gameRequest.get());
+                            FileUtils.moveDirectory(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + game.getId()).getAbsoluteFile());
+                        } catch (Exception e) {
+                            return returnJson(res, 500, "Something went wrong");
+                        }
+                        return returnJson(res, 200, "Request accepted");
+                    }
                     try {
-                        Game game = createGameFromRequest(gameRequest.get());
-                        FileUtils.moveDirectory( new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + game.getId()).getAbsoluteFile());
+                        Long gameId = editGame(gameRequest.get());
+                        FileUtils.moveDirectory(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + gameId).getAbsoluteFile());
                     }catch (Exception e){
                         return returnJson(res, 500, "Something went wrong");
                     }

@@ -32,6 +32,9 @@ public class Game extends Actor{
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Tag> tags;
 
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE}, mappedBy = "gameId")
+    private Set<GameRequest> editRequests;
+
     public Game() {
     }
 

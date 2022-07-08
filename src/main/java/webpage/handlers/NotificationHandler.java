@@ -3,11 +3,8 @@ package webpage.handlers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
 import webpage.model.Notification;
 import webpage.model.User;
 import webpage.responseFormats.NotificationResponse;
@@ -20,7 +17,6 @@ import static webpage.entity.Notifications.prepareNotificationResponse;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
 import static webpage.util.Parser.toJson;
-import static webpage.util.SecretKey.key;
 
 
 @WebSocket
@@ -30,13 +26,16 @@ public class NotificationHandler {
 
     @OnWebSocketConnect
     public void onConnect(Session user){
+        user.setIdleTimeout(200000);
     }
 
     @OnWebSocketMessage
     public void onMessege(Session user, String text){
         try {
-            checkRegistered(user, text);
-            sendNotifications(user, text);
+            if(checkRegistered(user, text)) {
+                sendNotifications(user, text);
+                user.setIdleTimeout(3000000);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -78,18 +77,26 @@ public class NotificationHandler {
         }
     }
 
-    private void checkRegistered(Session user, String mesasge) {
+    private boolean checkRegistered(Session user, String mesasge) {
         if (!sessionMap.containsValue(user)) {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(key)
-                    .parseClaimsJws(mesasge).getBody();
-            sessionMap.put(Long.valueOf((Integer)claims.get("id")), user);
+            try {
+                sessionMap.put(getIdByToken(mesasge), user);
+                return true;
+            }catch (Exception e){
+                onError(user, e);
+                return false;
+            }
         }
+        return true;
     }
 
 
     @OnWebSocketError
     public void onError(Session user, Throwable error){
-        user.getUpgradeResponse().setHeader("error", error.getMessage());
+        try {
+            user.getRemote().sendString(error.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

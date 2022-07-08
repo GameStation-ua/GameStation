@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts;
 import webpage.model.Game;
 import webpage.model.Tag;
 import webpage.model.User;
-import webpage.responseFormats.GameResponse;
 import webpage.responseFormats.HomeResponse;
 import webpage.responseFormats.SoftGameResponse;
 import webpage.responseFormats.UserResponse;
