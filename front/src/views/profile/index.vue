@@ -8,10 +8,7 @@ export default {
       user: {},
       colorx:'success',
       gamelist:[],
-      gamelistimg:[],
       debelopedGames:[],
-      debelopedGamesimg:[],
-      img: ""
     }
   },
   methods: {
@@ -23,10 +20,6 @@ export default {
       res.send(null)
       this.debelopedGames = JSON.parse(res.response)
       console.log(this.debelopedGames)
-      this.debelopedGames.map((game)=>{
-        this.debelopedGamesimg.push(this.getImg(game.gameId))
-      })
-      console.log(this.debelopedGamesimg)
     },
     getList(){
       const res = new XMLHttpRequest()
@@ -36,10 +29,6 @@ export default {
       res.send(null)
       this.gamelist = JSON.parse(res.response)
       console.log(this.gamelist)
-      this.gamelist.map((game)=>{
-        this.gamelistimg.push(this.getImg(game.gameId))
-      })
-      console.log(this.gamelistimg)
     },
     getUser(){
       this.user = JSON.parse(localStorage.getItem('selectedProfile'))
@@ -66,27 +55,11 @@ export default {
       router.push(rout)
       localStorage.setItem("inSearch", "false")
     },
-    getImgUser(){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/profile_pictures/" + this.$route.params.id.toString() + '.png')
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      console.log(res.responseText)
-      if (res.status === 200){
-        this.img = 'data:image.png;base64,' + res.response.toString()
-      }else{
-        this.img = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'
-      }
-
-    }
   },
   beforeMount() {
     this.getUser()
     this.getList()
     this.getDevelopedGames()
-    this.getImgUser()
   }
 }
 </script>
@@ -96,7 +69,7 @@ export default {
     <div class="form-box">
       <div style="display: flex; position: relative">
         <div style="width: 15%; position: relative; left: 5%">
-          <img :src="img" style="width: 100%; border-radius:150px">
+          <img :src="'http://localhost:8443/image/profile_pictures/' + user.id.toString() + '.png'" style="width: 100%; border-radius:150px">
         </div>
         <div style="display: block; left: 10%; position: relative; text-align: left">
           <h1>{{user.nickname}}</h1>
@@ -113,7 +86,7 @@ export default {
           <vs-tab @click="colorx = 'success'" label="GameList">
             <div class="con-tab-ejemplo" style="display: block">
               <div v-for="(games,index) in gamelist" :key="index" class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
-                <img :src="gamelistimg[index]" style="height: 100%" alt="logo">
+                <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
                 <div style="display: block; position: relative; left: 10px">
                   <h1>{{ games.title }}</h1>
                   <label v-if="games.score.toString() !== '0'">score: {{games.score.toString()}}</label>
@@ -123,10 +96,15 @@ export default {
           </vs-tab>
           <vs-tab @click="colorx = 'danger'" label="Published Games">
             <div class="con-tab-ejemplo">
-              <div v-for="(games,index) in debelopedGames" :key="index" class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
-                <img :src="debelopedGamesimg[index]" style="height: 100%" alt="logo">
-                <div style="display: block; position: relative; left: 10px">
-                  <h1>{{games.title}}</h1>
+              <div v-for="(games,index) in debelopedGames" :key="index">
+                <div class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
+                  <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
+                  <div style="display: block; position: relative; left: 10px">
+                    <h1>{{games.title}}</h1>
+                  </div>
+                </div>
+                <div v-if="user.id === verifi">
+                  <vs-button  color="primary" type="border" icon="edit" style="position: absolute; display: flex; right: 5%; top: 20px" :to="'/editGameMenu/' + games.gameId.toString()"></vs-button>
                 </div>
               </div>
             </div>

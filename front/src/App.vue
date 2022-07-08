@@ -1,14 +1,25 @@
 <script setup>
   import Start from "@/views/start";
+  import Socket from "@/socketjs"
   import {ref} from 'vue'
 
   let active = ref(false)
   let isAdmin = ref(localStorage.getItem("isAdmin").toString())
 
 
-
   import Store from './store'
   import router from "@/router";
+  import socket from "@/socketjs";
+
+  socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+  });
+
+  function getNotif(){
+    Socket.addEventListener('open',()=>{
+      socket.send(localStorage.getItem('token'))
+    })
+  }
 
   function logout(){
     setTimeout(()=>{
@@ -16,19 +27,10 @@
       localStorage.setItem("token", "")
     },1000);
   }
+
   function getImg(){
-    const res = new XMLHttpRequest()
-    res.open("GET", "/image", false)
-    res.setRequestHeader("Content-Type", "application/json")
-    res.setRequestHeader("path", "/profile_pictures/" + JSON.parse(localStorage.getItem('userData')).id.toString() + '.png')
-    res.setRequestHeader("token", localStorage.getItem("token"))
-    res.send(null)
-    console.log(res.responseText)
-    if (res.status === 200){
-      return 'data:image.png;base64,' + res.response.toString()
-    }else{
-      return 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'
-    }
+    const id = JSON.parse(localStorage.getItem('userData')).id.toString()
+    return "http://localhost:8443/image/profile_pictures/" + id + ".png"
 
   }
   function search(){
@@ -136,9 +138,10 @@
         </div>
       </vs-sidebar>
     </div>
+    {{getNotif()}}
     <router-view/>
   </template>
-  <notifications />
+  <notifications/>
 </template>
 
 <style>

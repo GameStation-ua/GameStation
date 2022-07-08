@@ -13,6 +13,11 @@ export default {
         tags: [],
         wiki: "",
         imgsInCarousel: 0
+      },
+      headersCarousel:{
+        token: localStorage.getItem('token'),
+        id: localStorage.getItem('id'),
+        imgType: 'carousel'
       }
     }
   },
@@ -64,42 +69,38 @@ export default {
 </script>
 
 <template>
-
-  <div>
-    <div class="scroller">
-      <H1>UpLoad Menu</H1>
-      <div class="form-box">
-        <div class="centerxmenu">
-          <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
-          <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
-          <div class="tags">
-            <div>
-              <label>Tags</label>
+  <div class="scroller">
+    <H1>UpLoad Menu</H1>
+    <div class="form-box">
+      <div class="centerxmenu">
+        <vs-input label="Name" placeholder="" v-model="gamedata.title"/>
+        <vs-input label="Wiki" placeholder="Url" v-model="gamedata.wiki"/>
+        <div class="tags">
+          <div>
+            <label>Tags</label>
+          </div>
+          <vs-button @click="popupActivo=true" color="primary" type="border">See Tags</vs-button>
+          <vs-popup class="holamundo"  title="Select the tags of your game" :active.sync="popupActivo">
+            <div class="box">
+              <ul class="center">
+                <li v-for="(tag,index) in availableTags1" :key="index">
+                  <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{tag}}</vs-checkbox>
+                </li>
+              </ul>
             </div>
-            <vs-button @click="popupActivo=true" color="primary" type="border">See Tags</vs-button>
-            <vs-popup class="holamundo"  title="Select the tags of your game" :active.sync="popupActivo">
-              <div class="box">
-                <ul class="center">
-                  <li v-for="(tag,index) in availableTags1" :key="index">
-                    <vs-checkbox v-model="gamedata.tags" :vs-value="tag">{{tag}}</vs-checkbox>
-                  </li>
-                </ul>
-              </div>
-              <vs-button @click="popupActivo=false" color="success" type="filled">Confirm</vs-button>
-              <vs-button @click="delAll" color="danger" type="filled">Delete all</vs-button>
-            </vs-popup>
-          </div>
-          <label id="description">Description</label>
-          <vs-textarea  counter="1024" v-model="gamedata.description" width="70%" height="300px"/>
-          <div class="next">
-            <vs-button @click="editGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
-          </div>
+            <vs-button @click="popupActivo=false" color="success" type="filled">Confirm</vs-button>
+            <vs-button @click="delAll" color="danger" type="filled">Delete all</vs-button>
+          </vs-popup>
+        </div>
+        <label id="description">Description</label>
+        <vs-textarea  counter="1024" v-model="gamedata.description" width="70%" height="300px"/>
+        <vs-upload :limit="10 - gamedata.imgsInCarousel" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg"/>
+        <div class="next">
+          <vs-button @click="editGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
         </div>
       </div>
     </div>
   </div>
-
-
 </template>
 
 <style>
@@ -164,6 +165,11 @@ label{
   margin: 30px auto;
   height: fit-content;
 }
+.scroller {
+  overflow-x: hidden;
+  height: calc(100% - 100px);
+}
+
 .scroller {
   overflow-x: hidden;
   height: calc(100% - 100px);

@@ -24,21 +24,22 @@ export default {
       this.searchresultusers = JSON.parse(res.response).foundUsers
       console.log(this.searchresult)
     },
-    getImg(id){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      return res.response
-    },
     gamepage(id){
       this.page('/gamePage/' + id.toString())
     },
     userpage(user){
       localStorage.setItem('selectedProfile', JSON.stringify(user))
       this.page('/profile/' + user.id.toString())
+    },
+    followUser(user){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/add/" + user.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
     }
   },
   beforeMount() {
@@ -54,7 +55,7 @@ export default {
       <h3>Related games</h3>
       <div v-for="(gameSearch,index) in searchresultGames" :key="index" style="position: relative">
         <div @click="gamepage(gameSearch.gameId)" style="cursor: pointer" class="selection">
-          <img :src="'data:image.png;base64,' + getImg(gameSearch.gameId)" style="height: 100%" alt="logo">
+          <img :src="'http://localhost:8443/image/games/' + gameSearch.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
           <div style="display: block; position: relative; left: 10px">
             <h1>{{ gameSearch.title }}</h1>
           </div>
@@ -67,13 +68,13 @@ export default {
       <h3>Related users and Developers</h3>
       <div v-for="(userSearch,index) in searchresultusers" :key="index" style="position: relative">
         <div class="selection" @click="userpage(userSearch)" style="cursor: pointer ">
-          <vs-avatar size="140px" src="https://avatars2.githubusercontent.com/u/31676496?s=460&v=4"/>
+          <vs-avatar size="140px" :src="'http://localhost:8443/image/profile_pictures/' + userSearch.id.toString() + '.png'"/>
           <div style="display: block; position: relative; left: 10px">
             <h1>{{ userSearch.nickname }}</h1>
           </div>
         </div>
         <div class="buttons">
-          <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+          <vs-button color="danger" type="border" icon="favorite" @click="followUser(userSearch)"></vs-button>
         </div>
       </div>
     </div>

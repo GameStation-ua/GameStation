@@ -11,13 +11,6 @@ export default {
   },
   data(){
     return {
-      imgs:{
-        img1:[],
-        img2:[],
-        img3:[],
-        img4:[],
-        img5:[],
-      },
       gamesRecomended:[],
       listdata:{
         gameId: '',
@@ -41,33 +34,12 @@ export default {
       res.send(null)
       console.log(res.responseText)
       this.gamesRecomended = JSON.parse(res.response)
-      localStorage.setItem('userData', JSON.stringify(this.gamesRecomended.user))
-      for (let i = 0; i < this.gamesRecomended.gamesTag1.length; i++) {
-        this.imgs.img1.push(this.getImg(this.gamesRecomended.gamesTag1[i].id))
-      }for (let i = 0; i < this.gamesRecomended.gamesTag2.length; i++) {
-        this.imgs.img2.push(this.getImg(this.gamesRecomended.gamesTag2[i].id))
-      }for (let i = 0; i < this.gamesRecomended.gamesTag3.length; i++) {
-        this.imgs.img3.push(this.getImg(this.gamesRecomended.gamesTag3[i].id))
-      }for (let i = 0; i < this.gamesRecomended.gamesTag4.length; i++) {
-        this.imgs.img4.push(this.getImg(this.gamesRecomended.gamesTag4[i].id))
-      }for (let i = 0; i < this.gamesRecomended.gamesTag5.length; i++) {
-        this.imgs.img5.push(this.getImg(this.gamesRecomended.gamesTag5[i].id))
-      }console.log(this.imgs)
     },
     gamepage(game){
       localStorage.setItem("id", game.id)
-      this.page('/gamePage/' + game.id.toString())
+      this.page('/gamePage/' + game.gameId.toString())
     },
-    getImg(id){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      console.log(res.responseText)
-      return 'data:image.png;base64,' + res.response.toString()
-    },
+
     addToList(){
       const res = new XMLHttpRequest()
       res.open("PATCH", "/gamelist/add", false)
@@ -80,7 +52,7 @@ export default {
     openPopup(game){
       this.selectedGame = game
       this.popupActivo = true
-      this.listdata.gameId = game.id
+      this.listdata.gameId = game.gameId
       console.log(this.selectedGame)
     },
     followGame(game){
@@ -88,7 +60,7 @@ export default {
          path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
        }
       const res = new XMLHttpRequest()
-      res.open("PATCH", "/follow/add/" + game.id.toString() , false)
+      res.open("PATCH", "/follow/add/" + game.gameId.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
@@ -108,7 +80,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag1" :key="slide" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="imgs.url[slide]" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
@@ -125,7 +97,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag2" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1">
-            <img :src="imgs.img2[slide]" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
@@ -142,7 +114,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag3" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="imgs.img3[slide]" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -159,7 +131,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag4" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" >
-            <img :src="imgs.img4[slide]" loading="lazy" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>
@@ -176,7 +148,7 @@ export default {
       <Carousel :items-to-show="3.5" wrapAround="false" :mouseDrag="false" snapAlign="left">
         <Slide v-for="(game, slide) in gamesRecomended.gamesTag5" :key="slide + 1" style="border-radius: 8px">
           <div @click="gamepage(game)" class="carousel__item1" alt="logo">
-            <img async :src="imgs.img5[slide]" style="width: 100%" alt="logo">
+            <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
             <vs-button color="danger" type="border" icon="favorite" ></vs-button>

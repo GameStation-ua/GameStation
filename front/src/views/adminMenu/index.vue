@@ -11,7 +11,6 @@ export default {
   data(){
     return {
       gameRequests:[],
-      mainImg:[],
       popupActivo1:false,
       popupActivo2:false,
       popupActivo3:false,
@@ -72,18 +71,6 @@ export default {
       this.getTags()
       this.tagsTodelete.tags = []
     },
-    getSrc(){
-      for (let i = 0; i < this.gameRequests.length; i++) {
-        const res = new XMLHttpRequest()
-        res.open("GET", "/image", false)
-        res.setRequestHeader("Content-Type", "application/json")
-        res.setRequestHeader("path", "/games/" + this.gameRequests[i].id.toString() + "/main.png")
-        res.setRequestHeader("token", localStorage.getItem("token"))
-        res.send(null)
-        console.log(res.responseText)
-        this.mainImg.push('data:image.png;base64,' + res.response)
-      }
-    },
     gameData(id){
       console.log(this.gameRequests)
       console.log(id)
@@ -92,27 +79,11 @@ export default {
           this.selectedGame = game
           this.popupActivo3 = true
           console.log(this.selectedGame.title)
-          const res = new XMLHttpRequest()
-          res.open("GET", "/image", false)
-          res.setRequestHeader("Content-Type", "application/json")
-          res.setRequestHeader("path", "/games/" + id.toString() + "/main.png")
-          res.setRequestHeader("token", localStorage.getItem("token"))
-          res.send(null)
-          console.log(res.responseText)
-          this.img = 'data:image.png;base64,' + res.response
+          this.img = 'http://localhost:8443/image/game_requests/' + id.toString() + '/main.png'
           return
         }
         return
       })
-    },
-    imgsInCarousel(num, id){
-      const res = new XMLHttpRequest()
-      res.open("GET", "/image", false)
-      res.setRequestHeader("Content-Type", "application/json")
-      res.setRequestHeader("path", "/games/" + id.toString() + + "/carousel=" + num.toString() + ".png")
-      res.setRequestHeader("token", localStorage.getItem("token"))
-      res.send(null)
-      return  'data:image.png;base64,' + res.response
     },
     approval(result, id){
       const approval = {
@@ -176,56 +147,63 @@ export default {
         <vs-tab label="Publish Game List" style="display: flex; flex-wrap: wrap" @click="getSrc">
           <div v-for="(gameRequest,index) in gameRequests" :key="index" class="selection" @click="gameData(gameRequest.id)" style="cursor: pointer ">
             <div class="Img" style="height: 100%">
-              <img :src="mainImg[index]" style="height: 100%">
+              <img :src="'http://localhost:8443/image/game_requests/' + gameRequest.id.toString() + '/main.png'" style="height: 100%">
             </div>
             <div style="display: block; position: relative; left: 10px">
               <h1>{{ gameRequest.title }}</h1>
               <p>{{ gameRequest.description }}</p>
             </div>
           </div>
-          <vs-popup class="Game Content"  title="Game Content" :active.sync="popupActivo3" fullscreen="true">
-            <div style="display: flex">
-              <div style="width: 35%">
-                <h1 style="color: black">Name</h1>
-                <h3 style="color: black!important;">{{selectedGame.title}}</h3>
-                <h1 style="color: black">Tags</h1>
-                <div>
-                  <ul>
-                    <li v-for="(tag, index) in selectedGame.tags" :key="index" style="color: black; margin-left: 10px; text-decoration: underline; display: flex; flex-wrap: wrap">{{tag}}</li>
-                  </ul>
-                </div>
-                <h1 style="color: black">Wiki</h1>
-                <vs-button color="warning" type="border" target :href="selectedGame.wiki">Wiki</vs-button>
-                <h1 style="color: black">Description</h1>
-                <p style="color: black">{{selectedGame.description}}</p>
-              </div>
-              <div style="width: 50%">
-                <img :src="img" style="width: 100%">
-                <Carousel :items-to-show="3" wrapAround="false" :mouseDrag="false" :touchDrag="false">
-                  <Slide v-for="slide in selectedGame.imgsInCarousel" :key="slide">
-                    <div class="carousel__admin">
-                      <img :src="imgsInCarousel(slide, selectedGame.id)" style="width: 100%">
-                    </div>
-                  </Slide>
-                  <template #addons>
-                    <Navigation />
-                  </template>
-                </Carousel>
-              </div>
-            </div>
-            <div style="position: absolute; bottom: 30px; left: 30px">
-              <vs-button color="success" type="border" icon="done" style="margin-right: 10px" @click="approval(true, selectedGame.id)">accept</vs-button>
-              <vs-button color="danger" type="border" icon="close" style="margin-right: 10px" @click="approval(false, selectedGame.id)">reject</vs-button>
-              <vs-button color="dark" type="border" @click="popupActivo3=false">cancel</vs-button>
-            </div>
-          </vs-popup>
+
         </vs-tab>
         <vs-tab label="Edit Game List">
-          <div class="con-tab-ejemplo">
-            Edit
+          <div v-for="(gameRequest,index) in gameRequests" :key="index" class="selection" @click="gameData(gameRequest.id)" style="cursor: pointer ">
+            <div class="Img" style="height: 100%">
+              <img :src="'http://localhost:8443/image/game_requests/' + gameRequest.id.toString() + '/main.png'" style="height: 100%">
+            </div>
+            <div style="display: block; position: relative; left: 10px">
+              <h1>{{ gameRequest.title }}</h1>
+              <p>{{ gameRequest.description }}</p>
+            </div>
           </div>
         </vs-tab>
       </vs-tabs>
+      <vs-popup class="Game Content"  title="Game Content" :active.sync="popupActivo3" fullscreen="true">
+        <div style="display: flex">
+          <div style="width: 35%">
+            <h1 style="color: black">Name</h1>
+            <h3 style="color: black!important;">{{selectedGame.title}}</h3>
+            <h1 style="color: black">Tags</h1>
+            <div>
+              <ul>
+                <li v-for="(tag, index) in selectedGame.tags" :key="index" style="color: black; margin-left: 10px; text-decoration: underline; display: flex; flex-wrap: wrap">{{tag}}</li>
+              </ul>
+            </div>
+            <h1 style="color: black">Wiki</h1>
+            <vs-button color="warning" type="border" target :href="selectedGame.wiki">Wiki</vs-button>
+            <h1 style="color: black">Description</h1>
+            <p style="color: black">{{selectedGame.description}}</p>
+          </div>
+          <div style="width: 50%">
+            <img :src="img" style="width: 100%">
+            <Carousel :items-to-show="3" wrapAround="false" :mouseDrag="false" :touchDrag="false">
+              <Slide v-for="slide in selectedGame.imgsInCarousel" :key="slide">
+                <div class="carousel__admin">
+                  <img :src="'http://localhost:8443/image/game_requests/' + selectedGame.id.toString() + '/carousel=' + slide.toString() + '.png'" style="width: 100%">
+                </div>
+              </Slide>
+              <template #addons>
+                <Navigation />
+              </template>
+            </Carousel>
+          </div>
+        </div>
+        <div style="position: absolute; bottom: 30px; left: 30px">
+          <vs-button color="success" type="border" icon="done" style="margin-right: 10px" @click="approval(true, selectedGame.id)">accept</vs-button>
+          <vs-button color="danger" type="border" icon="close" style="margin-right: 10px" @click="approval(false, selectedGame.id)">reject</vs-button>
+          <vs-button color="dark" type="border" @click="popupActivo3=false">cancel</vs-button>
+        </div>
+      </vs-popup>
     </div>
   </div>
 </template>

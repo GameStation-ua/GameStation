@@ -7,9 +7,6 @@ import './styles/global.css'
 import store from './store'
 import Notifications from '@kyvg/vue3-notification'
 
-
-
-
 let app = createApp(App).use(store)
 app.use(router)
 app.use(Vuesax)
