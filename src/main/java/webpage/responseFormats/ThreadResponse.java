@@ -10,6 +10,7 @@ import static webpage.entity.Actors.findIfFollowing;
 public class ThreadResponse {
 
     private  final Long gameId;
+    private final Long threadId;
     private final String title;
     private final String description;
     private final Date date;
@@ -19,6 +20,7 @@ public class ThreadResponse {
 
     public ThreadResponse(Thread thread, User user, Long userId) {
         this.title = thread.getName();
+        this.threadId = thread.getId();
         this.description = thread.getDescription();
         this.user = new UserResponse(user, userId);
         this.date = thread.getDate();
