@@ -109,7 +109,6 @@ public class ABMGamesHandler extends AbstractHandler{
                     try {
                         Long gameId = editGame(gameRequest.get());
                         moveImagesFromRequest(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + gameId).getAbsoluteFile());
-
                     }catch (Exception e){
                         return returnJson(res, 500, "Something went wrong");
                     }

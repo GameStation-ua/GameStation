@@ -7,20 +7,19 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static webpage.entity.Users.fetchNotifications;
-import static webpage.entity.Users.fetchFollowedActors;
+import static webpage.entity.Users.*;
 
 
 @Entity
-public class User extends Actor{
+public class User extends Actor {
 
-    @Column (name = "USER_NAME", nullable = false)
+    @Column(name = "USER_NAME", nullable = false)
     private String username;
 
-    @Column (name = "PASSWORD", nullable = false)
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column (name = "IS_ADMIN", nullable = false)
+    @Column(name = "IS_ADMIN", nullable = false)
     private boolean isAdmin;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
@@ -60,8 +59,13 @@ public class User extends Actor{
     public User() {
     }
 
-    public void addTag(Tag tag){
-        likedTags.add(tag);
+    public void addTag(Tag tag) {
+        try {
+            likedTags.add(tag);
+        }catch (LazyInitializationException e){
+            likedTags = new HashSet<>(fetchLikedTags(getId()));
+            likedTags.add(tag);
+        }
     }
 
     public Set<UserGame> getUserGame() {
@@ -81,7 +85,13 @@ public class User extends Actor{
     }
 
     public Set<Notification> getNotifications() {
-        return notifications;
+        try {
+            notifications.size();
+            return notifications;
+        } catch (LazyInitializationException e) {
+            notifications = new HashSet<>(fetchNotifications(getId()));
+            return notifications;
+        }
     }
 
     public void setNotifications(Set<Notification> notifications) {
@@ -128,13 +138,25 @@ public class User extends Actor{
         this.createdThreads = createdThreads;
     }
 
-    public void removeTag(Tag tag){
-        likedTags.remove(tag);
+    public void removeTag(Tag tag) {
+        try {
+            likedTags.remove(tag);
+        } catch (LazyInitializationException e) {
+            likedTags = new HashSet<>(fetchLikedTags(getId()));
+            likedTags.remove(tag);
+        }
     }
 
     public Set<Tag> getLikedTags() {
-        return likedTags;
+        try {
+            likedTags.size();
+            return likedTags;
+        } catch (LazyInitializationException e) {
+            likedTags = new HashSet<>(fetchLikedTags(getId()));
+            return likedTags;
+        }
     }
+
 
     public void setLikedTags(Set<Tag> likedtags) {
         this.likedTags = likedtags;
@@ -195,6 +217,11 @@ public class User extends Actor{
     }
 
     public void removeFollowedActor(Actor actor) {
-        followedActors.removeIf(followedActor -> Objects.equals(actor.getId(), followedActor.getId()));
+        try {
+            followedActors.remove(actor);
+        }catch(LazyInitializationException e){
+            followedActors = new HashSet<>(fetchFollowedActors(getId()));
+            followedActors.remove(actor);
+        }
     }
 }

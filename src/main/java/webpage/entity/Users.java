@@ -43,6 +43,18 @@ public class Users {
         }
     }
 
+    public static List<Tag> fetchLikedTags(Long id){
+        EntityManager em = currentEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<Tag> tags = em.createQuery("SELECT u.likedTags FROM User u WHERE u.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return tags;
+        }finally {
+            close();
+        }
+    }
+
     public static List<Notification> fetchNotifications(Long id){
         EntityManager em = currentEntityManager();
         try {
