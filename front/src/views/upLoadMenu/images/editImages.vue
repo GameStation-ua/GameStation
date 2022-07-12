@@ -13,7 +13,6 @@ export default {
         id: this.$route.params.id.toString(),
         imgType: 'carousel'
       },
-      imgs: JSON.parse(localStorage.getItem('imagesAmount'))
     }
   }
 }
@@ -26,7 +25,7 @@ export default {
         <h1>Change Main Image</h1>
         <vs-upload limit="1" :headers="headersMain" fileName="uploaded_file" action="/upload/attachImg"/>
         <h1>Add New Images</h1>
-        <vs-upload :limit="imgs" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg"/>
+        <vs-upload :limit="10" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg"/>
       </div>
     </div>
   </div>

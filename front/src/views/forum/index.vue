@@ -105,7 +105,7 @@ export default {
     <vs-popup class="holamundo"  title="New Thread" button-close-hidden="true"	 :active.sync="popupActivo">
       <vs-input label-placeholder="Thread Title" v-model="threadCreate.title" style="margin-bottom: 10px"/>
       <vs-textarea class="algo" counter="500" label="Description" :counter-danger.sync="counterDanger" v-model="threadCreate.description" style="color: black"/>
-      <vs-button @click="createTread()" color="success" type="border">Success</vs-button>
+      <vs-button @click="createTread()" color="success" type="border">Add</vs-button>
       <vs-button @click="popupActivo=false" color="dark" type="border">Cancel</vs-button>
     </vs-popup>
   </div>
