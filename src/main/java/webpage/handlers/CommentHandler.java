@@ -81,14 +81,12 @@ public class CommentHandler extends AbstractHandler{
                 Notification notification3 = new Notification(NotificationType.USER_COMMENTED_ON_FOLLOWED_THREAD, user.get(), thread.get(), commentRequest.getPath());
                 persistNotificationToFollowers(notification3, thread.get());
                 try{
-                    Optional<Thread> thread1 = findThreadByIdJFFollowers(thread.get().getId());
-                    if (thread1.isEmpty()) return returnJson(res, 500, "Something went wrong");
                     merge(creator.get());
                     merge(user.get());
                     merge(thread.get());
                     sendNotificationToFollowers(notification1, user.get());
                     sendNotification(creator.get().getId(), notification2);
-                    sendNotificationToFollowers(notification3, thread1.get());
+                    sendNotificationToFollowers(notification3, thread.get());
                     return returnJson(res, 200, "OK");
                 }catch (Throwable e){
                     return returnJson(res, 500, "Something went wrong");

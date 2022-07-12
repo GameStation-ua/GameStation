@@ -54,11 +54,7 @@ public class Actor {
     }
 
     public Set<User> getFollowers(){
-        try {
-            return followers;
-        }catch (LazyInitializationException e){
-            return new HashSet<>(fetchFollowers(getId()));
-        }
+        return new HashSet<>(fetchFollowers(getId()));
     }
 
     public String getName(){

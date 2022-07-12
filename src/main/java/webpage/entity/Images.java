@@ -32,7 +32,7 @@ public class Images {
     }
     public static void moveImagesFromRequest(File srcDir, File destDir) throws IOException {
 
-        Files.delete(destDir.toPath());
+        FileUtils.deleteDirectory(destDir);
 
         FileUtils.moveDirectory(srcDir, destDir);
     }

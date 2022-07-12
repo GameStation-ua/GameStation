@@ -3,6 +3,7 @@ package webpage.model;
 import org.hibernate.LazyInitializationException;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -178,8 +179,8 @@ public class User extends Actor{
         try {
             notifications.add(notification);
         }catch (LazyInitializationException e){
-            notifications = fetchNotifications(getId());
-            notification.add(notification);
+            notifications = new HashSet<>(fetchNotifications(getId()));
+            notifications.add(notification);
         }
     }
 

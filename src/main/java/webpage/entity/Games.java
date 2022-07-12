@@ -226,7 +226,7 @@ public class Games {
         Optional<List<Tag>> tags = findTagsIfAvailable(createGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
-        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1, true));
+        return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1, false));
     }
     public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId) {
 
@@ -253,7 +253,7 @@ public class Games {
         Optional<List<Tag>> tags = findTagsIfAvailable(editGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
-        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1, false, game.getId()));
+        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1, true, game.getId()));
     }
 
     public static boolean isOwner(Long userId, Long gameId){
@@ -304,6 +304,7 @@ public class Games {
 
         setGameData(gameRequest, game.get());
         merge(game.get());
+        remove(gameRequest);
         return game.get().getId();
     }
 
