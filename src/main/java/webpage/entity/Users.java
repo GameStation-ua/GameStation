@@ -100,6 +100,18 @@ public class Users {
         }
     }
 
+    public static List<Actor> fetchFollowedActors(Long id){
+        EntityManager em = currentEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<Actor> followedActors = em.createQuery("SELECT u.followedActors FROM User u WHERE u.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return followedActors;
+        }finally {
+            close();
+        }
+    }
+
     public static List<Notification> fetchNotifications(Long id, int pageNumber){
         EntityManager em = currentEntityManager();
         try {

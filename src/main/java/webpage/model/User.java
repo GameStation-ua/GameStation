@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static webpage.entity.Users.fetchNotifications;
+import static webpage.entity.Users.fetchFollowedActors;
 
 
 @Entity
@@ -185,7 +186,11 @@ public class User extends Actor{
     }
 
     public void addFollowedActor(Actor actor) {
-        followedActors.add(actor);
+        try {
+            followedActors.add(actor);
+        }catch(LazyInitializationException e){
+            followedActors = new HashSet<>(fetchFollowedActors(getId()));
+        }
     }
 
     public void removeFollowedActor(Actor actor) {
