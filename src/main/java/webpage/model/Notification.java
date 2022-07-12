@@ -26,6 +26,21 @@ public class Notification {
     @Column(name = "PATH", nullable = false)
     private String path;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final Notification other = (Notification) obj;
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (id == null ? 0 : id.hashCode());
+        return hash;
+    }
+
 
     public Notification() {
     }
