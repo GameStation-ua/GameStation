@@ -27,6 +27,14 @@ public class Actors {
         }
     }
 
+    public static List<Comment> fetchComments(Long id){
+        EntityManager em = currentEntityManager();
+            @SuppressWarnings("unchecked") List<Comment> comments = em.createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return comments;
+    }
+
     public static Optional<List<Comment>> findCommentsFromActorById(Long id, int pageNumber){
         EntityManager em = currentEntityManager();
         try {

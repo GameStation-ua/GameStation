@@ -1,7 +1,12 @@
 package webpage.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import static webpage.entity.Actors.fetchComments;
+import static webpage.entity.Actors.findCommentsFromActorById;
 
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -38,6 +43,9 @@ public class Actor {
     }
 
     public void addComment(Comment comment){
+        if (comments == null){
+            comments = new HashSet<>(fetchComments(id));
+        }
         comments.add(comment);
     }
 
