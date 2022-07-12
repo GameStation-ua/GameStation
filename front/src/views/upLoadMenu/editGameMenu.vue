@@ -14,11 +14,7 @@ export default {
         wiki: "",
         imgsInCarousel: 0
       },
-      headersCarousel:{
-        token: localStorage.getItem('token'),
-        id: localStorage.getItem('id'),
-        imgType: 'carousel'
-      }
+
     }
   },
   methods: {
@@ -34,6 +30,7 @@ export default {
       this.gamedata.tags = JSON.parse(res.response).tags
       this.gamedata.wiki = JSON.parse(res.response).wiki
       this.gamedata.imgsInCarousel = JSON.parse(res.response).imgsInCarousel
+      localStorage.setItem('imagesAmount', this.gamedata.imgsInCarousel)
     },
     getTags() {
       const res = new XMLHttpRequest()
@@ -51,13 +48,14 @@ export default {
     editGame(){
       var xhr = new XMLHttpRequest()
       var json = JSON.stringify(this.gamedata)
-      xhr.open("POST", "/game/edit/" + this.$route.params.id.toString(), false)
+      xhr.open("POST", "/game/solicitude/edit/" + this.$route.params.id.toString(), false)
       xhr.setRequestHeader("Content-Type", "application/json")
       xhr.setRequestHeader("token", localStorage.getItem("token"))
       xhr.send(json)
       console.log(json)
       if (xhr.status === 200){
-        router.push('/')
+        const id = JSON.parse(xhr.response)
+        router.push('/upLoadMenu/Editimages/' + id.toString())
       }
     }
   },
@@ -94,9 +92,8 @@ export default {
         </div>
         <label id="description">Description</label>
         <vs-textarea  counter="1024" v-model="gamedata.description" width="70%" height="300px"/>
-        <vs-upload :limit="10 - gamedata.imgsInCarousel" :headers="headersCarousel" fileName="uploaded_file" action="/upload/attachImg"/>
         <div class="next">
-          <vs-button @click="editGame" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
+          <vs-button @click="editGame()" color="success" type="filled" icon="arrow_forward_ios">Next</vs-button>
         </div>
       </div>
     </div>

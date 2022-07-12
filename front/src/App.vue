@@ -3,6 +3,7 @@
   import Socket from "@/socketjs"
   import {ref} from 'vue'
 
+  let notifInfo = ref([])
   let active = ref(false)
   let isAdmin = ref(localStorage.getItem("isAdmin").toString())
 
@@ -13,6 +14,8 @@
 
   socket.addEventListener('message', function (event) {
     console.log('Message from server ', event.data);
+    notifInfo.value = JSON.parse(event.data)
+    console.log(notifInfo.value)
   });
 
   function getNotif(){
@@ -64,32 +67,22 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
     <vs-navbar v-model="activeItem" class="nabarx">
+
         <vs-button radius @click="active=!active" color="dark" type="flat" icon="menu" id="one"></vs-button>
         <img class="logo" alt="GS logo" src="@/assets/navIcon.png" @click="page('/')">
+      {{data}}
       <div class="rightx">
         <vs-input icon="search"  placeholder="Search" v-model="$store.state.search" v-on:keyup.enter="search" color="success"/>
         <div class="dropdown">
-          <vs-dropdown vs-trigger-click="true">
+          <vs-dropdown vs-custom-content vs-trigger-click="true">
             <vs-button radius color="dark" type="flat" icon="notifications" id="two"></vs-button>
             <vs-dropdown-menu>
-              <vs-dropdown-item>
-                option 1
-              </vs-dropdown-item>
-              <vs-dropdown-item>
-                option 2
-              </vs-dropdown-item>
-              <vs-dropdown-group >
-                <vs-dropdown-item>
-                  option 1
-                </vs-dropdown-item>
-                <vs-dropdown-item>
-                  option 2
-                </vs-dropdown-item>
-
-              </vs-dropdown-group>
-              <vs-dropdown-item divider>
-                option 3
-              </vs-dropdown-item>
+              <h3>Notifications</h3>
+              <div v-for="(notif, index) in notifInfo" :key="index" @click="page(notif.path)">
+                <p style="color: black!important; font-size: 10px; margin-bottom: 0!important;">{{notif.date}}</p>
+                <p style="color: black!important;">{{notif.content}}</p>
+                <vs-divider/>
+              </div>
             </vs-dropdown-menu>
           </vs-dropdown>
         </div>
@@ -101,9 +94,8 @@
       <vs-sidebar parent="body" default-index="2"  color="success" class="sidebarx" spacer v-model="active">
         <div class="header-sidebar" slot="header">
           <vs-avatar  size="70px" :src="getImg()"/>
-          <h4>
+          <h4 style="color: white!important;">
             My Name
-            <vs-button color="success" icon="more_horiz" type="flat"></vs-button>
           </h4>
         </div>
         <vs-sidebar-item index="1" icon="home" color="success" @click="page('/')">
@@ -228,6 +220,10 @@ h4{
 
 #upload{
   right: -10px;
+}
+
+.vs-dropdown--custom{
+  width: 140%;
 }
 
 </style>

@@ -32,7 +32,7 @@ export default {
       res.send(null)
       console.log(res.responseText)
       this.gameInfo = JSON.parse(res.response)
-      console.log(this.gamesInfo)
+      console.log(this.gameInfo)
       console.log(this.gameInfo.gameId)
       for (let i = 0; i < this.gameInfo.imgsInCarousel; i++) {
         this.imgs.push("http://localhost:8443/image/games/" + this.$route.params.id.toString() + "/carousel=" + (i+1).toString() + ".png")
@@ -72,6 +72,60 @@ export default {
         location.reload()
       }
 
+    },
+    followGame(){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/add/" + this.gameInfo.gameId.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        this.gameInfo.isFollowing = true
+      }
+    },
+
+    unfollowGame(){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/delete/" + this.gameInfo.gameId.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        this.gameInfo.isFollowing = false
+      }
+    },
+    followUser(){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/add/" + this.gameInfo.creators.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        this.gameInfo.creators.isFollowing = true
+      }
+    },
+
+    unfollowUser(){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/delete/" + this.gameInfo.creators.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        this.gameInfo.creators.isFollowing = false
+      }
     }
   },
   beforeMount() {
@@ -104,20 +158,22 @@ export default {
           <vs-divider style="background: white"/>
           <h2 style="text-align: left; color: white">Publisher</h2>
           <div class="publisher">
-            <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + this.gameInfo.creators.id.toString() + '.png'"/>
+            <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + this.gameInfo.creators.id.toString() + '.png'" />
             <div style="display: block; position: relative; left: 10px">
               <h1 style="position: relative; top: 5px">{{ gameInfo.creators.nickname }}</h1>
             </div>
-            <vs-button color="danger" type="border" icon="favorite" style="position: absolute; right: 10px; top: 10px;"></vs-button>
+            <vs-button v-if="gameInfo.creators.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowUser()" style="position: absolute; right: 10px; top: 10px;"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followUser()" style="position: absolute; right: 10px; top: 10px;"></vs-button>
           </div>
         </div>
         <div class="right">
           <div class="rightContent" style="position: sticky !important;">
             <img id="rightimg" :src="img">
             <vs-button color="success" type="border">Add to list</vs-button>
-            <vs-button color="danger" type="border">Follow game</vs-button>
+            <vs-button v-if="gameInfo.isFollowing === true" color="danger" type="border" @click="unfollowGame()">Unfollow game</vs-button>
+            <vs-button v-else color="danger" type="border" @click="followGame()">Follow game</vs-button>
             <div class="otherButtons">
-              <vs-button color="primary" type="border">Forum</vs-button>
+              <vs-button color="primary" type="border"  :to="'/forum/' + this.$route.params.id.toString()">Forum</vs-button>
               <vs-button color="warning" type="border" target :href="gameInfo.wiki">Wiki</vs-button>
             </div>
             <div style="display: flex; margin-top: 10px">
@@ -148,7 +204,7 @@ export default {
           <div style="display: block; width: 90%">
             <div style="display: flex; margin-bottom: -15px">
               <p style=" text-align: left;color: white; display: flex; position: relative; margin-right: 10px">{{ comment.nickname}}</p>
-              <p style=" text-align: left;color: #2c3e50; display: flex; position: relative">{{comment.date.toString()}}</p>
+              <p style=" text-align: left;color: #515b7f; display: flex; position: relative">{{comment.date.toString()}}</p>
             </div>
             <p style="overflow-wrap: break-word">{{ comment.content}}</p>
           </div>

@@ -58,7 +58,7 @@ public class ImageHandler extends AbstractHandler{
                 default: return returnJson(res, 500, "Something went wrong");
             }
         }));
-        get("/image/*","image/png", (req, res) -> {
+        get("/image/*", (req, res) -> {
             try {
                 res.status(200);
                 res.header("Content-Type", "image/png");

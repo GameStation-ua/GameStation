@@ -25,6 +25,33 @@ export default {
     gamepage(id){
       this.page('/gamePage/' + id.toString())
     },
+    followGame(game){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/add/" + game.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        game.isFollowing = true
+      }
+    },
+
+    unfollowGame(game){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/delete/" + game.id.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        game.isFollowing = false
+      }
+    }
   },
   beforeMount() {
     this.getSearch()
@@ -45,8 +72,9 @@ export default {
           </div>
         </div>
         <div class="buttons">
-          <vs-button color="danger" type="border" icon="favorite" ></vs-button>
-          <vs-button color="primary" type="border" icon="add" ></vs-button>
+          <vs-button v-if="gameSearch.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(gameSearch)"></vs-button>
+          <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(gameSearch)"></vs-button>
+          <vs-button color="primary" type="border" icon="add"></vs-button>
         </div>
       </div>
     </div>

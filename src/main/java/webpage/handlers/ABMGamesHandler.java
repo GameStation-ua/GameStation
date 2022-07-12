@@ -68,6 +68,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     if (!isOwner(userId, gameId)) return returnJson(res, 401, "Unauthorized");
                     EditGameRequest editGameRequest = fromJson(req.body(), EditGameRequest.class);
+                    editGameRequest.setGameId(gameId);
 
                     Optional<GameRequest> gameRequest = editGameRequest(editGameRequest, userId);
                     if (gameRequest.isEmpty()) return returnJson(res, 400, "Something went wrong");

@@ -64,6 +64,23 @@ export default {
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
+      if (res.status === 200){
+        game.isFollowing = true
+      }
+    },
+
+    unfollowGame(game){
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/follow/delete/" + game.gameId.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(data))
+      if (res.status === 200){
+        game.isFollowing = false
+      }
     }
   },
   beforeMount() {
@@ -83,7 +100,8 @@ export default {
             <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
+            <vs-button v-if="game.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(game)"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -100,7 +118,8 @@ export default {
             <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
+            <vs-button v-if="game.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(game)"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -117,7 +136,8 @@ export default {
             <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+            <vs-button v-if="game.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(game)"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -134,7 +154,8 @@ export default {
             <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" loading="lazy" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+            <vs-button v-if="game.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(game)"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>
@@ -151,7 +172,8 @@ export default {
             <img :src="'http://localhost:8443/image/games/' + game.gameId.toString() + '/main.png'" style="width: 100%" alt="logo">
           </div>
           <div class="buttons">
-            <vs-button color="danger" type="border" icon="favorite" ></vs-button>
+            <vs-button v-if="game.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(game)"></vs-button>
+            <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(game)"></vs-button>
             <vs-button color="primary" type="border" icon="add" @click="openPopup(game)"></vs-button>
           </div>
         </Slide>

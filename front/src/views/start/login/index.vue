@@ -1,5 +1,5 @@
 <script setup>
-
+  import router from "@/router";
   import { ref } from 'vue'
   import Store from '../../../store'
   import {sha512} from "js-sha512";
@@ -37,6 +37,15 @@
       const is = JSON.parse(res.response).message
       console.log(is)
       localStorage.setItem("isAdmin", is)
+      const ros = new XMLHttpRequest()
+      ros.open("GET", "/home", false)
+      ros.setRequestHeader("Content-Type", "application/json")
+      ros.setRequestHeader("token", localStorage.getItem("token"))
+      ros.send(null)
+      console.log(ros.responseText)
+      localStorage.setItem('userData', JSON.stringify(JSON.parse(ros.response).user))
+      router.push('/')
+      location.reload()
     }
   }
 

@@ -9,6 +9,9 @@ import Profile from "@/views/profile/index"
 import EditProfile from "@/views/profile/edit/edit"
 import SearchTag from  "@/views/search/searchTags"
 import EditGameMenu from "@/views/upLoadMenu/editGameMenu"
+import UpLoadMenuEditImages from"@/views/upLoadMenu/images/editImages"
+import Forum from "@/views/forum/index"
+import ForumThread from "@/views/thread"
 
 const routes = [
   {
@@ -60,12 +63,22 @@ const routes = [
     path: '/editGameMenu/:id',
     name: 'editGameMenu',
     component: EditGameMenu
+  },
+  {
+    path:'/upLoadMenu/Editimages/:id',
+    name: 'upLoadMenuEditImages',
+    component: UpLoadMenuEditImages
+  },
+  {
+    path:'/forum/:id',
+    name: 'forum',
+    component: Forum
+  },
+  {
+    path:'/forum/thread/:id',
+    name: 'forumThread',
+    component: ForumThread
   }
-
-
-
-
-
 ]
 
 const router = createRouter({

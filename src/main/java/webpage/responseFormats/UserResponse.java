@@ -12,7 +12,7 @@ public class UserResponse {
     private final long id;
     private final String nickname;
     private final Set<String> likedTags;
-    private boolean isFollwing;
+    private boolean isFollowing;
 
     public UserResponse(User userToRespond, Long userId){
         this.id = userToRespond.getId();
@@ -22,6 +22,6 @@ public class UserResponse {
             tags.add(likedTag.getName());
         }
         this.likedTags = tags;
-        this.isFollwing = findIfFollowing(userToRespond.getId(), userId);
+        this.isFollowing = findIfFollowing(userToRespond.getId(), userId);
     }
 }
