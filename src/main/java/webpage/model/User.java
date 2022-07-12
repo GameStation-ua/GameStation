@@ -190,6 +190,7 @@ public class User extends Actor{
             followedActors.add(actor);
         }catch(LazyInitializationException e){
             followedActors = new HashSet<>(fetchFollowedActors(getId()));
+            followedActors.add(actor);
         }
     }
 
