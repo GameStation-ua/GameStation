@@ -15,8 +15,7 @@ import static spark.Spark.*;
 import static webpage.entity.Actors.*;
 import static webpage.entity.Comments.createCommentResponseList;
 import static webpage.entity.Persister.merge;
-import static webpage.entity.Threads.findThreadByIdJFComments;
-import static webpage.entity.Threads.findThreadByIdJFFollowers;
+import static webpage.entity.Threads.*;
 import static webpage.entity.UserComments.findUserCommentByCommentIdAndUserId;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
@@ -65,7 +64,7 @@ public class CommentHandler extends AbstractHandler{
                 Long userId = getIdByToken(token);
                 Long threadId = Long.valueOf(req.params(":threadId"));
 
-                Optional<Thread> thread = findThreadByIdJFComments(threadId);
+                Optional<Thread> thread = findThreadById(threadId);
 
                 if (thread.isEmpty()) return returnJson(res, 401, "Something went wrong");
 
