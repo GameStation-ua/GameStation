@@ -1,8 +1,12 @@
 package webpage.model;
 
+import org.hibernate.LazyInitializationException;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
+
+import static webpage.entity.Users.fetchNotifications;
 
 
 @Entity
@@ -171,9 +175,13 @@ public class User extends Actor{
     }
 
     public void addNotification(Notification notification){
-        notifications.add(notification);
+        try {
+            notifications.add(notification);
+        }catch (LazyInitializationException e){
+            notifications = fetchNotifications(getId());
+            notification.add(notification);
+        }
     }
-
 
     public void addFollowedActor(Actor actor) {
         followedActors.add(actor);

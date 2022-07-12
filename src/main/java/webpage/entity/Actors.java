@@ -27,12 +27,28 @@ public class Actors {
         }
     }
 
+    public static List<User> fetchFollowers(Long id){
+        EntityManager em = currentEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<User> followers = em.createQuery("SELECT followers FROM ACTOR a WHERE a.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return followers;
+        }finally {
+            close();
+        }
+    }
+
     public static List<Comment> fetchComments(Long id){
         EntityManager em = currentEntityManager();
+        try {
             @SuppressWarnings("unchecked") List<Comment> comments = em.createQuery("SELECT comments FROM ACTOR a WHERE a.id = ?1")
                     .setParameter(1, id)
                     .getResultList();
             return comments;
+        }finally {
+            close();
+        }
     }
 
     public static Optional<List<Comment>> findCommentsFromActorById(Long id, int pageNumber){

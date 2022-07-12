@@ -1,12 +1,14 @@
 package webpage.model;
 
+import org.hibernate.LazyInitializationException;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static webpage.entity.Actors.fetchComments;
-import static webpage.entity.Actors.findCommentsFromActorById;
+import static webpage.entity.Actors.*;
+import static webpage.entity.Users.fetchNotifications;
 
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -43,14 +45,20 @@ public class Actor {
     }
 
     public void addComment(Comment comment){
-        if (comments == null){
+        try{
+            comments.add(comment);
+        }catch (LazyInitializationException e){
             comments = new HashSet<>(fetchComments(id));
+            comments.add(comment);
         }
-        comments.add(comment);
     }
 
     public Set<User> getFollowers(){
-        return followers;
+        try {
+            return followers;
+        }catch (LazyInitializationException e){
+            return new HashSet<>(fetchFollowers(getId()));
+        }
     }
 
     public String getName(){

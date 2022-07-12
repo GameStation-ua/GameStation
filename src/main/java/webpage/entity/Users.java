@@ -88,6 +88,18 @@ public class Users {
         }
     }
 
+    public static List<Notification> fetchNotifications(Long id, int pageNumber){
+        EntityManager em = currentEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<Notification> notifications = em.createQuery("SELECT u.notifications FROM User u WHERE u.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return notifications;
+        }finally {
+            close();
+        }
+    }
+
     public static void addTagsToUser(List<Tag> tags, User user) {
         user.getLikedTags().addAll(tags);
     }
