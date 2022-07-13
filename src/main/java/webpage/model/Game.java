@@ -1,7 +1,14 @@
 package webpage.model;
 
+import org.hibernate.LazyInitializationException;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
+
+import static webpage.entity.Games.fetchTags;
+
+import static webpage.entity.Users.fetchLikedTags;
 
 @Entity
 public class Game extends Actor{
@@ -29,7 +36,7 @@ public class Game extends Actor{
     @OrderBy(value = "date ASC")
     private Set<GameUpdate> gameUpdates;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Tag> tags;
 
     @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE}, mappedBy = "gameId")
@@ -77,10 +84,6 @@ public class Game extends Actor{
         this.gameUpdates = gameUpdates;
     }
 
-    public void removeTag(Tag tag){
-        tags.remove(tag);
-    }
-
     public String getTitle() {
         return super.getName();
     }
@@ -106,11 +109,35 @@ public class Game extends Actor{
     }
 
     public Set<Tag> getTags() {
-        return tags;
+        try {
+            tags.size();
+            return tags;
+        } catch (LazyInitializationException e) {
+            tags = new HashSet<>(fetchTags(getId()));
+            return tags;
+        }
     }
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public void removeTag(Tag tag) {
+        try {
+            tags.remove(tag);
+        } catch (LazyInitializationException e) {
+            tags = new HashSet<>(fetchTags(getId()));
+            tags.remove(tag);
+        }
+    }
+
+    public void addTag(Tag tag) {
+        try {
+            tags.add(tag);
+        } catch (LazyInitializationException e) {
+            tags = new HashSet<>(fetchTags(getId()));
+            tags.add(tag);
+        }
     }
 
     public Long getId() {
@@ -127,9 +154,5 @@ public class Game extends Actor{
 
     public void setImgsInCarousel(int imgsInCarousel) {
         this.imgsInCarousel = imgsInCarousel;
-    }
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
     }
 }

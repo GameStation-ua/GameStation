@@ -167,8 +167,8 @@ public class ABMGamesHandler extends AbstractHandler{
                 if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long gameId = Long.valueOf(req.params(":gameId"));
 
-                Optional<Game> game = findGameByIdJFFollowers(gameId);
-                if(game.isEmpty()) game = findGameById(gameId);
+                Optional<Game> game = findGameById(gameId);
+                if(game.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                 Optional<List<UserGame>> userGames = findUserGamesbyGameId(gameId);
                 if (userGames.isEmpty()) return returnJson(res, 400, "Something went wrong");
@@ -216,7 +216,7 @@ public class ABMGamesHandler extends AbstractHandler{
             }
             meanScore = meanScore / userGames.size();
         }else {
-            meanScore = -1;
+            meanScore = 0;
         }
         return meanScore;
     }
