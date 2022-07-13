@@ -56,9 +56,9 @@ export default {
       console.log(this.selectedGame)
     },
     followGame(game){
-       const data = {
-         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
-       }
+      const data = {
+        path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
+      }
       const res = new XMLHttpRequest()
       res.open("PATCH", "/follow/add/" + game.gameId.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
@@ -68,7 +68,6 @@ export default {
         game.isFollowing = true
       }
     },
-
     unfollowGame(game){
       const data = {
         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()

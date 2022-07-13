@@ -31,6 +31,18 @@ public class Games {
         }
     }
 
+    public static List<Tag> fetchTags(Long id){
+        EntityManager em = currentEntityManager();
+        try {
+            @SuppressWarnings("unchecked") List<Tag> tags = em.createQuery("SELECT g.tags FROM Game g WHERE g.id = ?1")
+                    .setParameter(1, id)
+                    .getResultList();
+            return tags;
+        }finally {
+            close();
+        }
+    }
+
     public static Optional<List<GameUpdate>>findGameUpdatesByPage(Long gameId, int pageNum){
         EntityManager em = currentEntityManager();
         try{

@@ -6,7 +6,14 @@ export default {
     return {
       searchresultGames:[],
       searchresultusers:[],
-      searchinput: this.$route.params.id.toString()
+      searchinput: this.$route.params.id.toString(),
+      listdata:{
+        gameId: '',
+        score: 0,
+        status: ''
+      },
+      selectedGame:{},
+      popupActivo:false,
     }
   },
   methods:{
@@ -36,7 +43,7 @@ export default {
         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
       }
       const res = new XMLHttpRequest()
-      res.open("PATCH", "/follow/add/" + game.id.toString() , false)
+      res.open("PATCH", "/follow/add/" + game.gameId.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
@@ -50,7 +57,7 @@ export default {
         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
       }
       const res = new XMLHttpRequest()
-      res.open("PATCH", "/follow/delete/" + game.id.toString() , false)
+      res.open("PATCH", "/follow/delete/" + game.gameId.toString() , false)
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
@@ -58,7 +65,12 @@ export default {
         game.isFollowing = false
       }
     },
-
+    openPopup(game){
+      this.selectedGame = game
+      this.popupActivo = true
+      this.listdata.gameId = game.gameId
+      console.log(this.selectedGame)
+    },
     followUser(user){
       const data = {
         path: "/profile/" + JSON.parse(localStorage.getItem('userData')).id.toString()
@@ -85,7 +97,16 @@ export default {
       if (res.status === 200){
         user.isFollowing = false
       }
-    }
+    },
+    addToList(){
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/gamelist/add", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(this.listdata))
+      this.popupActivo = false
+
+    },
   },
   beforeMount() {
     this.getSearch()
@@ -108,7 +129,7 @@ export default {
         <div class="buttons">
           <vs-button v-if="gameSearch.isFollowing === true" color="danger" type="border" icon="heart_broken" @click="unfollowGame(gameSearch)"></vs-button>
           <vs-button v-else color="danger" type="border" icon="favorite" @click="followGame(gameSearch)"></vs-button>
-          <vs-button color="primary" type="border" icon="add"></vs-button>
+          <vs-button color="primary" type="border" icon="add" @click="openPopup(gameSearch)"></vs-button>
         </div>
       </div>
       <h3>Related users and Developers</h3>
@@ -125,6 +146,35 @@ export default {
         </div>
       </div>
     </div>
+    <vs-popup class="holamundo"  title="List data" :active.sync="popupActivo">
+      <h1 style="color: black">{{selectedGame.title}}</h1>
+      <div style="display: block">
+        <label style="color: black">Status</label>
+        <ul class="leftx">
+          <li>
+            <vs-radio color="success" v-model="listdata.status" vs-value="Playing">Playing</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="danger" v-model="listdata.status" vs-value="Dropped">Dropped</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="warning" v-model="listdata.status" vs-value="On hold">On hold</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="dark" v-model="listdata.status" vs-value="Waiting">Waiting</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="rgb(87, 251, 187)" v-model="listdata.status" vs-value="Completed">Completed</vs-radio>
+          </li>
+        </ul>
+        <label style="color: black">Score</label>
+        <vs-slider v-model="listdata.score"  max="100"/>
+        <div style="display: flex">
+          <vs-button @click="addToList()" color="success" type="border">Add</vs-button>
+          <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>
+        </div>
+      </div>
+    </vs-popup>
   </div>
 </template>
 

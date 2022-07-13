@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static webpage.entity.Actors.*;
+import static webpage.entity.Users.fetchLikedTags;
 import static webpage.entity.Users.fetchNotifications;
 
 @Entity(name = "ACTOR")
@@ -69,7 +70,13 @@ public class Actor {
     }
 
     public Set<User> getFollowers(){
-        return new HashSet<>(fetchFollowers(getId()));
+        try {
+            followers.size();
+            return followers;
+        } catch (LazyInitializationException e) {
+            followers = new HashSet<>(fetchFollowers(getId()));
+            return followers;
+        }
     }
 
     public String getName(){
