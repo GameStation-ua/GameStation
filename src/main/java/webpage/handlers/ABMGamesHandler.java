@@ -216,7 +216,7 @@ public class ABMGamesHandler extends AbstractHandler{
             }
             meanScore = meanScore / userGames.size();
         }else {
-            meanScore = -1;
+            meanScore = 0;
         }
         return meanScore;
     }

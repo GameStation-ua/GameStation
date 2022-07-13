@@ -5,7 +5,7 @@
 
   let notifInfo = ref([])
   let active = ref(false)
-  let isAdmin = ref(localStorage.getItem("isAdmin").toString())
+  let isAdmin = ref(localStorage.getItem('isAdmin'))
 
 
   import Store from './store'
@@ -32,6 +32,7 @@
   }
 
   function getImg(){
+    if (localStorage.getItem('userData') == null) return ""
     const id = JSON.parse(localStorage.getItem('userData')).id.toString()
     return "http://localhost:8443/image/profile_pictures/" + id + ".png"
 

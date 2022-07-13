@@ -28,6 +28,21 @@ public class Actor {
 
     private String name;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final Actor other = (Actor) obj;
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (id == null ? 0 : id.hashCode());
+        return hash;
+    }
+
     public void setFollowers(Set<User> followers) {
         this.followers = followers;
     }

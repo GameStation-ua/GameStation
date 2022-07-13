@@ -46,10 +46,8 @@ public class FollowHandler extends AbstractHandler{
            patch("/delete/:actorId", "application/json", (req, res) -> {
                String token = req.headers("token");
                if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
-               Claims claims = Jwts.parser()
-                       .setSigningKey(key)
-                       .parseClaimsJws(token).getBody();
-               Long userId = Long.valueOf((Integer) claims.get("id"));
+               Long userId = getIdByToken(token);
+
 
                Optional<Actor> actor = findActorById(Long.valueOf(req.params(":actorId")));
                Optional<User> user = findUserById(userId);
