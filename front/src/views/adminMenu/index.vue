@@ -137,7 +137,7 @@ export default {
             <vs-button @click="popupActivo1=false" color="dark" type="flat">Cancel</vs-button>
           </vs-popup>
           <vs-popup class="tagpopup"  title="Delate Tag" :active.sync="popupActivo2" button-close-hidden="true">
-            <p>
+            <p style="color: black">
               Are you sure you want to delate the tags selected?
             </p>
             <vs-button @click="removeTag" color="danger" type="filled">Yes</vs-button>

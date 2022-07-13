@@ -13,7 +13,13 @@ export default {
       textarea: '',
       counterDanger: false,
       page:1,
-      comments: []
+      comments: [],
+      listdata:{
+        gameId: this.$route.params.id.toString(),
+        score: 0,
+        status: ''
+      },
+      popupActivo: false,
     }
   },
   components: {
@@ -126,7 +132,16 @@ export default {
       if (res.status === 200){
         this.gameInfo.creators.isFollowing = false
       }
-    }
+    },
+    addToList(){
+      const res = new XMLHttpRequest()
+      res.open("PATCH", "/gamelist/add", false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(JSON.stringify(this.listdata))
+      this.popupActivo = false
+
+    },
   },
   beforeMount() {
     this.getGameInfo()
@@ -169,7 +184,7 @@ export default {
         <div class="right">
           <div class="rightContent" style="position: sticky !important;">
             <img id="rightimg" :src="img">
-            <vs-button color="success" type="border">Add to list</vs-button>
+            <vs-button color="success" type="border" @click="popupActivo=true">Add to list</vs-button>
             <vs-button v-if="gameInfo.isFollowing === true" color="danger" type="border" @click="unfollowGame()">Unfollow game</vs-button>
             <vs-button v-else color="danger" type="border" @click="followGame()">Follow game</vs-button>
             <div class="otherButtons">
@@ -211,6 +226,35 @@ export default {
         </div>
       </div>
     </div>
+    <vs-popup class="holamundo"  title="List data" :active.sync="popupActivo">
+      <h1 style="color: black">{{gameInfo.title}}</h1>
+      <div style="display: block">
+        <label style="color: black">Status</label>
+        <ul class="leftx">
+          <li>
+            <vs-radio color="success" v-model="listdata.status" vs-value="Playing">Playing</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="danger" v-model="listdata.status" vs-value="Dropped">Dropped</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="warning" v-model="listdata.status" vs-value="On hold">On hold</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="dark" v-model="listdata.status" vs-value="Waiting">Waiting</vs-radio>
+          </li>
+          <li>
+            <vs-radio color="rgb(87, 251, 187)" v-model="listdata.status" vs-value="Completed">Completed</vs-radio>
+          </li>
+        </ul>
+        <label style="color: black">Score</label>
+        <vs-slider v-model="listdata.score"  max="100"/>
+        <div style="display: flex">
+          <vs-button @click="addToList()" color="success" type="border">Add</vs-button>
+          <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>
+        </div>
+      </div>
+    </vs-popup>
   </div>
 </template>
 
