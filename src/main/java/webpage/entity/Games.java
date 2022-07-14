@@ -240,7 +240,7 @@ public class Games {
         Set<Tag> tags1 = new HashSet<>(tags.get());
         return Optional.of(new GameRequest(createGameRequest.getTitle(), createGameRequest.getDescription(), createGameRequest.getWiki(), creatorId, tags1, false));
     }
-    public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId) {
+    public static Optional<GameRequest> editGameRequest(EditGameRequest editGameRequest, Long creatorId, Long gameId) {
 
         EntityManager em = currentEntityManager();
         Game game;
@@ -265,7 +265,7 @@ public class Games {
         Optional<List<Tag>> tags = findTagsIfAvailable(editGameRequest.getTags());
         if (tags.isEmpty()) return Optional.empty();
         Set<Tag> tags1 = new HashSet<>(tags.get());
-        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1, true, game.getId()));
+        return Optional.of(new GameRequest(editGameRequest.getTitle(), editGameRequest.getDescription(), editGameRequest.getWiki(), creatorId, tags1, true, game.getId(), game.getImgsInCarousel()));
     }
 
     public static boolean isOwner(Long userId, Long gameId){
@@ -325,11 +325,12 @@ public class Games {
         game.setTitle(gameRequest.getTitle());
         game.setWiki(gameRequest.getWiki());
         game.setTags(gameRequest.getTags());
+        game.setImgsInCarousel(gameRequest.getImgsInCarousel());
     }
 
-    public static void createGameUpdate(GameUpdateRequest gur){
+    public static GameUpdate createGameUpdate(GameUpdateRequest gur){
         GameUpdate gameUpdate = new GameUpdate(gur.getGameId(), gur.getTitle(), gur.getContent());
-        merge(gameUpdate);
+        return merge(gameUpdate);
     }
 
     public static Optional<List<GameRequestResponse>> getGameRequestsAsResponses(){

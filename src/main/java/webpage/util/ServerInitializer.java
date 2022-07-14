@@ -14,6 +14,8 @@ public class ServerInitializer {
 
     public final static String ImagesPath = System.getenv("SystemDrive") + "/ImagesGameStation";
 
+    public final static  String frontEndLink = "http://localhost:8080";
+
     public static void createPaths() throws IOException {
         Files.createDirectories(Paths.get(ImagesPath + "/game_requests"));
         Files.createDirectories(Paths.get(ImagesPath + "/game_updates"));

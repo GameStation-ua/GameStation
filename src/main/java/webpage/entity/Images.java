@@ -32,9 +32,13 @@ public class Images {
     }
     public static void moveImagesFromRequest(File srcDir, File destDir) throws IOException {
 
-        FileUtils.deleteDirectory(destDir);
+//        FileUtils.deleteDirectory(destDir);
 
-        FileUtils.moveDirectory(srcDir, destDir);
+//        FileUtils.moveDirectory(srcDir, destDir);
+        String[] list = srcDir.list();
+        for (String s : list) {
+            FileUtils.copyFileToDirectory(new File(srcDir.toString() + "/" + s), destDir);
+        }
     }
 
     public static boolean rescale(String directory, int width, int height) {

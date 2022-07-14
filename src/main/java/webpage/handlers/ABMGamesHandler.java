@@ -1,6 +1,7 @@
 package webpage.handlers;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import webpage.model.*;
 import webpage.requestFormats.CreateGameRequest;
 import webpage.requestFormats.EditGameRequest;
@@ -10,7 +11,9 @@ import webpage.responseFormats.*;
 import webpage.util.HandlerType;
 import webpage.util.NotificationType;
 
+import javax.servlet.MultipartConfigElement;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,10 +22,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static spark.Spark.*;
+import static webpage.discord.Bot.sendNews;
 import static webpage.entity.Actors.persistNotificationToFollowers;
 import static webpage.entity.Actors.sendNotificationToFollowers;
 import static webpage.entity.Games.*;
 import static webpage.entity.Images.moveImagesFromRequest;
+import static webpage.entity.Images.upload;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Persister.remove;
 import static webpage.entity.Tags.createTagResponseList;
@@ -70,7 +75,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     EditGameRequest editGameRequest = fromJson(req.body(), EditGameRequest.class);
                     editGameRequest.setGameId(gameId);
 
-                    Optional<GameRequest> gameRequest = editGameRequest(editGameRequest, userId);
+                    Optional<GameRequest> gameRequest = editGameRequest(editGameRequest, userId, gameId);
                     if (gameRequest.isEmpty()) return returnJson(res, 400, "Something went wrong");
 
                     try{
@@ -133,15 +138,18 @@ public class ABMGamesHandler extends AbstractHandler{
                 String token = req.headers("token");
                 if (!verifyJWT(token)) return returnJson(res, 401, "Not logged in");
                 Long userId = getIdByToken(token);
-                GameUpdateRequest gameUpdateRequest = fromJson(req.body(), GameUpdateRequest.class);
+                req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+                GameUpdateRequest gameUpdateRequest = fromJson(IOUtils.toString(req.raw().getPart("json").getInputStream(), StandardCharsets.UTF_8), GameUpdateRequest.class);
                 if (!isOwner(userId, gameUpdateRequest.getGameId())) return returnJson(res, 401, "Unauthorized");
-                Optional<Game> game = findGameByIdJFFollowers(gameUpdateRequest.getGameId());
+                Optional<Game> game = findGameById(gameUpdateRequest.getGameId());
                 if (game.isEmpty()) return returnJson(res, 500, "Something went wrong");
                 Notification notification = new Notification(NotificationType.GAME_POSTED_UPDATE, game.get(), null, gameUpdateRequest.getPath());
                 try {
-                    createGameUpdate(gameUpdateRequest);
+                    GameUpdate gameUpdate = createGameUpdate(gameUpdateRequest);
                     persistNotificationToFollowers(notification, game.get());
+                    upload(req, res, 960, 540, ImagesPath + "/game_updates/" + gameUpdate.getId() + ".png");
                     sendNotificationToFollowers(notification, game.get());
+                    sendNews(game.get(),gameUpdateRequest, gameUpdate.getId());
                     return returnJson(res, 200, "OK");
                 }catch (Exception e){
                     return returnJson(res, 500, "Something went wrong");

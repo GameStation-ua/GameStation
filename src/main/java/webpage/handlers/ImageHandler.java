@@ -40,17 +40,6 @@ public class ImageHandler extends AbstractHandler{
                     merge(gameRequest1.get());
                     return returnMessage;
 
-
-                case GAME_UPDATE:
-                    Optional<GameUpdate> gameUpdate = findGameUpdateById(Long.valueOf(req.headers("id")));
-                    if (gameUpdate.isEmpty()) return returnJson(res, 500, "Something went wrong");
-                    Optional<Game> game = findGameById(gameUpdate.get().getGameId());
-                    if (game.isEmpty()) return returnJson(res, 500, "Something went wrong");
-                    if (!(game.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
-
-                    return upload(req, res, 960, 540, ImagesPath + "/game_updates/" + gameUpdate.get().getId() + ".png");
-
-
                 case PROFILE:
                     return upload(req, res, 540, 540, ImagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");
 

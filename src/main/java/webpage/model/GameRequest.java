@@ -21,7 +21,7 @@ public class GameRequest {
     private String wiki;
 
     @Column(name = "IMGS_IN_CAROUSEL", nullable = false)
-    private Integer imgsInCarousel = 0;
+    private Integer imgsInCarousel;
 
     @Column(name = "DATE", nullable = false)
     private final Date date = new Date();
@@ -45,8 +45,9 @@ public class GameRequest {
         this.creatorId = creatorId;
         this.tags = tags;
         this.alreadyExists = alreadyExists;
+        this.imgsInCarousel = 0;
     }
-    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags, boolean alreadyExists, Long gameId) {
+    public GameRequest(String title, String description, String wiki, Long creatorId, Set<Tag> tags, boolean alreadyExists, Long gameId, int imgsInCarousel) {
         this.title = title;
         this.description = description;
         this.wiki = wiki;
@@ -54,6 +55,7 @@ public class GameRequest {
         this.tags = tags;
         this.alreadyExists = alreadyExists;
         this.gameId = gameId;
+        this.imgsInCarousel = imgsInCarousel;
     }
 
     public GameRequest() {

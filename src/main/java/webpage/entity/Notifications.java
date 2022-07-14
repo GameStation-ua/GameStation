@@ -9,7 +9,6 @@ import java.util.List;
 public class Notifications {
 
 
-
     public static void prepareNotificationResponse(List<NotificationResponse> notificationResponse, User user){
         int i = 1;
         for (Notification notification : user.getNotifications()) {
