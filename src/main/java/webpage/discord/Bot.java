@@ -22,13 +22,14 @@ package webpage.discord;
         import java.util.stream.IntStream;
 
         import static discord4j.core.spec.MessageCreateFields.File;
+        import static webpage.util.BotToken.botToken;
         import static webpage.util.ServerInitializer.ImagesPath;
         import static webpage.util.ServerInitializer.frontEndLink;
 
 
 public class Bot {
     // The discord bot token.
-    private final static String token = "OTk2OTUwODYwOTU5NTg4NTIy.GBswLS.MFcvLGZAeckRI_vJM-O3Rga5MrghqidpLyYYmk";
+    private final static String token = botToken;
 
     // The ID of a webhook in a channel the bot has MANAGE_WEBHOOKS permission in.
     private final static Snowflake webhookId = Snowflake.of("997164425243021373");
