@@ -31,3 +31,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 /src/main/java/webpage/util/BotToken.java
+BotToken.java
