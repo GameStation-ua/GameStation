@@ -15,7 +15,6 @@ front/dist
 # local env files
 .env.local
 .env.*.local
-.webpage.util.BotToken
 
 # Log files
 npm-debug.log*
