@@ -7,7 +7,7 @@ import webpage.util.ImgType;
 import java.util.Optional;
 
 import static spark.Spark.*;
-import static webpage.entity.Games.*;
+import static webpage.entity.Games.findGameRequestById;
 import static webpage.entity.Images.findImg;
 import static webpage.entity.Images.upload;
 import static webpage.entity.Persister.merge;

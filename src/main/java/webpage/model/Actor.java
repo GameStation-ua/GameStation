@@ -4,12 +4,10 @@ import org.hibernate.LazyInitializationException;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
-import static webpage.entity.Actors.*;
-import static webpage.entity.Users.fetchLikedTags;
-import static webpage.entity.Users.fetchNotifications;
+import static webpage.entity.Actors.fetchComments;
+import static webpage.entity.Actors.fetchFollowers;
 
 @Entity(name = "ACTOR")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

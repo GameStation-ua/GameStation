@@ -41,7 +41,6 @@ public class Notification {
         return hash;
     }
 
-
     public Notification() {
     }
 

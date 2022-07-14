@@ -1,18 +1,18 @@
 package webpage.discord;
 
-        import discord4j.common.util.Snowflake;
-        import discord4j.core.DiscordClient;
-        import discord4j.core.GatewayDiscordClient;
-        import webpage.model.Game;
-        import webpage.requestFormats.GameUpdateRequest;
+import discord4j.common.util.Snowflake;
+import discord4j.core.DiscordClient;
+import discord4j.core.GatewayDiscordClient;
+import webpage.model.Game;
+import webpage.requestFormats.GameUpdateRequest;
 
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
-        import static discord4j.core.spec.MessageCreateFields.File;
-        import static webpage.util.BotToken.botToken;
-        import static webpage.util.ServerInitializer.imagesPath;
-        import static webpage.util.ServerInitializer.frontEndLink;
+import static discord4j.core.spec.MessageCreateFields.File;
+import static webpage.util.BotToken.botToken;
+import static webpage.util.ServerInitializer.frontEndLink;
+import static webpage.util.ServerInitializer.imagesPath;
 
 
 public class Bot {
@@ -37,17 +37,17 @@ public class Bot {
         try {
             if (gateway != null) {
                 gateway.getWebhookById(webhookId)
-                        .flatMap(webhook -> {
-                            try {
-                                return webhook.execute()
-                                        .withContent(alert)
-                                        .withFiles(File.of("image.png", new FileInputStream(imagesPath + "/game_updates/" + imageId + ".png")));
-                            } catch (FileNotFoundException e) {
-                                return webhook.execute()
-                                        .withContent(alert);
-                            }
-                        })
-                        .block();
+                    .flatMap(webhook -> {
+                        try {
+                            return webhook.execute()
+                                    .withContent(alert)
+                                    .withFiles(File.of("image.png", new FileInputStream(imagesPath + "/game_updates/" + imageId + ".png")));
+                        } catch (FileNotFoundException e) {
+                            return webhook.execute()
+                                    .withContent(alert);
+                        }
+                    })
+                    .block();
             }
         }catch (NullPointerException ignored){
         }

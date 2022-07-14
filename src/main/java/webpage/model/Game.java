@@ -8,8 +8,6 @@ import java.util.Set;
 
 import static webpage.entity.Games.fetchTags;
 
-import static webpage.entity.Users.fetchLikedTags;
-
 @Entity
 public class Game extends Actor{
 

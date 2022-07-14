@@ -1,7 +1,5 @@
 package webpage.handlers;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import webpage.model.Actor;
 import webpage.model.User;
 import webpage.requestFormats.FollowRequest;
@@ -16,7 +14,6 @@ import static webpage.entity.Actors.findActorById;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Users.*;
 import static webpage.util.Parser.fromJson;
-import static webpage.util.SecretKey.key;
 
 public class FollowHandler extends AbstractHandler{
 

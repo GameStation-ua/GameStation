@@ -15,7 +15,7 @@ import static spark.Spark.*;
 import static webpage.entity.Actors.*;
 import static webpage.entity.Comments.createCommentResponseList;
 import static webpage.entity.Persister.merge;
-import static webpage.entity.Threads.*;
+import static webpage.entity.Threads.findThreadById;
 import static webpage.entity.UserComments.findUserCommentByCommentIdAndUserId;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
