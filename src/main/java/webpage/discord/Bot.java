@@ -3,27 +3,15 @@ package webpage.discord;
         import discord4j.common.util.Snowflake;
         import discord4j.core.DiscordClient;
         import discord4j.core.GatewayDiscordClient;
-        import discord4j.core.event.domain.lifecycle.ReadyEvent;
-        import discord4j.core.event.domain.message.MessageCreateEvent;
-        import discord4j.core.object.entity.Message;
-        import discord4j.core.object.entity.User;
-        import discord4j.core.object.entity.Webhook;
-        import discord4j.core.object.entity.channel.TextChannel;
-        import discord4j.core.spec.EmbedCreateSpec;
-        import discord4j.core.spec.MessageCreateFields;
-        import discord4j.rest.entity.RestWebhook;
-        import reactor.core.publisher.Mono;
         import webpage.model.Game;
-        import webpage.model.GameUpdate;
         import webpage.requestFormats.GameUpdateRequest;
 
         import java.io.FileInputStream;
         import java.io.FileNotFoundException;
-        import java.util.stream.IntStream;
 
         import static discord4j.core.spec.MessageCreateFields.File;
         import static webpage.util.BotToken.botToken;
-        import static webpage.util.ServerInitializer.ImagesPath;
+        import static webpage.util.ServerInitializer.imagesPath;
         import static webpage.util.ServerInitializer.frontEndLink;
 
 
@@ -53,7 +41,7 @@ public class Bot {
                             try {
                                 return webhook.execute()
                                         .withContent(alert)
-                                        .withFiles(File.of("image.png", new FileInputStream(ImagesPath + "/game_updates/" + imageId + ".png")));
+                                        .withFiles(File.of("image.png", new FileInputStream(imagesPath + "/game_updates/" + imageId + ".png")));
                             } catch (FileNotFoundException e) {
                                 return webhook.execute()
                                         .withContent(alert);

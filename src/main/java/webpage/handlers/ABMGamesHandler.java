@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static spark.Spark.*;
 import static webpage.discord.Bot.sendNews;
@@ -34,7 +33,7 @@ import static webpage.entity.Tags.createTagResponseList;
 import static webpage.entity.Users.*;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.Parser.toJson;
-import static webpage.util.ServerInitializer.ImagesPath;
+import static webpage.util.ServerInitializer.imagesPath;
 
 public class ABMGamesHandler extends AbstractHandler{
 
@@ -56,7 +55,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try {
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get(ImagesPath + "/game_requests/" + gameRequest1.getId()));
+                        Files.createDirectories(Paths.get(imagesPath + "/game_requests/" + gameRequest1.getId()));
                         res.status(200);
                         return "" + gameRequest1.getId();
                     } catch (Exception e) {
@@ -80,7 +79,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     try{
                         GameRequest gameRequest1 = merge(gameRequest.get());
-                        Files.createDirectories(Paths.get(ImagesPath + "/game_requests/" + gameRequest1.getId()));
+                        Files.createDirectories(Paths.get(imagesPath + "/game_requests/" + gameRequest1.getId()));
                         res.status(200);
                         return  "" + gameRequest1.getId();
                     }catch (Exception e){
@@ -105,7 +104,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     if (!gameRequest.get().isAlreadyExists()) {
                         try {
                             Game game = createGameFromRequest(gameRequest.get());
-                            FileUtils.moveDirectory(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + game.getId()).getAbsoluteFile());
+                            FileUtils.moveDirectory(new File(imagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(imagesPath + "/games/" + game.getId()).getAbsoluteFile());
                         } catch (Exception e) {
                             return returnJson(res, 500, "Something went wrong");
                         }
@@ -113,7 +112,7 @@ public class ABMGamesHandler extends AbstractHandler{
                     }
                     try {
                         Long gameId = editGame(gameRequest.get());
-                        moveImagesFromRequest(new File(ImagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(ImagesPath + "/games/" + gameId).getAbsoluteFile());
+                        moveImagesFromRequest(new File(imagesPath + "/game_requests/" + gameRequest.get().getId()).getAbsoluteFile(), new File(imagesPath + "/games/" + gameId).getAbsoluteFile());
                     }catch (Exception e){
                         return returnJson(res, 500, "Something went wrong");
                     }
@@ -147,7 +146,7 @@ public class ABMGamesHandler extends AbstractHandler{
                 try {
                     GameUpdate gameUpdate = createGameUpdate(gameUpdateRequest);
                     persistNotificationToFollowers(notification, game.get());
-                    upload(req, res, 960, 540, ImagesPath + "/game_updates/" + gameUpdate.getId() + ".png");
+                    upload(req, res, 960, 540, imagesPath + "/game_updates/" + gameUpdate.getId() + ".png");
                     sendNotificationToFollowers(notification, game.get());
                     sendNews(game.get(),gameUpdateRequest, gameUpdate.getId());
                     return returnJson(res, 200, "OK");

@@ -3,6 +3,9 @@ package webpage.handlers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import webpage.model.Notification;
@@ -12,7 +15,11 @@ import webpage.responseFormats.NotificationResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import static webpage.emails.MailSender.sendMail;
 import static webpage.entity.Notifications.prepareNotificationResponse;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
@@ -41,12 +48,24 @@ public class NotificationHandler {
         }
     }
 
-    static public void sendNotification(Long userId, Notification notification){
+    static public void sendNotification(Long userId, Notification notification) {
+        ExecutorService threadpool = Executors.newCachedThreadPool();
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(threadpool);
+        @SuppressWarnings("unchecked") ListenableFuture<Long> guavaFuture = (ListenableFuture<Long>) service.submit(()-> sendNotificationAndMail(userId, notification));
+        try {
+            long result = guavaFuture.get();
+        } catch (InterruptedException | ExecutionException  | NullPointerException ignored) {
+        }
+    }
+
+    static private void sendNotificationAndMail(Long userId, Notification notification){
         Session session = sessionMap.get(userId);
         try {
             session.getRemote().sendString(toJson(new NotificationResponse(notification)));
         }catch (Exception ignored){
         }
+        Optional<User> user = findUserById(userId);
+        user.ifPresent(value -> sendMail(notification, value));
     }
 
     @OnWebSocketClose

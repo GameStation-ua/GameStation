@@ -16,6 +16,9 @@ public class User extends Actor {
     @Column(name = "USER_NAME", nullable = false)
     private String username;
 
+    @Column(name = "EMAIL")
+    private String email;
+
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
@@ -56,6 +59,14 @@ public class User extends Actor {
         this.password = password;
     }
 
+    public User(String nickname, String username, String password, String email) {
+        super.setName(nickname);
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+
     public User() {
     }
 
@@ -66,6 +77,14 @@ public class User extends Actor {
             likedTags = new HashSet<>(fetchLikedTags(getId()));
             likedTags.add(tag);
         }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Set<UserGame> getUserGame() {

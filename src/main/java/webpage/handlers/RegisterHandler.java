@@ -7,10 +7,13 @@ import webpage.util.HandlerType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static spark.Spark.path;
 import static spark.Spark.post;
 import static webpage.entity.Persister.persist;
+import static webpage.entity.Users.findEmailIfInUse;
 import static webpage.entity.Users.findUserByUsername;
 import static webpage.util.Parser.fromJson;
 
@@ -25,13 +28,15 @@ public class RegisterHandler extends AbstractHandler {
 
                 Optional<User> user = findUserByUsername(registerRequest.getUsername());
                 if (user.isPresent()) return returnJson(res, 200, "Username already taken");
+                if (findEmailIfInUse(registerRequest.getEmail()).isPresent()) return returnJson(res, 200, "Email already in use");
                 if (!(checkString(registerRequest.getPassword())) || (registerRequest.getPassword().length() < 8)) {
                     return returnJson(res, 200, "You need to meet password requirements");
                 } else {
                     registerRequest.setPassword(Hashing.sha512().hashString(registerRequest.getPassword(), StandardCharsets.UTF_8).toString());
                     User user1 = new User(registerRequest.getNickname(),
                             registerRequest.getUsername(),
-                            registerRequest.getPassword());
+                            registerRequest.getPassword(),
+                            registerRequest.getEmail());
                     try{
                         persist(user1);
                         return returnJson(res, 201, "User created!");
@@ -67,5 +72,12 @@ public class RegisterHandler extends AbstractHandler {
                 return true;
         }
         return false;
+    }
+
+    private boolean testMail(String emailAddress) {
+        Pattern pattern = Pattern.compile("^(.+)@(.+)$");
+
+        Matcher matcher = pattern.matcher(emailAddress);
+        return matcher.matches();
     }
 }

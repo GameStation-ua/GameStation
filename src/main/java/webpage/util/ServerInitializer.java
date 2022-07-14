@@ -12,15 +12,15 @@ import static spark.Spark.*;
 
 public class ServerInitializer {
 
-    public final static String ImagesPath = System.getenv("SystemDrive") + "/ImagesGameStation";
+    public final static String imagesPath = System.getenv("SystemDrive") + "/ImagesGameStation";
 
     public final static  String frontEndLink = "http://localhost:8080";
 
     public static void createPaths() throws IOException {
-        Files.createDirectories(Paths.get(ImagesPath + "/game_requests"));
-        Files.createDirectories(Paths.get(ImagesPath + "/game_updates"));
-        Files.createDirectories(Paths.get(ImagesPath + "/games"));
-        Files.createDirectories(Paths.get(ImagesPath + "/profile_pictures"));
+        Files.createDirectories(Paths.get(imagesPath + "/game_requests"));
+        Files.createDirectories(Paths.get(imagesPath + "/game_updates"));
+        Files.createDirectories(Paths.get(imagesPath + "/games"));
+        Files.createDirectories(Paths.get(imagesPath + "/profile_pictures"));
     }
 
     public static void initializeHandlers(){

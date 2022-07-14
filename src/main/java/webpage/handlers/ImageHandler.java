@@ -1,8 +1,6 @@
 package webpage.handlers;
 
-import webpage.model.Game;
 import webpage.model.GameRequest;
-import webpage.model.GameUpdate;
 import webpage.util.HandlerType;
 import webpage.util.ImgType;
 
@@ -15,7 +13,7 @@ import static webpage.entity.Images.upload;
 import static webpage.entity.Persister.merge;
 import static webpage.entity.Users.getIdByToken;
 import static webpage.util.Parser.fromJson;
-import static webpage.util.ServerInitializer.ImagesPath;
+import static webpage.util.ServerInitializer.imagesPath;
 
 public class ImageHandler extends AbstractHandler{
 
@@ -29,19 +27,19 @@ public class ImageHandler extends AbstractHandler{
                 case MAIN:
                     Optional<GameRequest> gameRequest = findGameRequestById(Long.valueOf(req.headers("id")));
                     if (gameRequest.isEmpty() || !(gameRequest.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
-                    return upload(req, res, 960, 540, ImagesPath + "/game_requests/" + req.headers("id") + "/main.png");
+                    return upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/main.png");
 
 
                 case CAROUSEL:
                     Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
                     if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
-                    String returnMessage = upload(req, res, 960, 540, ImagesPath + "/game_requests/" + req.headers("id") + "/carousel=" + (gameRequest1.get().getImgsInCarousel() + 1) + ".png");
+                    String returnMessage = upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/carousel=" + (gameRequest1.get().getImgsInCarousel() + 1) + ".png");
                     gameRequest1.get().setImgsInCarousel(gameRequest1.get().getImgsInCarousel() + 1);
                     merge(gameRequest1.get());
                     return returnMessage;
 
                 case PROFILE:
-                    return upload(req, res, 540, 540, ImagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");
+                    return upload(req, res, 540, 540, imagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");
 
 
                 default: return returnJson(res, 500, "Something went wrong");

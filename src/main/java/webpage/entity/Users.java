@@ -93,6 +93,20 @@ public class Users {
         }
     }
 
+    public static Optional<String> findEmailIfInUse(String email){
+        EntityManager em = currentEntityManager();
+        try {
+            String email1 = (String) em.createQuery("SELECT u.email FROM User u WHERE u.email = :email")
+                    .setParameter("email", email)
+                    .getSingleResult();
+            return Optional.of(email1);
+        }catch (Exception e){
+            return Optional.empty();
+        }finally {
+            close();
+        }
+    }
+
     public static Optional<List<UserResponse>> searchStringInUsers(String searchString, Long userId){
         EntityManager em = currentEntityManager();
         try {

@@ -10,14 +10,13 @@ import javax.servlet.ServletException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import static webpage.handlers.AbstractHandler.returnJson;
-import static webpage.util.ServerInitializer.ImagesPath;
+import static webpage.util.ServerInitializer.imagesPath;
 
 public class Images {
 
@@ -120,7 +119,7 @@ public class Images {
         }
 
         public static byte[] findImg(String path) throws IOException {
-            BufferedImage bi = ImageIO.read(new File(ImagesPath + path));
+            BufferedImage bi = ImageIO.read(new File(imagesPath + path));
 
             byte[] rawImage = null;
             try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {

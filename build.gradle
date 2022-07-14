@@ -32,6 +32,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.discord4j:discord4j-core:3.2.2'
     implementation 'org.simplejavamail:simple-java-mail:7.1.1'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
 
 
 
