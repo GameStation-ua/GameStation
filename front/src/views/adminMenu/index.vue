@@ -1,5 +1,4 @@
 <script>
-import { notify } from "@kyvg/vue3-notification";
 import { Carousel, Slide, Navigation } from 'vue3-carousel';
 export default {
   name: "index",
@@ -98,10 +97,7 @@ export default {
       xhr.send(json)
       console.log(json)
       if (xhr.status === 200){
-        notify({
-          type: "success",
-          title: JSON.parse(xhr.response()).message,
-        });
+        location.reload()
       }
     }
   },
@@ -214,36 +210,29 @@ h1{
   color: white;
   display: flex;
 }
-
 .vs-button{
   display: flex;
   margin-top: 10px;
   width: 100px;
 }
-
 .box{
   position: relative;
   width: calc(100% - 130px);
   left: 130px;
   top: -90px;
 }
-
 .tagpopup .vs-button{
   display: revert;
 }
-
 li{
   display: flex;
   position: relative;
   color: white;
 }
-
 .center{
   display: flex;
   justify-content: space-between;
-
 }
-
 .selection {
   width: 45%;
   background: rgba(0, 0, 0, 0.8);
@@ -255,7 +244,6 @@ li{
   margin-right: 10px;
   margin-bottom: 10px;
 }
-
 .carousel__admin {
   width: 100%;
   background-color: #1c6f42 !important;
@@ -268,5 +256,4 @@ li{
   cursor: pointer;
   position: relative;
 }
-
 </style>

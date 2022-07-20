@@ -71,20 +71,13 @@ public class Images {
         return false;
     }
 
-    public static String upload(Request req, Response res, int width, int height, String dir) {
-
-        try {
+    public static String upload(Request req, Response res, int width, int height, String dir) throws IOException {
             if (uploadAndRescale(req, dir, width, height)) {
                 res.status(500);
                 return returnJson(res, 200, "Image uploaded");
             }else {
-                res.status(500);
-                return returnJson(res, 500, "Something went wrong");
+                throw new IOException("Upload error");
             }
-        }catch (Exception e){
-            res.status(500);
-            return returnJson(res, 500, "Something went wrong");
-        }
     }
 
     public static void rescale(InputStream input, Path target,

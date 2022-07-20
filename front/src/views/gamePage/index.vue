@@ -13,6 +13,7 @@ export default {
       textarea: '',
       counterDanger: false,
       page:1,
+      page1: 1,
       comments: [],
       listdata:{
         gameId: this.$route.params.id.toString(),
@@ -20,6 +21,9 @@ export default {
         status: ''
       },
       popupActivo: false,
+      updates:[],
+      selectedUpdate:{},
+      popupActivo1: false
     }
   },
   components: {
@@ -142,10 +146,82 @@ export default {
       this.popupActivo = false
 
     },
+    upvote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/upvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if (comment.userVote === -1){
+          comment.votes += 2
+          comment.userVote = 1
+        }else{
+          comment.votes += 1
+          comment.userVote = 1
+        }
+
+      }
+    },
+    downvote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/downvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if (comment.userVote === 1){
+          comment.votes -= 2
+          comment.userVote = -1
+        }else{
+          comment.votes -= 1
+          comment.userVote = -1
+        }
+      }
+    },
+    neutralVote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/neutralvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if(comment.userVote === 1){
+          comment.votes -= 1
+        }
+        if (comment.userVote === -1){
+          comment.votes += 1
+        }
+        comment.userVote = 0
+      }
+    },
+    getUpdates(){
+      const res = new XMLHttpRequest()
+      res.open("GET", '/game/gameUpdate/' + this.$route.params.id.toString() + '/' + this.page1.toString() , false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      console.log(res.responseText)
+      this.updates = JSON.parse(res.response)
+      console.log(this.updates)
+    },
+    openpopup1(update){
+      this.selectedUpdate = update
+      this.popupActivo1 = true
+    },
+    next(){
+      this.page +=1
+      this.getcomments()
+    },
+    back(){
+      this.page -=1
+      this.getcomments()
+    }
   },
   beforeMount() {
     this.getGameInfo()
     this.getcomments()
+    this.getUpdates()
   }
 }
 </script>
@@ -199,7 +275,7 @@ export default {
             </div>
             <vs-divider style="background: white; width: 80%; left: 10%"/>
             <div style="display: flex">
-              <label style="margin-left: 10%; margin-top: -5px">Average</label>
+              <label style="margin-left: 10%; margin-top: -5px">Score</label>
             </div>
             <div style="width: 80%; margin-left: 10%; display: flex">
               <vs-progress :percent="gameInfo.meanScore" color="success" style="right: 0; width: 92%; margin-right: 5px">success</vs-progress>
@@ -208,20 +284,59 @@ export default {
           </div>
         </div>
       </div>
-      <h1 style="display: flex; position: relative; left: -5px">Comments</h1>
-      <div style="width: 60%">
-        <vs-textarea counter="300" :counter-danger.sync="counterDanger" v-model="textarea" width="100%" height="200px"/>
-        <div style="display: flex; position: relative; right: 10px; margin-left: 10px">
-          <vs-button @click="comment()" color="success" type="filled">Comment</vs-button>
-        </div>
-        <div v-for="(comment, index) in comments" :key="index" style="margin-top: 40px;display: flex; flex-wrap: wrap">
-          <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + comment.userId.toString() + '.png'"/>
-          <div style="display: block; width: 90%">
-            <div style="display: flex; margin-bottom: -15px">
-              <p style=" text-align: left;color: white; display: flex; position: relative; margin-right: 10px">{{ comment.nickname}}</p>
-              <p style=" text-align: left;color: #515b7f; display: flex; position: relative">{{comment.date.toString()}}</p>
+      <div style="display: flex">
+        <div style="width: 60%; position: relative">
+          <h1 style="display: flex; position: relative; left: 0px">Comments</h1>
+          <vs-textarea counter="300" :counter-danger.sync="counterDanger" v-model="textarea" width="100%"/>
+          <div style="display: flex; position: relative; right: 10px; margin-left: 10px">
+            <vs-button @click="comment()" color="success" type="filled">Comment</vs-button>
+          </div>
+          <div v-for="(comment, index) in comments" :key="index" style="margin-top: 40px;display: flex; flex-wrap: wrap">
+            <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + comment.userId.toString() + '.png'"/>
+            <div style="display: block; width: 90%">
+              <div style="display: flex; margin-bottom: -15px">
+                <p style=" text-align: left;color: white; display: flex; position: relative; margin-right: 10px">{{ comment.nickname}}</p>
+                <p style=" text-align: left;color: #515b7f; display: flex; position: relative">{{comment.date.toString()}}</p>
+              </div>
+              <p style="overflow-wrap: break-word">{{ comment.content}}</p>
+              <div style="display:flex; ">
+                <div v-if="comment.userVote === 1">
+                  <vs-button @click="neutralVote(comment)" color="rgb(255, 255, 255)" type="flat" icon="thumb_up" style="margin-right: 10px; position: relative"></vs-button>
+                </div>
+                <div v-else>
+                  <vs-button @click="upvote(comment)" color="rgb(0, 0, 0)" type="flat" icon="thumb_up" style="margin-right: 10px; position: relative"></vs-button>
+                </div>
+                <label style="margin-right: 10px; position: relative">{{comment.votes}}</label>
+                <div v-if="comment.userVote === -1">
+                  <vs-button @click="neutralVote(comment)" color="rgb(255, 255, 255)" type="flat" icon="thumb_down" style="margin-right: 10px; position: relative"></vs-button>
+                </div>
+                <div v-else>
+                  <vs-button @click="downvote(comment)" color="rgb(0, 0, 0)" type="flat" icon="thumb_down" style="margin-right: 10px; position: relative"></vs-button>
+                </div>
+              </div>
             </div>
-            <p style="overflow-wrap: break-word">{{ comment.content}}</p>
+          </div>
+          <div style="display: flex; position: relative">
+            <div v-if="page !== 1">
+              <vs-button @click="back()" color="primary" type="border">Back</vs-button>
+            </div>
+            <div v-else></div>
+            <div v-if="comments.length === 10">
+              <vs-button @click="next()" color="primary" type="border">Next</vs-button>
+            </div>
+            <div v-else></div>
+          </div>
+        </div>
+        <div style="width: 40%;position: relative; right: 0; margin-left: 50px; margin-top: 20px">
+          <h1 style="text-align: left">Updates</h1>
+          <div v-for="(update, index) in updates" :key="index">
+            <div @click="openpopup1(update)" class="selection1" style="cursor: pointer">
+              <img :src="'http://localhost:8443/image/game_updates/' + update.id + '.png'" style="height: 100%">
+              <div style="display: block; text-align: left; margin-left: 10px">
+                <h3 style="color: white!important;margin-bottom: 40px">{{update.title}}</h3>
+                <p> {{update.date}}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -253,6 +368,14 @@ export default {
           <vs-button @click="addToList()" color="success" type="border">Add</vs-button>
           <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>
         </div>
+      </div>
+    </vs-popup>
+    <vs-popup class="holamundo" button-close-hidden="true" title="Update" :active.sync="popupActivo1">
+      <div>
+        <img :src="'http://localhost:8443/image/game_updates/' + selectedUpdate.id + '.png'" style="width: 100%">
+        <h1 style="color: black">{{selectedUpdate.title}}</h1>
+        <p style="color: black">{{selectedUpdate.content}}</p>
+        <vs-button @click="popupActivo1 = false" color="dark" type="border">Close</vs-button>
       </div>
     </vs-popup>
   </div>
@@ -363,5 +486,15 @@ a{
 }
 .vs-textarea:focus{
   resize: none!important;
+}
+.selection1{
+  background: rgba(0, 0, 0, 0.8);
+  color: #000000;
+  position: relative;
+  left: 10px;
+  display: flex!important;
+  height: 100px!important;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 </style>

@@ -13,6 +13,7 @@ const input = ref({
   nickname: "",
   password: "",
   verifypassword: "",
+  email:"",
 })
 
 function register () {
@@ -20,7 +21,8 @@ function register () {
   const hashed = {
     username : input.value.username,
     nickname : input.value.nickname,
-    password : input.value.password
+    password : input.value.password,
+    email: input.value.email
   }
 //  hashed.password = sha512(hashed.password)
   var json = JSON.stringify(hashed)
@@ -56,9 +58,11 @@ function register () {
       <div>
         <div class="centerx">
           <vs-input label-placeholder="Username" v-model="input.username" size="large" color="success"/>
+          <vs-input label-placeholder="Email" v-model="input.email" size="large"  color="success"  type="mail" description-text="(optional)"/>
           <vs-input label-placeholder="Nickname" v-model="input.nickname" size="large" color="success"/>
           <vs-input label-placeholder="Password" v-model="input.password" size="large" type="password" color="success" :danger="one"  :success="two"   description-text="the password needs 8 or more characters, numbers and capital letters"/>
           <vs-input label-placeholder="Verify password" v-model="input.verifypassword" size="large" type="password" color="success" :danger="three"  :success="four"  description-text="wright the same password"/>
+
           <vs-button @click="register" color="success" type="gradient">Register</vs-button>
         </div>
         {{ user.nickName }}

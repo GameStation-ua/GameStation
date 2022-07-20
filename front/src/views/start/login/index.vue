@@ -3,6 +3,7 @@
   import { ref } from 'vue'
   import Store from '../../../store'
   import {sha512} from "js-sha512";
+  import { notify } from "@kyvg/vue3-notification";
 
 
 
@@ -46,6 +47,11 @@
       localStorage.setItem('userData', JSON.stringify(JSON.parse(ros.response).user))
       router.push('/')
       location.reload()
+    }else{
+      notify({
+        type: "error",
+        title: "Username or password are wrong",
+      });
     }
   }
 

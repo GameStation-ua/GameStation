@@ -13,6 +13,7 @@ import webpage.util.NotificationType;
 
 import javax.servlet.MultipartConfigElement;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -99,6 +100,7 @@ public class ABMGamesHandler extends AbstractHandler{
 
                     if (!gameAprovalRequest.isApproved()){
                         remove(gameRequest.get());
+                        FileUtils.deleteDirectory(new File(imagesPath + "/game_requests/" + gameRequest.get().getId()));
                         return returnJson(res, 200, "Request rejected");
                     }
                     if (!gameRequest.get().isAlreadyExists()) {
@@ -143,14 +145,19 @@ public class ABMGamesHandler extends AbstractHandler{
                 Optional<Game> game = findGameById(gameUpdateRequest.getGameId());
                 if (game.isEmpty()) return returnJson(res, 500, "Something went wrong");
                 Notification notification = new Notification(NotificationType.GAME_POSTED_UPDATE, game.get(), null, gameUpdateRequest.getPath());
+                GameUpdate gameUpdate = new GameUpdate();
                 try {
-                    GameUpdate gameUpdate = createGameUpdate(gameUpdateRequest);
-                    persistNotificationToFollowers(notification, game.get());
+                    gameUpdate = createGameUpdate(gameUpdateRequest);
                     upload(req, res, 960, 540, imagesPath + "/game_updates/" + gameUpdate.getId() + ".png");
+                    persistNotificationToFollowers(notification, game.get());
                     sendNotificationToFollowers(notification, game.get());
                     sendNews(game.get(),gameUpdateRequest, gameUpdate.getId());
                     return returnJson(res, 200, "OK");
                 }catch (Exception e){
+                    try {
+                        if (e.getClass() == IOException.class) remove(gameUpdate);
+                    }catch (Exception ignored){
+                    }
                     return returnJson(res, 500, "Something went wrong");
                 }
             });

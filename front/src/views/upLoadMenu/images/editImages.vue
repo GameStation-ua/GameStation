@@ -19,7 +19,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="scroller">
     <div class="form-box">
       <div class="centerx">
         <h1>Change Main Image</h1>

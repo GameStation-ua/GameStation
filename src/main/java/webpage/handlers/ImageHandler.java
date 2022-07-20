@@ -30,12 +30,17 @@ public class ImageHandler extends AbstractHandler{
                     return upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/main.png");
 
                 case CAROUSEL:
-                    Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
-                    if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
-                    String returnMessage = upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/carousel=" + (gameRequest1.get().getImgsInCarousel() + 1) + ".png");
-                    gameRequest1.get().setImgsInCarousel(gameRequest1.get().getImgsInCarousel() + 1);
-                    merge(gameRequest1.get());
-                    return returnMessage;
+                    try {
+                        Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
+                        if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token))))
+                            return returnJson(res, 401, "Unauthorized");
+                        String returnMessage = upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/carousel=" + (gameRequest1.get().getImgsInCarousel() + 1) + ".png");
+                        gameRequest1.get().setImgsInCarousel(gameRequest1.get().getImgsInCarousel() + 1);
+                        merge(gameRequest1.get());
+                        return returnMessage;
+                    }catch (Exception e){
+                        return returnJson(res, 500, "Something went wrong");
+                    }
 
                 case PROFILE:
                     return upload(req, res, 540, 540, imagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");

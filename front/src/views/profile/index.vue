@@ -14,8 +14,23 @@ export default {
         score: 0,
         status: ''
       },
+      update:{
+          gameId: 0,
+          title: '',
+          content: '',
+          path: ''
+      },
+      object:{
+        json: ""
+      },
       selectedGame:{},
       popupActivo:false,
+      popupActivo1:false,
+      counterDanger: false,
+      headersUpdate:{
+        token: localStorage.getItem('token')
+      },
+      imgs: false
     }
   },
   methods: {
@@ -66,6 +81,34 @@ export default {
       this.popupActivo = true
       this.listdata.gameId = game.gameId
       console.log(this.selectedGame)
+    },
+    openPopup1(game){
+      this.selectedGame = game
+      this.update.gameId = game.gameId
+      this.update.path = '/gamepage/' + game.gameId
+      this.popupActivo1 = true
+
+    },
+    save(){
+      this.object.json = JSON.stringify(this.update)
+      this.imgs = true
+    },
+    cancel(){
+      this.listdata.score = 0
+      this.listdata.status = ''
+      this.popupActivo = false
+
+    },
+    cancel1(){
+      this.update = {
+          gameId: 0,
+          title: '',
+          content: '',
+          path: ''
+        }
+
+      this.popupActivo1 = false
+
     },
     editList(){
       const res = new XMLHttpRequest()
@@ -125,7 +168,8 @@ export default {
                   <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
                   <div style="display: block; position: relative; left: 10px">
                     <h1>{{ games.title }}</h1>
-                    <label v-if="games.score.toString() !== '0'">score: {{games.score.toString()}}</label>
+                    <p >score: {{games.score.toString()}}</p>
+                    <p v-if="games.status !== null">Status: {{games.status}}</p>
                   </div>
                 </div>
                 <div class="buttons" v-if="user.id === verifi">
@@ -138,16 +182,18 @@ export default {
           </vs-tab>
           <vs-tab @click="colorx = 'danger'" label="Published Games">
             <div class="con-tab-ejemplo">
-              <div v-for="(games,index) in debelopedGames" :key="index">
+              <div v-for="(games,index) in debelopedGames" :key="index" style="position: relative">
                 <div class="selection" @click="gamepage(games.gameId)" style="cursor: pointer ">
                   <img :src="'http://localhost:8443/image/games/' + games.gameId.toString() + '/main.png'" style="height: 100%" alt="logo">
                   <div style="display: block; position: relative; left: 10px">
                     <h1>{{games.title}}</h1>
                   </div>
                 </div>
-                <div v-if="user.id === verifi">
-                  <vs-button  color="primary" type="border" icon="edit" style="position: absolute; display: flex; right: 5%; top: 20px" :to="'/editGameMenu/' + games.gameId.toString()"></vs-button>
+                <div v-if="user.id === verifi" class="buttons">
+                  <vs-button  color="success" type="border" icon="notification_add" @click="openPopup1(games)"></vs-button>
+                  <vs-button  color="primary" type="border" icon="edit" :to="'/editGameMenu/' + games.gameId.toString()"></vs-button>
                 </div>
+                <div v-else></div>
               </div>
             </div>
           </vs-tab>
@@ -177,13 +223,24 @@ export default {
             <vs-slider v-model="listdata.score"  max="100"/>
             <div style="display: flex">
               <vs-button @click="editList()" color="success" type="border">Edit</vs-button>
-              <vs-button @click="popupActivo = false" color="dark" type="border">Cancel</vs-button>
+              <vs-button @click="cancel" color="dark" type="border">Cancel</vs-button>
             </div>
           </div>
         </vs-popup>
+        <vs-popup class="holamundo"  title="Add Update" button-close-hidden="true" :active.sync="popupActivo1">
+          <h1 style="color: black">{{selectedGame.title}}</h1>
+          <vs-input label-placeholder="Title" v-model="update.title" style="margin-bottom: 10px"/>
+          <vs-textarea class="algo" counter="500" label="Description" :counter-danger.sync="counterDanger" v-model="update.content" style="color: black"/>
+          <vs-button @click="save" color="dark" type="border">Save</vs-button>
+          <div v-if="imgs">
+            <vs-upload limit="1" :headers="headersUpdate" :data="object" fileName="uploaded_file" action="/game/gameupdate/add"/>
+          </div>
+          <div v-else>
+          </div>
+          <vs-button @click="cancel1" color="dark" type="border">Close</vs-button>
+        </vs-popup>
       </div>
     </div>
-
   </div>
 </template>
 

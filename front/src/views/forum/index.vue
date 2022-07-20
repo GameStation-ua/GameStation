@@ -38,6 +38,7 @@ export default {
         this.popupActivo = false
         this.threadCreate.description = ""
         this.threadCreate.title = ""
+        location.reload()
       }
     },
     followThread(user){

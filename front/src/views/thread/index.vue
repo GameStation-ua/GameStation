@@ -40,9 +40,68 @@ export default {
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
-      if (res.status === 200) {
+/*      if (res.status === 200) {
         location.reload()
       }
+
+ */
+    },
+    upvote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/upvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if (comment.userVote === -1){
+          comment.votes += 2
+          comment.userVote = 1
+        }else{
+          comment.votes += 1
+          comment.userVote = 1
+        }
+
+      }
+    },
+    downvote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/downvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if (comment.userVote === 1){
+          comment.votes -= 2
+          comment.userVote = -1
+        }else{
+          comment.votes -= 1
+          comment.userVote = -1
+        }
+      }
+    },
+    neutralVote(comment){
+      const res = new XMLHttpRequest()
+      res.open("POST", '/comment/neutralvote/' + comment.id.toString()  ,false)
+      res.setRequestHeader("Content-Type", "application/json")
+      res.setRequestHeader("token", localStorage.getItem("token"))
+      res.send(null)
+      if (res.status === 200){
+        if(comment.userVote === 1){
+          comment.votes -= 1
+        }
+        if (comment.userVote === -1){
+          comment.votes += 1
+        }
+        comment.userVote = 0
+      }
+    },
+    next(){
+      this.page +=1
+      this.getComments()
+    },
+    back(){
+      this.page -=1
+      this.getComments()
     }
   },
   beforeMount() {
@@ -67,6 +126,9 @@ export default {
         <p style="margin-left: 10px; font-size: 20px; white-space: initial;">{{thread.description}}</p>
       </div>
       <vs-divider color="#ffffff"/>
+      <label style="text-align: center; margin-left: 10px; display: flex; position: relative">Add a comment</label>
+      <vs-textarea counter="300" v-model="textarea"/>
+      <vs-button @click="comment" color="success" type="border">Comment</vs-button>
       <div v-for="(comment, index) in comments" :key="index" style="margin-top: 40px;display: flex; flex-wrap: wrap">
           <vs-avatar size="large" :src="'http://localhost:8443/image/profile_pictures/' + comment.userId.toString() + '.png'"/>
           <div style="display: block; width: 90%">
@@ -75,12 +137,32 @@ export default {
               <p style=" text-align: left;color: #515b7f; display: flex; position: relative">{{comment.date.toString()}}</p>
             </div>
             <p style="overflow-wrap: break-word">{{ comment.content}}</p>
+            <div style="display:flex">
+              <div v-if="comment.userVote === 1">
+                <vs-button @click="neutralVote(comment)" color="rgb(255, 255, 255)" type="flat" icon="thumb_up" style="margin-right: 10px; position: relative"></vs-button>
+              </div>
+              <div v-else>
+                <vs-button @click="upvote(comment)" color="rgb(86, 86, 86)" type="flat" icon="thumb_up" style="margin-right: 10px; position: relative"></vs-button>
+              </div>
+              <label style="margin-right: 10px; position: relative">{{comment.votes}}</label>
+              <div v-if="comment.userVote === -1">
+                <vs-button @click="neutralVote(comment)" color="rgb(255, 255, 255)" type="flat" icon="thumb_down" style="margin-right: 10px; position: relative"></vs-button>
+              </div>
+              <div v-else>
+                <vs-button @click="downvote(comment)" color="rgb(86, 86, 86)" type="flat" icon="thumb_down" style="margin-right: 10px; position: relative"></vs-button>
+              </div>
+            </div>
           </div>
         </div>
-      <div>
-        <label style="text-align: center; margin-left: 10px; display: flex; position: relative">Add a comment</label>
-        <vs-textarea counter="300" v-model="textarea"/>
-        <vs-button @click="comment" color="success" type="border">Comment</vs-button>
+      <div style="display: flex; position: relative">
+        <div v-if="page !== 1">
+          <vs-button @click="back()" color="primary" type="border">Back</vs-button>
+        </div>
+        <div v-else></div>
+        <div v-if="comments.length === 10">
+          <vs-button @click="next()" color="primary" type="border">Next</vs-button>
+        </div>
+        <div v-else></div>
       </div>
     </div>
   </div>

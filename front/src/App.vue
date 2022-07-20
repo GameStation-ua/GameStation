@@ -6,7 +6,8 @@
   let notifInfo = ref([])
   let active = ref(false)
   let isAdmin = ref(localStorage.getItem('isAdmin'))
-
+  let userData = ref(JSON.parse(localStorage.getItem('userData')))
+  let news = ref(false)
 
   import Store from './store'
   import router from "@/router";
@@ -14,8 +15,14 @@
 
   socket.addEventListener('message', function (event) {
     console.log('Message from server ', event.data);
-    notifInfo.value = JSON.parse(event.data)
-    console.log(notifInfo.value)
+    if (news.value === true){
+      notifInfo.value.unshift(JSON.parse(event.data))
+    }else{
+      notifInfo.value = JSON.parse(event.data)
+      console.log(notifInfo.value)
+      news.value = true
+    }
+
   });
 
   function getNotif(){
@@ -79,7 +86,7 @@
             <vs-button radius color="dark" type="flat" icon="notifications" id="two"></vs-button>
             <vs-dropdown-menu>
               <h3>Notifications</h3>
-              <div v-for="(notif, index) in notifInfo" :key="index" @click="page(notif.path)">
+              <div v-for="(notif, index) in notifInfo" :key="index" @click="page(notif.path)" style="cursor: pointer">
                 <p style="color: black!important; font-size: 10px; margin-bottom: 0!important;">{{notif.date}}</p>
                 <p style="color: black!important;">{{notif.content}}</p>
                 <vs-divider/>
@@ -95,8 +102,8 @@
       <vs-sidebar parent="body" default-index="2"  color="success" class="sidebarx" spacer v-model="active">
         <div class="header-sidebar" slot="header">
           <vs-avatar  size="70px" :src="getImg()"/>
-          <h4 style="color: white!important;">
-            My Name
+          <h4 v-if="userData !== undefined" style="color: white!important;">
+            {{ userData.nickname }}
           </h4>
         </div>
         <vs-sidebar-item index="1" icon="home" color="success" @click="page('/')">

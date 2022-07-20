@@ -133,10 +133,6 @@ export default {
   left: 10px;
 }
 
-.centerxmenu .vs-input{
-  width: 40%;
-}
-
 .form-box {
   width: 50%;
   background: rgba(0, 0, 0, 0.8);
