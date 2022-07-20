@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static webpage.api.MailSender.sendMail;
 import static webpage.entity.Persister.merge;
-import static webpage.handlers.NotificationHandler.sendNotification;
 import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 
@@ -92,9 +92,7 @@ public class Actors {
     }
 
     public static void sendNotificationToFollowers(Notification notification, Actor actor) {
-        for (User follower : actor.getFollowers()) {
-            sendNotification(follower.getId(), notification);
-        }
+        sendMail(notification, actor.getFollowers());
     }
 
     public static boolean persistNotificationToFollowers(Notification notification, Actor actor) {

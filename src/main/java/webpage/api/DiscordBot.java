@@ -1,4 +1,4 @@
-package webpage.discord;
+package webpage.api;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
@@ -15,7 +15,7 @@ import static webpage.util.ServerInitializer.frontEndLink;
 import static webpage.util.ServerInitializer.imagesPath;
 
 
-public class Bot {
+public class DiscordBot {
     // The discord bot token.
     private final static String token = botToken;
 
@@ -27,29 +27,30 @@ public class Bot {
             .login()
             .block();
 
-
     public static void sendNews(Game game, GameUpdateRequest gameUpdateRequest, Long imageId){
         sendNews(game.getName() + " just posted an update!!! \n" +
                 gameUpdateRequest.getTitle() + "\n" +
                 "Click here for more! " + frontEndLink + gameUpdateRequest.getPath(), imageId);
     }
+
     private static void sendNews(String alert, Long imageId) {
-        try {
-            if (gateway != null) {
+        if (gateway != null) {
+            try {
                 gateway.getWebhookById(webhookId)
-                    .flatMap(webhook -> {
-                        try {
-                            return webhook.execute()
-                                    .withContent(alert)
-                                    .withFiles(File.of("image.png", new FileInputStream(imagesPath + "/game_updates/" + imageId + ".png")));
-                        } catch (FileNotFoundException e) {
-                            return webhook.execute()
-                                    .withContent(alert);
-                        }
-                    })
-                    .block();
+                        .flatMap(webhook -> {
+                            try {
+                                return webhook.execute()
+                                        .withContent(alert)
+                                        .withFiles(File.of("image.png", new FileInputStream(imagesPath + "/game_updates/" + imageId + ".png")));
+                            } catch (FileNotFoundException e) {
+                                return webhook.execute()
+                                        .withContent(alert);
+                            }
+                        })
+                        .block();
+
+            } catch (NullPointerException ignored) {
             }
-        }catch (NullPointerException ignored){
         }
     }
 }

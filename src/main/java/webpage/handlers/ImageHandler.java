@@ -29,7 +29,6 @@ public class ImageHandler extends AbstractHandler{
                     if (gameRequest.isEmpty() || !(gameRequest.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
                     return upload(req, res, 960, 540, imagesPath + "/game_requests/" + req.headers("id") + "/main.png");
 
-
                 case CAROUSEL:
                     Optional<GameRequest> gameRequest1 = findGameRequestById(Long.valueOf(req.headers("id")));
                     if (gameRequest1.isEmpty() || !(gameRequest1.get().getCreatorId().equals(getIdByToken(token)))) return returnJson(res, 401, "Unauthorized");
@@ -40,7 +39,6 @@ public class ImageHandler extends AbstractHandler{
 
                 case PROFILE:
                     return upload(req, res, 540, 540, imagesPath + "/profile_pictures/" + getIdByToken(token) + ".png");
-
 
                 default: return returnJson(res, 500, "Something went wrong");
             }

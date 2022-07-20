@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static spark.Spark.*;
-import static webpage.discord.Bot.sendNews;
+import static webpage.api.DiscordBot.sendNews;
 import static webpage.entity.Actors.persistNotificationToFollowers;
 import static webpage.entity.Actors.sendNotificationToFollowers;
 import static webpage.entity.Games.*;
