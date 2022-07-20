@@ -143,8 +143,11 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-                if (userComment.isEmpty()) return returnJson(res, 500, "Something went wrong");
-                userComment.get().setVote(1);
+                if (userComment.isEmpty()) {
+                    userComment = Optional.of(new UserComment(userId, commentId, 1));
+                }else {
+                    userComment.get().setVote(1);
+                }
                 try {
                     merge(userComment.get());
                     return returnJson(res, 200, "OK");
@@ -160,8 +163,11 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-                if (userComment.isEmpty()) return returnJson(res, 500, "Something went wrong");
-                userComment.get().setVote(-1);
+                if (userComment.isEmpty()) {
+                    userComment = Optional.of(new UserComment(userId, commentId, -1));
+                }else {
+                    userComment.get().setVote(-1);
+                }
                 try {
                     merge(userComment.get());
                     return returnJson(res, 200, "OK");
@@ -177,8 +183,11 @@ public class CommentHandler extends AbstractHandler{
                 Long commentId =  Long.valueOf(req.params(":commentId"));
 
                 Optional<UserComment> userComment = findUserCommentByCommentIdAndUserId(commentId, userId);
-                if (userComment.isEmpty()) return returnJson(res, 500, "Something went wrong");
-                userComment.get().setVote(0);
+                if (userComment.isEmpty()) {
+                    userComment = Optional.of(new UserComment(userId, 119L, 1));
+                }else {
+                    userComment.get().setVote(0);
+                }
                 try {
                     merge(userComment.get());
                     return returnJson(res, 200, "OK");
