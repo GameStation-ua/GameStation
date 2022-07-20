@@ -12,6 +12,7 @@ import webpage.responseFormats.NotificationResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static webpage.api.MailSender.sendMail;
 import static webpage.entity.Notifications.prepareNotificationResponse;
@@ -42,7 +43,18 @@ public class NotificationHandler {
         }
     }
 
-    static public void sendNotification(Long userId, Notification notification) {
+    public static void sendnotificationToSocketAndMail(Notification notification, Set<User> users){
+        for (User user : users) {
+            try {
+                sessionMap.get(user.getId()).getRemote().sendString(toJson(new NotificationResponse(notification)));
+            } catch (Exception ignored) {
+            }
+        }
+        sendMail(notification, users);
+    }
+
+
+    public static void sendNotificationToSocketAndMail(Long userId, Notification notification) {
             Session session = sessionMap.get(userId);
             try {
                 session.getRemote().sendString(toJson(new NotificationResponse(notification)));

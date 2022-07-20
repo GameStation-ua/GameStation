@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static webpage.api.MailSender.sendMail;
 import static webpage.entity.Persister.merge;
+import static webpage.handlers.NotificationHandler.sendnotificationToSocketAndMail;
 import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 
@@ -92,7 +93,7 @@ public class Actors {
     }
 
     public static void sendNotificationToFollowers(Notification notification, Actor actor) {
-        sendMail(notification, actor.getFollowers());
+        sendnotificationToSocketAndMail(notification, actor.getFollowers());
     }
 
     public static boolean persistNotificationToFollowers(Notification notification, Actor actor) {

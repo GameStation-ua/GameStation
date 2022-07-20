@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static webpage.entity.Persister.merge;
-import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.handlers.NotificationHandler.sendNotificationToSocketAndMail;
 import static webpage.util.EntityManagers.close;
 import static webpage.util.EntityManagers.currentEntityManager;
 import static webpage.util.SecretKey.key;
@@ -74,7 +74,7 @@ public class Users {
             Notification notification = new Notification(NotificationType.USER_STARTED_FOLLOWING, user, actor, followRequest.getPath());
             user1.addNotification(notification);
             merge(user1);
-            sendNotification(user1.getId(), notification);
+            sendNotificationToSocketAndMail(user1.getId(), notification);
         } catch (Throwable ignored) {
         }
     }

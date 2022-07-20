@@ -19,7 +19,7 @@ import static webpage.entity.Threads.findThreadById;
 import static webpage.entity.UserComments.findUserCommentByCommentIdAndUserId;
 import static webpage.entity.Users.findUserById;
 import static webpage.entity.Users.getIdByToken;
-import static webpage.handlers.NotificationHandler.sendNotification;
+import static webpage.handlers.NotificationHandler.sendNotificationToSocketAndMail;
 import static webpage.util.Parser.fromJson;
 import static webpage.util.Parser.toJson;
 
@@ -85,7 +85,7 @@ public class CommentHandler extends AbstractHandler{
                     merge(user.get());
                     merge(thread.get());
                     sendNotificationToFollowers(notification1, user.get());
-                    sendNotification(creator.get().getId(), notification2);
+                    sendNotificationToSocketAndMail(creator.get().getId(), notification2);
                     sendNotificationToFollowers(notification3, thread.get());
                     return returnJson(res, 200, "OK");
                 }catch (Throwable e){
@@ -115,7 +115,7 @@ public class CommentHandler extends AbstractHandler{
                     merge(user.get());
                     merge(targetUser.get());
                     sendNotificationToFollowers(notification, user.get());
-                    sendNotification(targetUserId, notification1);
+                    sendNotificationToSocketAndMail(targetUserId, notification1);
                     return returnJson(res, 200, "OK");
                 }catch (Throwable e){
                     return returnJson(res, 500, "Something went wrong");
