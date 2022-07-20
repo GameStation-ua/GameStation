@@ -40,11 +40,9 @@ export default {
       res.setRequestHeader("Content-Type", "application/json")
       res.setRequestHeader("token", localStorage.getItem("token"))
       res.send(JSON.stringify(data))
-/*      if (res.status === 200) {
+     if (res.status === 200) {
         location.reload()
       }
-
- */
     },
     upvote(comment){
       const res = new XMLHttpRequest()
